@@ -45,8 +45,11 @@ class Build {
     this.clip = {}; WALLS.forEach(w => { this.clip[w] = new THREE.Plane(new V3(0, -1, 0), 1e4); });
     this.tall = [];
     this.hotspots = []; this.zones = []; this.dims = []; this.feet = []; this.mirrors = []; this.leds = []; this.accent = []; this.frosted = [];
-    this.door = { a0: 0.4, a1: 1.28, h: 2.01 };
-    this.win = { a0: D.W - 1.0, a1: D.W - 0.4, v0: 1.05, v1: 1.95 };
+    // Raster aus der Video-Rekonstruktion (Structure-from-Motion), relativ zu den Wänden
+    this.door = { a0: 0.42, a1: Math.min(D.W - 0.27, 1.18), h: 2.01 };
+    this.win = { a0: D.W - 0.93, a1: D.W - 0.41, v0: 1.15, v1: 1.95 };
+    this.lay = { tray: 0.78, wcX: 0.3, rz: 0.98, vz: D.L - 0.42 };
+    this.anc = {};
   }
   // Wand-Montage: along = Weltkoordinate entlang Wand (x bei back/front, z bei left/right)
   mount(o, wall, along, v, d = 0) {
@@ -235,5 +238,5 @@ function freeArea(B) {
 }
 function zoneState(B, z) {
   const ov = B.feet.some(f => Math.min(f.x1, z.x1) - Math.max(f.x0, z.x0) > 0.03 && Math.min(f.z1, z.z1) - Math.max(f.z0, z.z0) > 0.03);
-  return ov ? 'warn' : 'ok';
+  return ov || (z.label === 'WC' && z.x1 - z.x0 < 0.79) ? 'warn' : 'ok';
 }
