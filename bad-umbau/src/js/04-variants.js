@@ -21,23 +21,20 @@ function buildBestand(B) {
   const { W, L, H } = B.D;
   const wallTile = M.tile('bestWall', { tw: 0.2, th: 0.25, cols: 5, rows: 4, base: '#f0ece3', vary: 0.018, grout: '#b9b1a3', gw: 0.003, rt: 0.11, bevel: 0.007 });
   const floorTile = M.tile('bestFloor', { tw: 0.33, layout: 'diag', colors: ['#d5c7b0', '#d9ccb6', '#cfc0a8'], vary: 0.025, grout: '#9e927b', gw: 0.004, rt: 0.3, bevel: 0.006 });
-  const doorWood = M.wood('door', WOOD.door);
-  buildShell(B, {
-    walls: (id, len) => [{ a0: 0, a1: len, v0: 0, v1: H, mat: wallTile }],
-    floor: floorTile, reveal: M.plaster('#f1eee8'),
-    door: { leafMat: doorWood, innerMat: doorWood },
-  });
+  const doorWood = M.wood('door', WOOD.door), ch = M.chrome(), oak = M.wood('oakLight', WOOD.oakLight);
+  buildShell(B, { walls: full(wallTile), floor: floorTile, reveal: M.plaster('#f1eee8'), door: { leafMat: doorWood, innerMat: doorWood } });
   addLights(B);
 
-  // Wanne + Dusche
-  const tub = bathtub({}); tub.position.set(W - 0.375, 0, 0); B.add(tub, { name: 'Badewanne 75 × 160' }); B.foot(W - 0.75, 0, W, 1.6);
-  B.add(B.mount(showerSetBestand(), 'right', 0.65, 0), { name: 'Brausestange & Aufputz-Mischer' });
-  const bk = wireBasket(bottlesRow([{ r: 0.03, h: 0.16, c: '#f4efe2', cap: '#d8b25a' }, { r: 0.022, h: 0.13, c: '#3f6f5c', cap: '#222' }, { r: 0.024, h: 0.11, c: '#a52a3a', cap: '#ddd' }], 0.075));
-  bk.children[1].position.set(0.07, 0.003, 0.06);
-  const glove = rbox(0.12, 0.05, 0.06, 0.02, M.fabric('glove', '#e4b6b0')); glove.position.set(0.3, 0.08, 0.08); glove.rotation.z = 0.5; bk.add(glove);
-  B.add(B.mount(bk, 'right', 0.03, 1.64), { name: 'Gitterkorb Duschecke' });
+  // Wanne (geflieste Schürze) + Dusche
+  const tub = bathtub({ apronMat: wallTile, worldApron: true }); tub.position.set(W - 0.375, 0, 0); B.add(tub, { name: 'Badewanne 75 × 160, Schürze gefliest' }); B.foot(W - 0.75, 0, W, 1.6);
+  B.add(B.mount(showerSetBestand(), 'right', 0.62, 0), { name: 'Brausestange & Aufputz-Mischer' });
+  const bk = wireBasket(bottlesRow([{ r: 0.03, h: 0.16, c: '#7a1f3d', cap: '#e8e2d6' }, { r: 0.028, h: 0.13, c: '#d8a24a', cap: '#3a3a3a', flat: true }, { r: 0.022, h: 0.15, c: '#f2efe6', cap: '#2a2a2a' }, { r: 0.024, h: 0.17, c: '#2e2e33', cap: '#ccc' }], 0.075));
+  bk.children[1].position.set(0.06, 0.003, 0.06);
+  const glove = rbox(0.12, 0.05, 0.06, 0.02, M.fabric('glove', '#e4b6b0')); glove.position.set(0.33, 0.06, 0.1); glove.rotation.z = 0.6; bk.add(glove);
+  bk.add(rod([-0.06, 0.02, 0.1], [0.0, 0.02, 0.1], 0.01, M.blackPlastic()));
+  B.add(B.mount(bk, 'back', W - 0.46, 1.6), { name: 'Gitterkorb an der Fensterwand' });
   // Vorhang
-  const rodX = W - 0.72, ch = M.chrome();
+  const rodX = W - 0.72;
   B.add(rod([rodX, 2.02, 0.0], [rodX, 2.02, 1.62], 0.011, ch), { name: 'Vorhangstange' });
   for (const z of [0.35, 1.3]) B.add(rod([rodX, 2.02, z], [rodX, H, z], 0.007, ch), { ceil: true });
   const cg = new THREE.Group(), cm = curtainMesh({ flat: 1.9, h: 1.38, folds: 30, span: 0.3 });
@@ -45,54 +42,63 @@ function buildBestand(B) {
   for (let i = 0; i < 8; i++) { const ring = mesh(new THREE.TorusGeometry(0.018, 0.0025, 6, 16), ch); ring.position.set(i * 0.04, 0.02, 0); cg.add(ring); }
   B.add(cg, { name: 'Duschvorhang · Klick zum Zuziehen', click: () => toggle(cg, 'cur', { a: 0.3, b: 1.55, dur: 1100, fn: v => { setCurtain(cm, v); cg.position.z = 1.6 - v; cg.children.forEach((c, i) => { if (i) c.position.x = (i - 1) * (v / 7); }); } }) });
   // Caddy, Kabel, Steckdosen
-  B.add(B.mount(ovalCaddy(), 'right', 1.9, 0.9), { name: 'Duschregal (hängt neben der Wanne)' });
+  B.add(B.mount(ovalCaddy(), 'right', 1.9, 0.9), { name: 'Ovales Duschregal (hängt neben der Wanne)' });
   B.add(tube([[W - 0.05, 0.9, 1.9], [W - 0.07, 0.75, 1.94], [W - 0.04, 0.62, 1.88], [W - 0.012, 0.56, 1.86]], 0.003, M.blackPlastic(), 40), { name: 'Ladekabel' });
   B.add(B.mount(rbox(0.12, 0.12, 0.008, 0.004, M.steel()), 'right', 1.86, 0.56, 0.004), { wall: 'right', name: 'Anschlussdose' });
   B.add(B.mount(socket(), 'right', 1.7, 0.3), { wall: 'right' });
-  // WC
-  const wc = toilet({}); B.add(B.mount(wc, 'back', 0.45, 0), { name: 'Stand-WC · Klick: Deckel', click: () => toggle(wc.userData.lid, 'lid', { prop: 'rotation.x', a: 0, b: -1.75, dur: 700 }) });
-  B.foot(0.27, 0, 0.63, 0.58, 'WC');
-  B.add(B.mount(flushPlate(M.whitePlastic()), 'back', 0.45, 1.0), { wall: 'back' });
-  // Waschtisch
-  const vz = L - 0.36; B.vz = vz;
-  B.add(B.mount(vanityBestand(), 'left', vz, 0), { name: 'Waschtisch-Unterschrank (stehend)' });
-  B.foot(0, L - 0.67, 0.41, L - 0.05, 'WT');
-  B.add(B.mount(basin({ w: 0.52, d: 0.45, h: 0.055, bw: 0.4, bd: 0.3, bz: 0.035 }), 'left', vz, 0.86), { name: 'Waschbecken' });
+  // WC mit Aufputz-Spülkasten, Plüschbezug, U-Vorleger
+  const wc = toilet({ lidM: FUR('lid', '#7c7873') });
+  B.add(B.mount(wc, 'back', 0.45, 0, 0.06), { name: 'Stand-WC · Klick: Deckel', click: () => toggle(wc.userData.lid, 'lid', { prop: 'rotation.x', a: 0, b: -1.75, dur: 700 }) });
+  B.foot(0.27, 0.06, 0.63, 0.64, 'WC');
+  B.add(B.mount(cisternExposed(), 'back', 0.45, 0.95), { name: 'Aufputz-Spülkasten' });
+  B.add(at(uMat(), 0.45, 0.0, 0.14), { name: 'WC-Vorleger (Plüsch)' });
+  B.add(at(brushHolder(), 0.81, 0, 0.1), { name: 'WC-Bürste' });
+  B.add(B.mount(tpHolder(), 'left', 1.12, 0.8), { name: 'Klopapierhalter' });
+  const rag = rbox(0.22, 0.006, 0.3, 0.003, M.fabric('rag', '#e2d6c2')); rag.position.set(0.84, 0.004, 0.62); rag.rotation.y = 0.4; B.add(rag);
+  // Waschbecken (wandhängend) + kleine Kommode + Spiegelaufsatz
+  const vz = L - 0.33; B.vz = vz;
+  B.add(B.mount(vanityDrawers(oak), 'left', vz + 0.02, 0), { name: 'Schubladen-Kommode unterm Becken' });
+  B.foot(0, vz - 0.21, 0.45, vz + 0.25, 'Kommode');
+  B.add(B.mount(basin({ w: 0.6, d: 0.47, h: 0.15, r: 0.03, bw: 0.46, bd: 0.32, br: 0.08, bz: 0.03, depth: 0.13, cap: true }), 'left', vz, 0.86), { name: 'Wandwaschbecken 60 cm' });
   B.add(B.mount(faucetDeck(ch), 'left', vz, 0.86, 0.055));
-  const soap = bottle({ r: 0.03, h: 0.14, c: '#d6a24a', cap: '#d9dde0', pump: true, gloss: 0.05 }); B.add(B.mount(soap, 'left', vz + 0.17, 0.86, 0.06));
-  B.add(B.mount(rbox(0.06, 0.025, 0.04, 0.01, M.paint('#d77a8a')), 'left', L - 0.08, 0.8125, 0.3));
-  B.add(B.mount(mirrorCabBestand(B), 'left', vz, 1.5), { name: 'Spiegelschrank (ohne Licht)' });
-  // Heizkörper + Handtücher
-  const rad = ladderRadiator({ w: 0.5, h: 1.55 });
-  rad.add(at(towelOver({ w: 0.46, front: 0.42, back: 0.34, m: M.fabric('beige', '#e3d3bb', '#8b7a66'), seed: 3 }), 0, 1.5, 0.055));
-  rad.add(at(towelOver({ w: 0.22, front: 0.18, back: 0.12, r: 0.012, m: M.fabric('lila', '#9a86c6'), seed: 8, wave: 0.006 }), 0.1, 0.42, 0.055));
-  B.add(B.mount(rad, 'left', 1.22, 0.17), { name: 'Handtuchheizkörper' });
-  const bar = towelRail(0.5, ch); bar.add(at(towelOver({ w: 0.62, front: 0.85, back: 0.7, r: 0.012, m: M.fabric('green', '#9fb43a'), seed: 5, wave: 0.02 }), 0, 0, 0.065));
-  B.add(B.mount(bar, 'left', 0.55, 1.88), { name: 'Handtuchstange' });
+  B.add(B.mount(bottle({ r: 0.032, h: 0.15, c: '#d6a24a', cap: '#d9dde0', pump: true, gloss: 0.05 }), 'left', vz - 0.2, 0.86, 0.06));
+  B.add(B.mount(mirrorUnitBestand(B), 'left', vz, 1.2), { name: 'Spiegelaufsatz mit offenen Fächern (ohne Licht)' });
+  // Heizkörper, Rohre, Handtücher
+  const rz = 1.58;
+  const rad = ladderRadiator({ w: 0.6, h: 1.2, groups: [5, 5, 5] });
+  rad.add(at(towelOver({ w: 0.26, front: 0.2, back: 0.14, r: 0.012, m: M.fabric('lila', '#9a86c6'), seed: 8, wave: 0.006 }), 0.12, 0.1, 0.055));
+  B.add(B.mount(rad, 'left', rz, 0.24), { name: 'Handtuchheizkörper (nackt)' });
+  const pm = M.paint('#f2f2ee');
+  B.add(rod([0.045, 0.11, rz + 0.3], [0.045, 0.11, 0.03], 0.011, pm), rod([0.075, 0.18, rz - 0.3], [0.075, 0.18, 0.03], 0.011, pm));
+  B.add(rod([0.045, 0.11, rz + 0.3], [0.045, 0.22, rz + 0.3], 0.011, pm), rod([0.075, 0.18, rz - 0.3], [0.075, 0.22, rz - 0.3], 0.011, pm));
+  const bar = towelRail(0.58, ch);
+  bar.add(at(towelOver({ w: 0.42, front: 0.85, back: 0.7, r: 0.012, m: M.fabric('green', '#a9b93c'), seed: 5, wave: 0.02 }), -0.12, 0, 0.065));
+  bar.add(at(towelOver({ w: 0.26, front: 0.7, back: 0.55, r: 0.016, m: M.fabric('beige', '#e3d3bb', '#8b7a66'), seed: 3 }), 0.17, 0, 0.065));
+  B.add(B.mount(bar, 'left', rz, 1.86), { name: 'Handtuchstange (doppelt behängt)' });
   const hk = hook(ch); hk.add(at(clothHang({ w: 0.2, h: 0.5, m: M.fabric('black', '#22262c'), seed: 6 }), 0, 0.02, 0.045));
-  B.add(B.mount(hk, 'front', 0.2, 1.58), { name: 'Haken' });
-  B.add(B.mount(exhaustFan(), 'left', 0.12, 2.12), { wall: 'left', name: 'Lüfter' });
+  B.add(B.mount(hk, 'front', 0.2, 1.58), { name: 'Saughaken' });
+  B.add(B.mount(exhaustFan(), 'left', 0.14, 2.12), { wall: 'left', name: 'Lüfter' });
   B.add(at(domeLamp(0.16), W / 2, H, L / 2), { ceil: true, name: 'Deckenleuchte' });
   // Boden-Kram
   B.add(at(bathScale(), W - 0.4, 0, L - 0.6), { name: 'Waage' }); B.foot(W - 0.55, L - 0.75, W - 0.25, L - 0.45, 'Waage');
   B.add(at(swingBin(), W - 0.17, 0, L - 0.2), { name: 'Mülleimer' }); B.foot(W - 0.28, L - 0.3, W - 0.06, L - 0.1);
-  B.add(at(bathMat(0.45, 0.7, '#77736d', 'g1'), 0.72, 0.01, 1.05), { name: 'Hochflor-Vorleger' });
-  B.add(at(bathMat(0.4, 0.62, '#77736d', 'g1'), 0.66, 0.01, L - 0.36), { name: 'Hochflor-Vorleger' });
-  const sl = slippers(); sl.position.set(0.24, 0, 1.73); sl.rotation.y = 0.4; B.add(sl, { name: 'Plüsch-Schlappen' });
+  B.add(at(bathMat(0.42, 0.66, '#77736d', 'g1'), 0.73, 0.01, 1.15), { name: 'Hochflor-Vorleger' });
+  B.add(at(bathMat(0.4, 0.6, '#77736d', 'g1'), 0.68, 0.01, vz), { name: 'Hochflor-Vorleger' });
+  const sl = slippers(); sl.position.set(0.24, 0, rz + 0.18); sl.rotation.y = 0.4; B.add(sl, { name: 'Plüsch-Schlappen' });
 
   // Analyse
-  B.hot(1, [W - 0.76, 1.45, 1.42], 'Duschvorhang', 'Klebt beim Duschen am Körper, lässt Spritzwasser durch und wird am Saum schnell stockig.', 'issue');
-  B.hot(2, [W - 0.06, 1.5, 1.9], 'Zwei Ablagen an zwei Wänden', 'Gitterkorb in der Ecke plus ovales Regal, das neben der Wanne hängt: Flaschen tropfen auf die Fliesen.', 'issue');
+  B.hot(1, [W - 0.74, 1.45, 1.42], 'Duschvorhang', 'Klebt beim Duschen am Körper, lässt Spritzwasser durch und wird am Saum schnell stockig.', 'issue');
+  B.hot(2, [W - 0.06, 1.5, 1.9], 'Zwei Ablagen an zwei Wänden', 'Gitterkorb an der Fensterwand plus ovales Regal, das neben der Wanne hängt: Flaschen tropfen auf die Fliesen.', 'issue');
   B.hot(3, [W - 0.06, 0.74, 1.92], 'Ladekabel im Spritzbereich', 'Das Kabel hängt vom Duschregal zur Dose. Kabelsalat in der Nasszone ist unpraktisch und nicht ideal.', 'issue');
-  B.hot(4, [W - 0.4, 0.12, L - 0.6], 'Alles steht auf dem Boden', 'Waage, Mülleimer, Schlappen: jede freie Fliese ist belegt, Wischen wird zum Slalom.', 'issue');
-  B.hot(5, [0.72, 0.1, 1.05], 'Zwei Hochflor-Vorleger', 'Fusseln, trocknen langsam und verrutschen auf glatten Fliesen.', 'issue');
-  B.hot(6, [0.42, 0.45, vz], 'Stehender Unterschrank', 'Kein Fußraum, Staubkante am Sockel, nur rund 110 Liter Stauraum.', 'issue');
-  B.hot(7, [0.17, 1.82, vz], 'Spiegelschrank ohne Licht & Steckdose', 'Licht kommt nur von oben (Schatten im Gesicht), die offene Ablage darunter wird zur Kabel-Ecke.', 'issue');
-  B.hot(8, [0.06, 1.6, 0.75], 'Handtuch-Stau', 'Stange und Heizkörper sind doppelt behängt, nichts trocknet richtig.', 'issue');
-  B.hot(9, [0.45, 1.45, 0.04], 'Wand über dem WC', 'Rund 0,6 m² Wand ohne jede Funktion: kein Regal, kein Vorrat.', 'issue');
+  B.hot(4, [W - 0.4, 0.12, L - 0.6], 'Alles steht auf dem Boden', 'Waage, Mülleimer, Schlappen, WC-Bürste: jede freie Fliese ist belegt, Wischen wird zum Slalom.', 'issue');
+  B.hot(5, [0.45, 0.1, 0.7], 'Plüsch überall', 'Zwei Hochflor-Vorleger, ein WC-Vorleger und ein Deckelbezug: Fusselmagneten, die schlecht trocknen.', 'issue');
+  B.hot(6, [0.42, 0.45, vz], 'Mini-Kommode unterm Becken', 'Die kleine Kommode passt nicht zum 60er-Becken. Oben drauf landet ein Korb mit Föhn und Kabeln, viel Stauraum gibt es nicht.', 'issue');
+  B.hot(7, [0.17, 1.85, vz], 'Spiegelaufsatz ohne Licht', 'Licht kommt nur von der Deckenleuchte, also Schatten im Gesicht. Oben drauf stapeln sich Fenstersauger und Kartons.', 'issue');
+  B.hot(8, [0.06, 1.62, rz], 'Handtuch-Stau', 'Zwei große Handtücher teilen sich eine Stange über dem Heizkörper, der selbst nackt bleibt.', 'issue');
+  B.hot(9, [0.45, 1.12, 0.06], 'Spülkasten & Rohre auf Putz', 'Sichtbarer Spülkasten, Eckventil und Heizungsrohre an der Wand: unruhig und schwer zu putzen.', 'issue');
   B.hot('+', [(B.win.a0 + B.win.a1) / 2, 1.55, 0.0], 'Fenster + Lüfter', 'Die beste Nachricht: echtes Fenster und Abluft. Damit ist Schimmel gut beherrschbar.', 'plus');
-  stdZones(B, { wcFront: 0.58 });
-  B.zone('Waschtisch', 0.45, L - 0.81, 1.2, L);
+  stdZones(B, { wcFront: 0.64 });
+  B.zone('Waschtisch', 0.47, vz - 0.45, 1.22, Math.min(L, vz + 0.45));
   B.dim([W - 0.75, 0.6, 1.66], [W, 0.6, 1.66], '75');
   B.dim([W - 0.82, 0.6, 0], [W - 0.82, 0.6, 1.6], '160');
 }
@@ -107,7 +113,7 @@ function buildA(B) { // Skandi Sage
   buildShell(B, { walls: full(wallTile), floor, reveal: M.plaster('#f1eee8'), skirting: { h: 0.05, mat: M.paint('#f3f2ee') }, door: { leafMat: doorWood, innerMat: doorWood } });
   addLights(B);
   // Wanne mit Glas-Faltwand
-  const tub = bathtub({}); tub.position.set(W - 0.375, 0, 0); B.add(tub, { name: 'Badewanne (bleibt)' }); B.foot(W - 0.75, 0, W, 1.6);
+  const tub = bathtub({ apronMat: wallTile, worldApron: true }); tub.position.set(W - 0.375, 0, 0); B.add(tub, { name: 'Badewanne (bleibt)' }); B.foot(W - 0.75, 0, W, 1.6);
   const gx = W - 0.725, gm = M.glass();
   B.add(slab(gx - 0.004, 0.57, 0.012, gx + 0.004, 1.97, 0.56, gm, { cast: false }), { name: 'Glas-Faltwand 110 cm' });
   B.add(slab(gx - 0.004, 0.57, 0.565, gx + 0.004, 1.97, 1.1, gm, { cast: false }), { name: 'Glas-Faltwand 110 cm' });
@@ -121,17 +127,19 @@ function buildA(B) { // Skandi Sage
     bt.position.set(0.06, 0.012, 0.06); sh.add(bt); B.add(B.mount(sh, 'right', 0.04, v), { name: 'Duschablage (bohrfrei)' });
   }
   // WC + Überbauregal
-  const wc = toilet({}); B.add(B.mount(wc, 'back', 0.45, 0), { name: 'WC · Klick: Deckel', click: () => toggle(wc.userData.lid, 'lid', { prop: 'rotation.x', a: 0, b: -1.75, dur: 700 }) });
-  B.foot(0.27, 0, 0.63, 0.58, 'WC');
-  B.add(B.mount(flushPlate(M.whitePlastic()), 'back', 0.45, 1.0), { wall: 'back' });
+  const wc = toilet({ seat: oak }); B.add(B.mount(wc, 'back', 0.45, 0, 0.06), { name: 'WC mit Eichen-Sitz · Klick: Deckel', click: () => toggle(wc.userData.lid, 'lid', { prop: 'rotation.x', a: 0, b: -1.75, dur: 700 }) });
+  B.foot(0.27, 0.06, 0.63, 0.64, 'WC');
+  B.add(B.mount(cisternExposed(), 'back', 0.45, 0.95), { name: 'Spülkasten (bleibt)' });
+  B.add(at(brushHolder(black), 0.81, 0, 0.1), { name: 'WC-Bürste schwarz' });
+  B.add(B.mount(tpHolder(black), 'left', 1.12, 0.8), { name: 'Klopapierhalter' });
   const sh = new THREE.Group(), sx0 = 0.07, sx1 = 0.69, sd = 0.25;
-  for (const [x, z] of [[sx0, 0.015], [sx1, 0.015], [sx0, sd], [sx1, sd]]) sh.add(slab(x - 0.009, 0, z - 0.009, x + 0.009, 1.86, z + 0.009, black));
-  for (const y of [1.12, 1.43, 1.74]) { sh.add(slab(sx0, y, 0.005, sx1, y + 0.022, sd + 0.01, oak)); sh.add(slab(sx0, y - 0.03, sd - 0.004, sx1, y - 0.022, sd + 0.004, black)); }
-  const tp = tpRolls(3); tp.position.set(0.38, 1.142, 0.13); sh.add(tp);
-  const sp = snakePlant({ n: 7, h: 0.32 }); const spp = pot({ r: 0.065, h: 0.11, m: M.ceramicMatte('#f1efe9') }); spp.position.set(0.2, 1.762, 0.13); sp.position.set(0.2, 1.862, 0.13); sh.add(spp, sp);
-  const cd = candle(); cd.position.set(0.55, 1.762, 0.12); sh.add(cd);
-  const bs = rbox(0.24, 0.16, 0.18, 0.02, M.fabric('basket', '#cdb894')); bs.position.set(0.48, 1.452 + 0.08, 0.13); sh.add(bs);
-  const bt2 = bottlesRow([{ r: 0.03, h: 0.12, c: '#efe9dd', cap: '#3a3a3a' }, { r: 0.025, h: 0.16, c: sage, cap: '#3a3a3a' }], 0.07); bt2.position.set(0.14, 1.452, 0.12); sh.add(bt2);
+  for (const [x, z] of [[sx0, 0.015], [sx1, 0.015], [sx0, sd], [sx1, sd]]) sh.add(slab(x - 0.009, 0, z - 0.009, x + 0.009, 2.0, z + 0.009, black));
+  for (const y of [1.36, 1.64, 1.92]) { sh.add(slab(sx0, y, 0.005, sx1, y + 0.022, sd + 0.01, oak)); sh.add(slab(sx0, y - 0.03, sd - 0.004, sx1, y - 0.022, sd + 0.004, black)); }
+  const tp = tpRolls(3); tp.position.set(0.38, 1.382, 0.13); sh.add(tp);
+  const sp = snakePlant({ n: 7, h: 0.32 }); const spp = pot({ r: 0.065, h: 0.11, m: M.ceramicMatte('#f1efe9') }); spp.position.set(0.2, 1.942, 0.13); sp.position.set(0.2, 2.042, 0.13); sh.add(spp, sp);
+  const cd = candle(); cd.position.set(0.55, 1.942, 0.12); sh.add(cd);
+  const bs = rbox(0.24, 0.16, 0.18, 0.02, M.fabric('basket', '#cdb894')); bs.position.set(0.48, 1.662 + 0.08, 0.13); sh.add(bs);
+  const bt2 = bottlesRow([{ r: 0.03, h: 0.12, c: '#efe9dd', cap: '#3a3a3a' }, { r: 0.025, h: 0.16, c: sage, cap: '#3a3a3a' }], 0.07); bt2.position.set(0.14, 1.662, 0.12); sh.add(bt2);
   B.add(sh, { name: 'WC-Überbauregal Eiche/Schwarz' });
   // Waschtisch hängend + Spiegelschrank
   const vz = L - 0.36; B.vz = vz;
@@ -160,12 +168,15 @@ function buildA(B) { // Skandi Sage
   B.add(B.mount(mc, 'left', vz, 1.33), { name: 'LED-Spiegelschrank · Klick zum Öffnen', click: () => openDoors(cab, 'mc', 1.9) });
   const pl = new THREE.PointLight(0xfff1dc, 0, 1.3, 2); pl.position.set(0.25, 1.25, vz); pl.userData.on = 0.6; pl.userData.day = 0.25; B.led(ledM, pl);
   // Heizkörper, Stange, Haken
-  const rad = ladderRadiator({ w: 0.5, h: 1.55 });
-  rad.add(at(towelOver({ w: 0.46, front: 0.42, back: 0.34, m: M.fabric('sage', sage, '#f1efe9'), seed: 3 }), 0, 1.5, 0.055));
-  rad.add(at(towelOver({ w: 0.42, front: 0.3, back: 0.24, m: M.fabric('linen', '#e9e2d4', sage), seed: 9 }), 0, 0.93, 0.055));
-  B.add(B.mount(rad, 'left', 1.22, 0.17), { name: 'Heizkörper (bleibt)' });
+  const rz = 1.58, rad = ladderRadiator({ w: 0.6, h: 1.2, groups: [5, 5, 5] });
+  rad.add(at(towelOver({ w: 0.5, front: 0.42, back: 0.34, m: M.fabric('sage', sage, '#f1efe9'), seed: 3 }), 0, 1.16, 0.055));
+  rad.add(at(towelOver({ w: 0.44, front: 0.3, back: 0.24, m: M.fabric('linen', '#e9e2d4', sage), seed: 9 }), 0, 0.62, 0.055));
+  B.add(B.mount(rad, 'left', rz, 0.24), { name: 'Heizkörper (bleibt, jetzt mit eigenen Handtüchern)' });
+  const pm = M.paint('#f2f2ee');
+  B.add(rod([0.045, 0.11, rz + 0.3], [0.045, 0.11, 0.03], 0.011, pm), rod([0.075, 0.18, rz - 0.3], [0.075, 0.18, 0.03], 0.011, pm));
+  B.add(rod([0.045, 0.11, rz + 0.3], [0.045, 0.22, rz + 0.3], 0.011, pm), rod([0.075, 0.18, rz - 0.3], [0.075, 0.22, rz - 0.3], 0.011, pm));
   const bar = towelRail(0.45, black); bar.add(at(towelOver({ w: 0.5, front: 0.55, back: 0.45, r: 0.012, m: M.fabric('sage2', '#a7b7a2', '#f1efe9'), seed: 5 }), 0, 0, 0.065));
-  B.add(B.mount(bar, 'left', 0.55, 1.8), { name: 'Handtuchstange schwarz' });
+  B.add(B.mount(bar, 'left', 0.62, 1.8), { name: 'Handtuchstange schwarz' });
   const hk = new THREE.Group(); hk.add(slab(-0.14, -0.02, 0, 0.14, 0.02, 0.018, oak)); [-0.08, 0.08].forEach(x => { const h = hook(black); h.position.set(x, 0, 0.018); hk.add(h); });
   hk.add(at(clothHang({ w: 0.26, h: 0.55, m: M.fabric('sage', sage, '#f1efe9'), seed: 11 }), -0.08, 0.02, 0.065));
   B.add(B.mount(hk, 'front', 0.2, 1.62), { name: 'Hakenleiste' });
@@ -187,7 +198,7 @@ function buildA(B) { // Skandi Sage
   B.hot(5, [W - 0.15, 1.25, L - 0.17], 'Hochschrank mit Wäschekippe', '30 cm schmal, rund 150 Liter Stauraum, unten Wäschekorb. Der Treteimer zieht daneben ein.');
   B.hot(6, [0.72, 0.04, 0.9], 'Klick-Vinyl Fischgrät', 'Wasserfestes SPC, schwimmend auf die alten Fliesen gelegt. Beim Auszug kommt es wieder raus.');
   B.hot(7, [0.82, 1.9, 0.27], 'Efeutute am Fenster', 'Mag Feuchtigkeit und wenig Licht, rankt von allein. Pflegeleichter geht Grün nicht.');
-  stdZones(B, { wcFront: 0.58 });
+  stdZones(B, { wcFront: 0.64 });
   B.zone('Waschtisch', 0.46, L - 0.81, 1.21, L);
 }
 
@@ -349,18 +360,20 @@ function buildC(B) { // Grand Hotel
   B.add(B.mount(sh, 'right', 0.62, 0), { name: 'Thermostat-Brauseset Messing' });
   B.add(B.mount(bottlesRow([{ r: 0.03, h: 0.18, c: '#7a3d1a', cap: '#c9a052', pump: true, gloss: 0.05 }, { r: 0.03, h: 0.18, c: '#2a2a28', cap: '#c9a052', pump: true }, { r: 0.022, h: 0.12, c: '#efe7d8', cap: '#c9a052' }], 0.09), 'right', 1.1, 0.7, -0.05), { wall: 'right' });
   // WC + Regal + Kunstdruck
-  const wc = toilet({ seat: walnut }); B.add(B.mount(wc, 'back', 0.45, 0), { name: 'WC mit Nussbaum-Sitz · Klick: Deckel', click: () => toggle(wc.userData.lid, 'lid', { prop: 'rotation.x', a: 0, b: -1.75, dur: 700 }) });
-  B.foot(0.27, 0, 0.63, 0.58, 'WC');
-  B.add(B.mount(flushPlate(brass, brass, true), 'back', 0.45, 0.98), { wall: 'back', name: 'Drückerplatte Messing' });
+  // Vormauerung verschwindet den Aufputz-Spülkasten, oben Nussbaum-Ablage
+  const vx1 = B.win.a0 - 0.02;
+  B.add(slabW(0, 0, 0, vx1, 1.16, 0.22, zel), { name: 'Vormauerung (versteckt den Spülkasten)' }); B.foot(0, 0, vx1, 0.22);
+  B.add(slab(0, 1.16, 0, vx1 + 0.01, 1.19, 0.245, walnut), { name: 'Nussbaum-Ablage' });
+  const wc = toilet({ seat: walnut }); B.add(B.mount(wc, 'back', 0.45, 0, 0.22), { name: 'WC mit Nussbaum-Sitz · Klick: Deckel', click: () => toggle(wc.userData.lid, 'lid', { prop: 'rotation.x', a: 0, b: -1.75, dur: 700 }) });
+  B.foot(0.27, 0.22, 0.63, 0.8, 'WC');
+  B.add(B.mount(flushPlate(brass, brass, true), 'back', 0.45, 0.9, 0.22), { name: 'Drückerplatte Messing' });
   const shelf = new THREE.Group();
-  shelf.add(slab(0.1, 1.4, 0, 0.62, 1.432, 0.19, walnut));
-  for (const x of [0.16, 0.56]) shelf.add(slab(x - 0.008, 1.32, 0.0, x + 0.008, 1.4, 0.012, brass), slab(x - 0.008, 1.392, 0.0, x + 0.008, 1.4, 0.16, brass));
-  const tp = trailing({ n: 7, minL: 0.15, maxL: 0.4, size: 0.04, seed: 9, out: 0.06 }); const tpp = pot({ r: 0.06, h: 0.09, m: brass }); tpp.position.set(0.22, 1.432, 0.1); tp.position.set(0.22, 1.51, 0.1); shelf.add(tpp, tp);
-  const cdl = candle(0.03, 0.09); cdl.position.set(0.5, 1.432, 0.1); shelf.add(cdl);
-  shelf.add(at(rbox(0.12, 0.03, 0.15, 0.004, M.paint('#9a3b2c')), 0.37, 1.447, 0.1), at(rbox(0.11, 0.025, 0.14, 0.004, M.paint('#e7dcc6')), 0.37, 1.475, 0.1));
+  const tp = trailing({ n: 7, minL: 0.15, maxL: 0.4, size: 0.04, seed: 9, out: 0.06 }); const tpp = pot({ r: 0.06, h: 0.09, m: brass }); tpp.position.set(0.12, 1.19, 0.12); tp.position.set(0.12, 1.27, 0.12); shelf.add(tpp, tp);
+  const cdl = candle(0.03, 0.09); cdl.position.set(0.6, 1.19, 0.12); shelf.add(cdl);
+  shelf.add(at(rbox(0.12, 0.03, 0.15, 0.004, M.paint('#9a3b2c')), 0.45, 1.205, 0.12), at(rbox(0.11, 0.025, 0.14, 0.004, M.paint('#e7dcc6')), 0.45, 1.233, 0.12));
   const fr = new THREE.Group(); fr.add(slab(-0.17, -0.24, 0, 0.17, 0.24, 0.025, walnut)); const pr = mesh(new THREE.PlaneGeometry(0.28, 0.4), std({ map: printTex(), roughness: 0.8, envMapIntensity: 0.3 })); pr.position.z = 0.0255; fr.add(pr);
-  fr.position.set(0.36, 1.82, 0); shelf.add(fr);
-  B.add(shelf, { name: 'Nussbaum-Regal & Kunstdruck' });
+  fr.position.set(0.34, 1.68, 0); shelf.add(fr);
+  B.add(shelf, { name: 'Ablage & Kunstdruck' });
   // Waschtisch Nussbaum gerillt
   const vz = L - 0.4, vw = 0.6, vd = 0.46; B.vz = vz;
   const van = new THREE.Group(), flW = M.flutedWood('walnut', WOOD.walnut, 22);
@@ -421,8 +434,8 @@ function buildC(B) { // Grand Hotel
   B.hot(5, [W - 0.16, 1.55, L - 0.47], 'Apothekerschrank', 'Oben Glas für das Schöne, unten zu für den Vorrat. Die Bart-Station steht im Glasfach. Klick öffnet die Glastüren.');
   B.hot(6, [0.72, 0.03, 2.3], 'Terrazzo-Boden', '60er-Platten mit grünen und messingfarbenen Splittern, auf die alten Fliesen verlegt.');
   B.hot(7, [0.06, 1.2, 1.22], 'Messing-Heizkörper', 'Handtücher hängen nebeneinander statt übereinander und trocknen schneller.');
-  B.hot(8, [0.36, 1.85, 0.03], 'Regal & Kunstdruck über dem WC', 'Die tote Wand wird zur kleinen Galerie mit Ablage.');
-  stdZones(B, { wcFront: 0.58 });
+  B.hot(8, [0.34, 1.3, 0.22], 'Vormauerung statt Spülkasten', 'Ein gefliester Kasten versteckt Spülkasten, Eckventil und Rohre. Oben drauf eine Nussbaum-Ablage, darüber ein Kunstdruck.');
+  stdZones(B, { wcFront: 0.8 });
   B.zone('Waschtisch', 0.46, vz - 0.45, 1.21, Math.min(L, vz + 0.45));
 }
 
@@ -431,9 +444,9 @@ const VARIANTS = [
   {
     key: 'bestand', hash: 'bestand', label: 'Bestand', sub: 'So ist es jetzt', build: buildBestand, sw: ['#efebe2', '#d5c7b0', '#2f7d90'],
     info: {
-      eyebrow: 'Bestand · rekonstruiert aus 13 Fotos', title: 'Das Bad heute',
+      eyebrow: 'Bestand · aus Fotos + Video rekonstruiert', title: 'Das Bad heute',
       pitch: 'Rund 4,3 m², hell gefliest, mit Fenster und Lüfter. Die Substanz passt. Das Problem ist die Organisation: vieles steht auf dem Boden oder hängt irgendwo dazwischen.',
-      tenant: null, budget: null, effort: '—', storage: 180,
+      tenant: null, budget: null, effort: '—', storage: 110,
       good: ['Fenster und Abluft: beste Voraussetzung gegen Schimmel', 'Fliesen sauber verlegt, hell und intakt', 'Heizkörper mit Thermostat am richtigen Platz'],
       palette: [['Fliese creme', '#efebe2'], ['Boden beige', '#d5c7b0'], ['Tür Eiche rot', '#b0592e'], ['Vorhang petrol', '#2f7d90'], ['Handtuch grün', '#9fb43a']],
     },
@@ -462,9 +475,9 @@ const VARIANTS = [
     key: 'c', hash: 'hotel', label: 'Grand Hotel', sub: 'Grün, Messing, Terrazzo', build: buildC, sw: ['#245746', '#c8a052', '#ebe5d9'],
     info: {
       eyebrow: 'Variante C · Fliese auf Fliese', title: 'Grand Hotel',
-      pitch: 'Kein Abriss: flaschengrüne Zellige-Fliesen, Terrazzo-Boden und gebürstetes Messing kommen direkt auf den alten Belag. Die Wanne bleibt, bekommt aber eine feste Glaswand und eine beleuchtete Nische. Fühlt sich an wie ein kleines Boutique-Hotel.',
+      pitch: 'Kein Abriss: flaschengrüne Zellige-Fliesen, Terrazzo-Boden und gebürstetes Messing kommen direkt auf den alten Belag. Die Wanne bleibt, bekommt aber eine feste Glaswand und eine beleuchtete Nische, und der Aufputz-Spülkasten verschwindet hinter einer gefliesten Vormauerung. Fühlt sich an wie ein kleines Boutique-Hotel.',
       tenant: { ok: false, text: 'Mietwohnung nur mit Vermieter-OK' }, effort: 'ca. 2 Wochen · Fliesenleger + Sanitär', storage: 440,
-      costs: [['Fliese auf Fliese: Zellige-Look Wand + Terrazzo Boden inkl. Verlegung', 4300], ['Wannenschürze neu verfliest + beleuchtete Nische', 380], ['Feste Glaswand Wanne, Messingprofil', 520], ['Thermostat-Brauseset + WT-Armatur, Messing gebürstet', 980], ['Waschtisch Nussbaum gerillt + Marmor-Optik-Platte', 1150], ['Bogenspiegel + Messing-Leuchte', 400], ['Apothekerschrank grün lackiert', 330], ['Handtuchheizkörper Messing', 340], ['WC-Keramik spülrandlos, Nussbaum-Sitz, Drückerplatte', 420], ['Maler: Kalkputz-Optik oben + Decke', 520], ['Tür innen foliert, Drücker Messing', 140], ['Elektro: Leuchtenanschlüsse', 450], ['Farn, Kelim-Läufer, Handtücher', 260]],
+      costs: [['Fliese auf Fliese: Zellige-Look Wand + Terrazzo Boden inkl. Verlegung', 4300], ['Wannenschürze neu verfliest + beleuchtete Nische', 380], ['Feste Glaswand Wanne, Messingprofil', 520], ['Thermostat-Brauseset + WT-Armatur, Messing gebürstet', 980], ['Waschtisch Nussbaum gerillt + Marmor-Optik-Platte', 1150], ['Bogenspiegel + Messing-Leuchte', 400], ['Apothekerschrank grün lackiert', 330], ['Handtuchheizkörper Messing', 340], ['Vormauerung + Unterputz-Spülkasten, WC spülrandlos, Nussbaum-Sitz', 1450], ['Maler: Kalkputz-Optik oben + Decke', 520], ['Tür innen foliert, Drücker Messing', 140], ['Elektro: Leuchtenanschlüsse', 450], ['Farn, Kelim-Läufer, Handtücher', 260]],
       palette: [['Flaschengrün', '#245746'], ['Messing', '#c8a052'], ['Terrazzo', '#ebe5d9'], ['Nussbaum', '#5d3a24'], ['Champignon', '#d7c9b6']],
     },
   },

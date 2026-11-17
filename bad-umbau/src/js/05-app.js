@@ -134,13 +134,15 @@ function layoutCamera() {
   const { w, h } = viewport();
   renderer.setSize(w, h, false);
   // freien Bereich (zwischen Kopf, Dock und Panel) als Bildmitte nutzen
-  const top = $('.top').getBoundingClientRect().bottom + 8;
-  const bottom = isMobile() ? $('#dock').getBoundingClientRect().top - 8 : h - 20;
-  const right = isMobile() ? w : $('#panel').getBoundingClientRect().left - 8;
-  const dx = Math.max(0, w / 2 - right / 2), dy = Math.max(0, h / 2 - (top + bottom) / 2);
-  const fw = w + 2 * dx, fh = h + 2 * dy;
+  const mob = isMobile();
+  const top = mob ? $('.top').getBoundingClientRect().bottom + 8 : 20;
+  const bottom = mob ? $('#dock').getBoundingClientRect().top - 8 : h - 20;
+  const left = mob ? 0 : $('#tabs').getBoundingClientRect().right + 8;
+  const right = mob ? w : $('#panel').getBoundingClientRect().left - 8;
+  const dx = w / 2 - (left + right) / 2, dy = Math.max(0, h / 2 - (top + bottom) / 2);
+  const fw = w + 2 * Math.abs(dx), fh = h + 2 * dy;
   camera.aspect = fw / fh;
-  camera.setViewOffset(fw, fh, 2 * dx, 2 * dy, w, h);
+  camera.setViewOffset(fw, fh, dx > 0 ? 2 * dx : 0, 2 * dy, w, h);
   camera.updateProjectionMatrix(); req();
 }
 function render() {
@@ -215,7 +217,8 @@ function placeCard() {
   const maxX = w - $('#panel').offsetWidth - 40 - cw;
   let x = p.x + 22, y = p.y - ch / 2;
   if (x > maxX) x = p.x - cw - 22;
-  x = clamp(x, 16, Math.max(16, maxX)); y = clamp(y, 90, h - ch - 100);
+  const minX = $('#tabs').getBoundingClientRect().right + 12;
+  x = clamp(x, minX, Math.max(minX, maxX)); y = clamp(y, 90, h - ch - 100);
   cardEl.style.transform = `translate(${x}px, ${y}px)`;
 }
 
@@ -283,7 +286,8 @@ function swatchHTML(sw) {
   return `<span class="sw" style="background:${sw[0]}"><i style="left:50%;top:0;right:0;bottom:50%;background:${sw[1]}"></i><i style="left:0;top:50%;right:50%;bottom:0;background:${sw[2]}"></i></span>`;
 }
 function renderTabs() {
-  $('#tabs').innerHTML = VARIANTS.map((v, i) => `<button class="tab" role="tab" data-v="${v.key}" aria-selected="${state.v === v.key}">${swatchHTML(v.sw)}<span><b>${v.label} <kbd>${i + 1}</kbd></b><small>${v.sub}</small></span></button>`).join('');
+  const bud = (v) => v.info.budget ? (v.info.budget / 1000).toLocaleString('de-DE', { maximumFractionDigits: 1 }) + ' T€' : 'heute';
+  $('#tabs').innerHTML = `<div class="tabs-head"><span>Bäder</span><span>${VARIANTS.length}</span></div>` + VARIANTS.map((v, i) => `<button class="tab" role="tab" data-v="${v.key}" aria-selected="${state.v === v.key}">${swatchHTML(v.sw)}<span><b><span>${v.label}<kbd>${i + 1}</kbd></span><span class="bud">${bud(v)}</span></b><small>${v.sub}</small></span></button>`).join('');
   $('#tabs').querySelectorAll('.tab').forEach(b => b.addEventListener('click', () => setVariant(b.dataset.v)));
   const tb = $('#tabs'), act = tb.querySelector('[aria-selected="true"]');
   if (act && tb.scrollWidth > tb.clientWidth) tb.scrollLeft = act.offsetLeft - (tb.clientWidth - act.offsetWidth) / 2;
@@ -314,8 +318,10 @@ function renderPanel() {
     html += `<section class="sec"><h3><span>Kostenrahmen</span><span>${eur(I.budget)}</span></h3><div class="bar"><i style="width:${(I.budget / max * 100).toFixed(1)}%"></i></div><table class="costs"><tbody>${I.costs.map(([t, p]) => `<tr><td>${esc(t)}</td><td>${eur(p)}</td></tr>`).join('')}</tbody><tfoot><tr><td>Summe</td><td>${eur(I.budget)}</td></tr></tfoot></table><p class="fine">Richtwerte inkl. MwSt., Stand 2026. Vor dem Kauf echte Angebote einholen; Maße vor Ort nachmessen.</p></section>`;
     html += `<section class="sec"><h3>Vorher / Nachher</h3><div class="compare-cta"><button class="btn" id="ctaCompare"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 2v20"/></svg>Mit Bestand vergleichen</button></div></section>`;
   }
+  const maxB = Math.max(...VARIANTS.map(v => v.info.budget || 0));
+  html += `<section class="sec"><h3><span>Alle Bäder im Vergleich</span><span>Budget</span></h3><div class="cmp">${VARIANTS.map(v => `<button data-go="${v.key}" class="${v.key === V.key ? 'on' : ''}"><span>${esc(v.label)}</span><span class="tr"><i style="width:${((v.info.budget || 0) / maxB * 100).toFixed(1)}%"></i></span><em>${v.info.budget ? (v.info.budget / 1000).toLocaleString('de-DE', { maximumFractionDigits: 1 }) + ' T€' : '—'}</em></button>`).join('')}</div></section>`;
   html += `<section class="sec"><h3>Material &amp; Farbe</h3><div class="swatches">${I.palette.map(([n, c]) => `<div class="swatch"><i style="background:${c}"></i><span>${esc(n)}</span></div>`).join('')}</div></section>`;
-  html += `<p class="fine">Modell aus 13 Handyfotos rekonstruiert, Maße geschätzt (anpassbar unter „Raummaß“). DIN-Flächen nach DIN 18022 als Orientierung.</p>`;
+  html += `<p class="fine">Modell aus 13 Fotos und einem Rundgang-Video rekonstruiert, Maße geschätzt (anpassbar unter „Raummaß“). DIN-Flächen nach DIN 18022 als Orientierung.</p>`;
   $('#panelBody').innerHTML = html;
   $('#panelBody').querySelectorAll('.hs-item').forEach(el => el.addEventListener('click', () => { const h = hs.find(x => String(x.n) === el.dataset.n); if (h) openCard(h); if (isMobile()) setSheet(false); }));
   $('#panelBody').querySelectorAll('[data-go]').forEach(el => el.addEventListener('click', () => setVariant(el.dataset.go)));

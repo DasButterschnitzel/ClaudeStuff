@@ -4,7 +4,7 @@
    ===================================================================== */
 
 /* ---------- Sanitär ---------- */
-function toilet({ wall = false, seat = null, cer = M.ceramic() } = {}) {
+function toilet({ wall = false, seat = null, cer = M.ceramic(), lidM = null } = {}) {
   const g = new THREE.Group();
   const y0 = wall ? 0.22 : 0.0, top = wall ? 0.425 : 0.385;
   if (wall) g.add(rslab(-0.17, y0 + 0.01, 0, 0.17, top - 0.004, 0.2, 0.05, cer));
@@ -21,7 +21,7 @@ function toilet({ wall = false, seat = null, cer = M.ceramic() } = {}) {
   const sm = seat || cer, sy = top + 0.012;
   g.add(at(mesh(plateGeo(0.36, 0.45, 0.17, 0.022, { w: 0.225, d: 0.285, r: 0.11, z: 0.01 }), sm), 0, sy, zc + 0.015));
   const lid = new THREE.Group(); lid.position.set(0, sy + 0.023, 0.1);
-  lid.add(at(mesh(plateGeo(0.355, 0.44, 0.17, 0.018), sm), 0, 0, zc + 0.015 - 0.1));
+  lid.add(at(mesh(plateGeo(0.355, 0.44, 0.17, lidM ? 0.03 : 0.018), lidM || sm), 0, 0, zc + 0.015 - 0.1));
   g.add(lid);
   const hm = M.chrome();
   g.add(at(cyl(0.011, 0.011, 0.03, hm), -0.085, sy + 0.012, 0.1), at(cyl(0.011, 0.011, 0.03, hm), 0.085, sy + 0.012, 0.1));
@@ -42,8 +42,8 @@ function bathtub({ w = 0.75, l = 1.6, h = 0.56, rimMat = M.ceramic(), innerMat =
   const S = worldApron ? slabW : slab;
   g.add(S(-w / 2, 0, 0, -w / 2 + 0.025, h - 0.035, l, apronMat));
   g.add(S(-w / 2, 0, l - 0.025, w / 2, h - 0.035, l, apronMat));
-  g.add(at(cyl(0.032, 0.032, 0.004, M.chrome()), 0, h - 0.394, 0.42));
-  const ov = cyl(0.03, 0.03, 0.006, M.chrome()); ov.rotation.x = PI / 2; ov.position.set(0, h - 0.12, rim + 0.012); g.add(ov);
+  g.add(at(cyl(0.032, 0.032, 0.004, M.chrome()), 0, h - 0.394, l - 0.42));
+  const ov = cyl(0.03, 0.03, 0.006, M.chrome()); ov.rotation.x = PI / 2; ov.position.set(0, h - 0.12, l - rim - 0.012); g.add(ov);
   return g;
 }
 function basin({ w = 0.5, d = 0.42, h = 0.06, r = 0.04, bw = 0.4, bd = 0.3, br = 0.1, bz = 0.03, depth = 0.13, m = M.ceramic(), cap = false } = {}) {
@@ -54,8 +54,8 @@ function basin({ w = 0.5, d = 0.42, h = 0.06, r = 0.04, bw = 0.4, bd = 0.3, br =
   g.add(at(cyl(0.02, 0.02, 0.004, M.chrome()), 0, -depth + 0.004, d / 2 + bz + 0.012));
   return g;
 }
-function vessel({ w = 0.46, d = 0.34, h = 0.13, m }) { // auf Platte, y 0..h, zentriert
-  const g = new THREE.Group(), r = Math.min(w, d) / 2;
+function vessel({ w = 0.46, d = 0.34, h = 0.13, m, r: rr }) { // auf Platte, y 0..h, zentriert
+  const g = new THREE.Group(), r = rr ?? Math.min(w, d) / 2;
   g.add(mesh(loftGeo([{ w, d, r, y: h }, { w: w * 0.985, d: d * 0.985, r: r * 0.985, y: h * 0.62 }, { w: w * 0.84, d: d * 0.8, r: r * 0.8, y: 0.012 }, { w: w * 0.8, d: d * 0.76, r: r * 0.76, y: 0 }], { capBottom: true }), m));
   g.add(at(mesh(plateGeo(w, d, r, 0.008, { w: w - 0.026, d: d - 0.026, r: r - 0.013 }), m), 0, h - 0.008, 0));
   g.add(mesh(loftGeo([{ w: w - 0.026, d: d - 0.026, r: r - 0.013, y: h - 0.002 }, { w: w * 0.8, d: d * 0.74, r: r * 0.74, y: h * 0.45 }, { w: w * 0.4, d: d * 0.36, r: r * 0.36, y: 0.03 }], { capBottom: true }), m));
