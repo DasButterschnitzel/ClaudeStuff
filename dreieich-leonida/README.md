@@ -1,0 +1,66 @@
+# Dreieich × Leonida – Logo-Konzepte für Social Media
+
+Sechs Logo-Varianten, als wäre Dreieich eine Stadt im Bundesstaat Leonida (GTA VI).
+Jede Variante gibt es als Hochglanz-Key-Visual (Feed 4:5 und Story 9:16), als
+freigestelltes Logo und als animierten 8-Sekunden-Reel.
+
+**Präsentation:** `board/index.html` im Browser öffnen. Bilder sind eingebettet,
+Videos werden aus `anim/` geladen.
+
+| # | Konzept | Idee | Animation |
+|---|---------|------|-----------|
+| 01 | **Sunset Triangle** | Das Stadt-Dreieck als Fenster in einen Leonida-Sonnenuntergang: Palmen und Eichen, Burg Hayn, ein Jet im Anflug, Chrom-Swoosh, fetter Stack „drei / eich“ | Lichtstreifen, das Dreieck öffnet sich, der Swoosh kreist einmal herum, der Schriftzug knallt mit Schockwelle rein, Licht-Sweeps |
+| 02 | **Neon Nights** | Neon-Script „Dreieich“ an einem Fachwerkhaus, Regen, Pfützen-Reflexe, „EST. 1977“ | Die Röhren zünden Buchstabe für Buchstabe. Wand und Pfützen werden live mit angeleuchtet, dazu Regen |
+| 03 | **Welcome to Dreieich** | Googie-Willkommensschild zur Golden Hour, Marquee-Birnen, Burgruine, Jet | 2.5D-Parallaxe, das Neon-Dreieck stottert an, Birnen-Lauflicht mit Doppel-Blitz, Jet-Drift, Lens Flare |
+| 04 | **Dreieich Nights** | Chrom-Lettern im 80er-Stil, Glasdreieck, Neon „Nights“, Synthwave-Grid, Burg in der Sonne | Das Grid rast endlos auf die Kamera zu, ein Chrom-Sweep enthüllt die Lettern, „Nights“ schreibt sich in Neon |
+| 05 | **Greetings from Dreieich** | Großbuchstaben-Postkarte: Burg, Fachwerk, Flamingos, Jet, Villa, Eichenwald, Bembel, S-Bahn | Die Karte landet auf dem Strandtuch, Glitzer, alle 8 Buchstaben glänzen nacheinander, wandernde Lichtflecken |
+| 06 | **Leonida Plate** | Vanity-Kennzeichen „DREIEICH · SUNSHINE CITY“ an einem pinken 80er-Sportwagen | Rack-Focus, Glanzlicht über die geprägten Lettern, Holo-Plakette, Hitzeflimmern, Palmenschatten |
+
+## Ordner
+
+```
+board/    index.html (Präsentation), overview_4x5.jpg, overview_9x16.jpg
+final/    Key Visuals: *_4x5.jpg (1080×1350, Feed) und *_9x16.jpg (1080×1920, Story/Reel-Cover)
+anim/     *.mp4 (1080×1920, 30 fps, 8 s, stumm) + dreieich_leonida_reel.mp4 (alle sechs, 45 s) + Poster-JPGs
+logos/    Freisteller als PNG mit Alpha (V2 zusätzlich „on black“ für Screen-Blending, V6 entzerrte Frontansicht)
+raw/      KI-Master: 4:5-Originale und per Adobe Firefly auf 9:16 erweiterte Fassungen, explorations/ = verworfene Varianten
+tools/    Pipeline (Python/OpenCV): Clean Plates, Masken, Animationen, Stills, Board
+```
+
+## Pipeline
+
+1. **Motive:** GPT-Image 2.5 („sunburst“) über Figma, mit ausführlicher Art Direction. Die generierten Bilder
+   liegen auch in der Figma-Datei „Dreieich × Leonida – Logo Concepts“.
+2. **9:16-Fassungen:** Adobe Firefly Generative Expand (oben und unten je +270 px). Der Originalbereich bleibt
+   pixelgenau erhalten.
+3. **Masken:** Adobe Photoshop API (Select by Prompt) und ISNet (rembg). Wo nötig zusätzlich geometrische Masken
+   und Farbmasken.
+4. **Animationen:** eigene Compositing-Engine (`tools/fx.py`). Sie bildet jedes Frame als Funktion der Zeit:
+   - V1: Clean Plate ohne Schriftzug. Der Dreiecksrahmen hinter der Schrift wird aus dem gemessenen Profil
+     rekonstruiert, der See als gespiegelte Reflexion fortgesetzt.
+   - V2: „Aus“-Zustand des Neons aus dem Bild abgeleitet. Das Neonlicht wird pro Buchstabe mit räumlichen
+     Gewichten wieder addiert (Wand und Pfützen inklusive).
+   - V4: Die Grid-Linien werden entfernt und mit gefitteter Perspektive (Horizont y = 1044) prozedural neu
+     gezeichnet. Dadurch loopt das Grid nahtlos.
+
+```bash
+pip install opencv-python-headless numpy scipy rembg[cpu]
+cd tools
+python3 v1_build.py                 # Clean Plate + Ebenen für V1
+SP=/tmp python3 anim_v1.py preview  # Kontaktbogen nach $SP
+python3 anim_v1.py video            # Master-MP4 nach ../anim/ (CRF 17)
+python3 stills.py                   # final/, logos/, board/overview_*
+python3 board.py                    # board/index.html
+```
+
+Die MP4s in `anim/` sind für Social Media neu encodiert (H.264 High, CRF 22, max. 8 Mbit/s,
+Reel max. 5 Mbit/s).
+
+## Hinweise
+
+- Es werden keine Logos, Schriften, Figuren oder Screenshots von Rockstar Games / Take-Two verwendet. Alles ist
+  eine reine Stil-Hommage, die Schriften sind KI-generiert.
+- „Leonida“ ist ein Ortsname aus GTA VI. Für organische Posts als Anspielung üblich. Vor Paid Ads, Print oder Merch
+  rechtlich prüfen lassen.
+- Alle Motive sind KI-generiert. Bitte das Plattform-Label „Mit KI erstellt“ setzen. Empfohlener Zusatz im Post:
+  „Fan-Hommage – keine Kooperation mit Rockstar Games.“
