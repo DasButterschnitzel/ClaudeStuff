@@ -1,8 +1,8 @@
 # Dreieich × Leonida – Logo-Konzepte für Social Media
 
-Sechs Logo-Varianten, als wäre Dreieich eine Stadt im Bundesstaat Leonida (GTA VI).
-Jede Variante gibt es als Hochglanz-Key-Visual (Feed 4:5 und Story 9:16), als
-freigestelltes Logo und als animierten 8-Sekunden-Reel.
+Sechs Logo-Varianten plus eine Dreieich-Edition mit echten Fotos, als wäre Dreieich eine
+Stadt im Bundesstaat Leonida (GTA VI). Jede Variante gibt es als Hochglanz-Key-Visual
+(Feed 4:5 und Story 9:16), als freigestelltes Logo und als animierten 8-Sekunden-Reel.
 
 **Präsentation:** `board/index.html` im Browser öffnen. Bilder sind eingebettet,
 Videos werden aus `anim/` geladen.
@@ -11,9 +11,10 @@ Videos werden aus `anim/` geladen.
 |---|---------|------|-----------|
 | 01 | **Sunset Triangle** | Das Stadt-Dreieck als Fenster in einen Leonida-Sonnenuntergang: Palmen und Eichen, Burg Hayn, ein Jet im Anflug, Chrom-Swoosh, fetter Stack „drei / eich“ | Lichtstreifen, das Dreieck öffnet sich, der Swoosh kreist einmal herum, der Schriftzug knallt mit Schockwelle rein, Licht-Sweeps |
 | 02 | **Neon Nights** | Neon-Script „Dreieich“ an einem Fachwerkhaus, Regen, Pfützen-Reflexe, „EST. 1977“ | Die Röhren zünden Buchstabe für Buchstabe. Wand und Pfützen werden live mit angeleuchtet, dazu Regen |
-| 03 | **Welcome to Dreieich** | Googie-Willkommensschild zur Golden Hour, Marquee-Birnen, Burgruine, Jet | 2.5D-Parallaxe, das Neon-Dreieck stottert an, Birnen-Lauflicht mit Doppel-Blitz, Jet-Drift, Lens Flare |
+| 03 | **Welcome to Dreieich** | Googie-Willkommensschild zur Golden Hour, Marquee-Birnen, Burgruine, Jet | 2.5D-Parallaxe, das Neon-Dreieck stottert an, Birnen-Lauflicht mit Doppel-Blitz. Der Jet fliegt physikalisch korrekt an (siehe unten), Lens Flare |
 | 04 | **Dreieich Nights** | Chrom-Lettern im 80er-Stil, Glasdreieck, Neon „Nights“, Synthwave-Grid, Burg in der Sonne | Das Grid rast endlos auf die Kamera zu, ein Chrom-Sweep enthüllt die Lettern, „Nights“ schreibt sich in Neon |
 | 05 | **Greetings from Dreieich** | Großbuchstaben-Postkarte: Burg, Fachwerk, Flamingos, Jet, Villa, Eichenwald, Bembel, S-Bahn | Die Karte landet auf dem Strandtuch, Glitzer, alle 8 Buchstaben glänzen nacheinander, wandernde Lichtflecken |
+| 05b | **Greetings from Dreieich – Dreieich-Edition** | Dieselbe Postkartenidee, aber mit euren echten Fotos in den Buchstaben (Fahrgasse/„Alte Burg“, Dreieichbahn, Buchschlag, Fachwerk, 360°-Drohnenpanorama), dahinter Frankfurter Skyline, Stadtmauer und Fachwerk | Die Karte landet auf einem Ebbelwoi-Tisch (Bembel, Geripptes, Brezel, Eichenlaub), kollisionsfrei neben den Requisiten, jeder Foto-Buchstabe glänzt auf |
 | 06 | **Leonida Plate** | Vanity-Kennzeichen „DREIEICH · SUNSHINE CITY“ an einem pinken 80er-Sportwagen | Rack-Focus, Glanzlicht über die geprägten Lettern, Holo-Plakette, Hitzeflimmern, Palmenschatten |
 
 ## Ordner
@@ -21,9 +22,10 @@ Videos werden aus `anim/` geladen.
 ```
 board/    index.html (Präsentation), overview_4x5.jpg, overview_9x16.jpg
 final/    Key Visuals: *_4x5.jpg (1080×1350, Feed) und *_9x16.jpg (1080×1920, Story/Reel-Cover)
-anim/     *.mp4 (1080×1920, 30 fps, 8 s, stumm) + dreieich_leonida_reel.mp4 (alle sechs, 45 s) + Poster-JPGs
+anim/     *.mp4 (1080×1920, 30 fps, 8 s, stumm) + dreieich_leonida_reel.mp4 (alle sieben, 53 s) + Poster-JPGs
 logos/    Freisteller als PNG mit Alpha (V2 zusätzlich „on black“ für Screen-Blending, V6 entzerrte Frontansicht)
-raw/      KI-Master: 4:5-Originale und per Adobe Firefly auf 9:16 erweiterte Fassungen, explorations/ = verworfene Varianten
+raw/      KI-Master: 4:5-Originale und per Adobe Firefly auf 9:16 erweiterte Fassungen, explorations/ = verworfene Varianten,
+          photos/ = eure Dreieich-Fotos für 05b, v5b_card_key.png = KI-Lettering mit Chroma-Key-Flächen
 tools/    Pipeline (Python/OpenCV): Clean Plates, Masken, Animationen, Stills, Board
 ```
 
@@ -42,11 +44,23 @@ tools/    Pipeline (Python/OpenCV): Clean Plates, Masken, Animationen, Stills, B
      Gewichten wieder addiert (Wand und Pfützen inklusive).
    - V4: Die Grid-Linien werden entfernt und mit gefitteter Perspektive (Horizont y = 1044) prozedural neu
      gezeichnet. Dadurch loopt das Grid nahtlos.
+   - V3: Der Jet fliegt eine 3D-Gerade mit konstanter Geschwindigkeit, Nase voraus, auf einem ~3°-Gleitpfad.
+     Für so eine Bewegung skalieren Bildposition und Größe gemeinsam um den Fluchtpunkt der Flugbahn:
+     `p(t) = VP + s(t)·(p_ref − VP)` mit `s(t) = 1 / (1 − (t − t_ref) / T_c)`. VP liegt dort, wo die
+     Rumpfachse hinter dem Heck die Höhe des Gleitpfads knapp über dem Horizont erreicht. Dazu kommen
+     Landescheinwerfer, Positionslichter (rot links, grün rechts aus Sicht des Piloten), Doppelblitz-Strobes,
+     Beacon, Dunst in der Ferne, Verdeckung durch Schild und Bäume und Bewegungsunschärfe (180°-Shutter).
+     Der Himmel hinter dem Jet ist per Poisson-Cloning mit echter Wolkentextur gefüllt.
+   - V5b: Die grünen Chroma-Key-Flächen des KI-Letterings werden exakt entmischt und mit euren Fotos
+     gefüllt (handkolorierter Postkarten-Look, Leinenstruktur, Innenschatten). Das 360°-Panorama wird dafür
+     equirektangulär → perspektivisch entzerrt. Die Ruheposition der Karte auf dem Tisch ist per Suche so
+     gewählt, dass sie keine Requisite überlappt.
 
 ```bash
-pip install opencv-python-headless numpy scipy rembg[cpu]
+pip install opencv-contrib-python-headless numpy scipy rembg[cpu]
 cd tools
 python3 v1_build.py                 # Clean Plate + Ebenen für V1
+python3 v5b_build.py                # Foto-Postkarte (Dreieich-Edition) + Buchstaben-Labels
 SP=/tmp python3 anim_v1.py preview  # Kontaktbogen nach $SP
 python3 anim_v1.py video            # Master-MP4 nach ../anim/ (CRF 17)
 python3 stills.py                   # final/, logos/, board/overview_*

@@ -20,6 +20,7 @@ VARIANTS = [
     ('v3', 'welcome_sign', 'v3_welcome_a'),
     ('v4', 'chrome_nights', 'v4_chrome_b'),
     ('v5', 'greetings_postcard', 'v5_postcard_a'),
+    ('v5b', 'greetings_dreieich', 'v5b_postcard'),
     ('v6', 'leonida_plate', 'v6_plate_a'),
 ]
 
@@ -65,31 +66,42 @@ def mask(p):
 for vid, name, raw in VARIANTS:
     src = rd(L('raw', f'{raw}.png'))[..., :3]
     wr(L('final', f'{vid}_{name}_4x5.jpg'), sharpen(resize(src, (1080, 1350))))
-    if vid == 'v5':
+    if vid in ('v5', 'v5b'):
         continue
     s916 = rd(L('raw', f'{raw}_916.png'))[..., :3]
     wr(L('final', f'{vid}_{name}_9x16.jpg'), sharpen(resize(s916, (1080, 1920))))
 
-# V5 story still: the postcard resting on the flat-lay (same composite as the animation, no camera move)
-bg = resize(rd(L('raw', 'v5_flatlay_bg.png'))[..., :3], (1080, 1920)).astype(np.float32) / 255
-card = rd(L('raw', 'v5_postcard_a.png'))[..., :3].astype(np.float32) / 255
-CH, CW = card.shape[:2]
-ca = np.zeros((CH, CW), np.uint8)
-r = 16
-cv2.rectangle(ca, (r, 0), (CW - 1 - r, CH - 1), 255, -1)
-cv2.rectangle(ca, (0, r), (CW - 1, CH - 1 - r), 255, -1)
-for cx, cy in ((r, r), (CW - 1 - r, r), (r, CH - 1 - r), (CW - 1 - r, CH - 1 - r)):
-    cv2.circle(ca, (cx, cy), r, 255, -1, cv2.LINE_AA)
-ca = cv2.GaussianBlur(ca, (0, 0), 0.8).astype(np.float32) / 255
-M = cv2.getRotationMatrix2D((CW / 2, CH / 2), -3.5, 0.84)
-M[0, 2] += 1080 / 2 + 4 - CW / 2
-M[1, 2] += 1920 * 0.485 - CH / 2
-a = cv2.warpAffine(ca, M, (1080, 1920))
-rgb = cv2.warpAffine(card * ca[..., None], M, (1080, 1920))
-sh = cv2.GaussianBlur(cv2.warpAffine(a, np.float32([[1, 0, 14], [0, 1, 18]]), (1080, 1920)), (0, 0), 14)
-comp = bg * (1 - 0.42 * sh[..., None]) * (1 - 0.25 * cv2.GaussianBlur(a, (0, 0), 3)[..., None])
-comp = comp * (1 - a[..., None]) + rgb
-wr(L('final', 'v5_greetings_postcard_9x16.jpg'), sharpen((np.clip(comp, 0, 1) * 255 + .5).astype(np.uint8)))
+# V5 / V5b story stills: the postcard resting on its flat-lay (same composite as the animation, no camera move)
+def rounded_alpha(CH, CW, r=16):
+    ca = np.zeros((CH, CW), np.uint8)
+    cv2.rectangle(ca, (r, 0), (CW - 1 - r, CH - 1), 255, -1)
+    cv2.rectangle(ca, (0, r), (CW - 1, CH - 1 - r), 255, -1)
+    for cx, cy in ((r, r), (CW - 1 - r, r), (r, CH - 1 - r), (CW - 1 - r, CH - 1 - r)):
+        cv2.circle(ca, (cx, cy), r, 255, -1, cv2.LINE_AA)
+    return cv2.GaussianBlur(ca, (0, 0), 0.8).astype(np.float32) / 255
+
+
+def card_on_table(card_png, bg_png, rot, scale, center, out_jpg):
+    bg = resize(rd(L('raw', bg_png))[..., :3], (1080, 1920)).astype(np.float32) / 255
+    card = rd(L('raw', card_png))[..., :3].astype(np.float32) / 255
+    CH, CW = card.shape[:2]
+    ca = rounded_alpha(CH, CW)
+    M = cv2.getRotationMatrix2D((CW / 2, CH / 2), rot, scale)
+    M[0, 2] += center[0] - CW / 2
+    M[1, 2] += center[1] - CH / 2
+    a = cv2.warpAffine(ca, M, (1080, 1920))
+    rgb = cv2.warpAffine(card * ca[..., None], M, (1080, 1920))
+    sh = cv2.GaussianBlur(cv2.warpAffine(a, np.float32([[1, 0, 14], [0, 1, 18]]), (1080, 1920)), (0, 0), 14)
+    comp = bg * (1 - 0.42 * sh[..., None]) * (1 - 0.25 * cv2.GaussianBlur(a, (0, 0), 3)[..., None])
+    comp = comp * (1 - a[..., None]) + rgb
+    wr(L('final', out_jpg), sharpen((np.clip(comp, 0, 1) * 255 + .5).astype(np.uint8)))
+    return ca
+
+
+ca = card_on_table('v5_postcard_a.png', 'v5_flatlay_bg.png', -3.5, 0.84, (1080 / 2 + 4, 1920 * 0.485),
+                   'v5_greetings_postcard_9x16.jpg')
+ca_b = card_on_table('v5b_postcard.png', 'v5b_flatlay_bg.png', 2.0, 0.74, (660, 870),
+                     'v5b_greetings_dreieich_9x16.jpg')
 
 # ------------------------------------------------------------------ transparent logos
 # V1: ISNet subject mask + filled triangle polygon (scene inside the triangle must be opaque)
@@ -155,9 +167,11 @@ for k in range(1, nlab):
 alpha = cv2.GaussianBlur(keep.astype(np.float32), (0, 0), 1.0)
 wr(L('logos', 'v4_chrome_nights_logo.png'), cut(src, alpha))
 
-# V5: the postcard with rounded corners
+# V5 / V5b: the postcards with rounded corners
 card8 = rd(L('raw', 'v5_postcard_a.png'))[..., :3]
 wr(L('logos', 'v5_greetings_postcard_card.png'), np.dstack([card8, (ca * 255 + .5).astype(np.uint8)]))
+card8 = rd(L('raw', 'v5b_postcard.png'))[..., :3]
+wr(L('logos', 'v5b_greetings_dreieich_card.png'), np.dstack([card8, (ca_b * 255 + .5).astype(np.uint8)]))
 
 # V6: plate cutout + perspective-rectified front view
 src = rd(L('raw', 'v6_plate_a.png'))[..., :3]
@@ -182,13 +196,15 @@ def sheet(files, tile_w, tile_h, cols, out, gap=18, bgc=(14, 8, 24)):
     for i, f in enumerate(files):
         im = resize(rd(f)[..., :3], (tile_w, tile_h))
         r_, c_ = divmod(i, cols)
+        in_row = min(cols, len(files) - r_ * cols)
+        x_off = (cols - in_row) * (tile_w + gap) // 2          # centre an incomplete last row
         y = gap + r_ * (tile_h + gap)
-        x = gap + c_ * (tile_w + gap)
+        x = gap + c_ * (tile_w + gap) + x_off
         canvas[y:y + tile_h, x:x + tile_w] = im
     wr(out, canvas)
 
 
 os.makedirs(L('board'), exist_ok=True)
-sheet([L('final', f'{v}_{n}_4x5.jpg') for v, n, _ in VARIANTS], 540, 675, 3, L('board', 'overview_4x5.jpg'))
-sheet([L('final', f'{v}_{n}_9x16.jpg') for v, n, _ in VARIANTS], 360, 640, 6, L('board', 'overview_9x16.jpg'))
+sheet([L('final', f'{v}_{n}_4x5.jpg') for v, n, _ in VARIANTS], 540, 675, 4, L('board', 'overview_4x5.jpg'))
+sheet([L('final', f'{v}_{n}_9x16.jpg') for v, n, _ in VARIANTS], 360, 640, 7, L('board', 'overview_9x16.jpg'))
 print('stills done')

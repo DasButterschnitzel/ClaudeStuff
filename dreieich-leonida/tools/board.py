@@ -53,9 +53,11 @@ CONCEPTS = [
         eggs=['Burg Hayn auf dem Hügel', 'Flieger im Anflug', 'Eichen mit Spanish Moss neben Palmen',
               'Dreieck + Swoosh als Schild-Krone'],
         beats=[('0,0 s', 'Fade-up, 2.5D-Parallaxe: Schild wächst schneller als der Hintergrund'),
-               ('0,55 s', 'Neon-Dreieck stottert an'), ('1,0 s', 'Glühbirnen schalten sich von links nach rechts durch'),
-               ('2,0 s', 'Lauflicht'), ('4,75 s', 'Doppel-Blitz aller Birnen'),
-               ('durchgehend', 'Jet driftet, Lens-Flare mit Ghosts, Goldstaub')],
+               ('0,55 s', 'Neon-Dreieck stottert an'),
+               ('1,0 s', 'Glühbirnen schalten sich von links nach rechts durch, dann Lauflicht'),
+               ('3,4 s', 'Jet taucht hinter dem Schild auf: geradliniger Anflug, Nase voraus, 3°-Gleitpfad'),
+               ('5,4 s', 'wird perspektivisch korrekt größer und schneller (Projektion über den Fluchtpunkt), mit Landescheinwerfern, Positionslichtern rot/grün, Strobes und Beacon'),
+               ('7,2 s', 'donnert mit Bewegungsunschärfe oben rechts aus dem Bild, Doppel-Blitz der Birnen davor')],
         caption='Ab sofort offiziell: Dreieich, Leonida. Bitte langsam fahren – hier wird gechillt.',
         logo='v3_welcome_sign_logo.png'),
     dict(
@@ -82,6 +84,23 @@ CONCEPTS = [
                ('durchgehend', 'Lichtflecken der Palmen wandern, Kamera fährt auf die Lettern')],
         caption='Grüße aus Dreieich! Bembel statt Cocktail, Weiher statt Ozean – Vibe identisch. 🦩',
         logo='v5_greetings_postcard_card.png'),
+    dict(
+        id='v5b', slug='greetings_dreieich', no='05b', name='Greetings from Dreieich', tag='Dreieich-Edition · eure echten Fotos',
+        idea='Die Postkarte als Dreieich-Edition: In den acht Buchstaben stecken eure echten Fotos, so wie bei klassischen '
+             'Großbuchstaben-Postkarten: die Fahrgasse in Dreieichenhain mit dem Gasthaus „Alte Burg“, die Dreieichbahn im Wald, '
+             'die Villenkolonie Buchschlag, das Fachwerk, dazu der Sonnenuntergang über den Feldern und das Felder-Patchwork aus '
+             'der 360°-Drohnenaufnahme (perspektivisch entzerrt). Dahinter die Frankfurter Skyline über dem Wald, Stadtmauer mit '
+             'Turm und Fachwerkhäuser. Im Reel landet die Karte auf einem Ebbelwoi-Tisch.',
+        eggs=['echte Fotos: Fahrgasse mit „Alte Burg“, Dreieichbahn, Buchschlag, Fachwerk, Drohnen-Panorama',
+              'Frankfurter Skyline über dem Wald – der Blick aus Dreieich', 'Stadtmauer mit Turm und Fachwerk',
+              'Eichenlaub mit Eicheln: die „Eich“ in Dreieich', 'Bembel, Geripptes und Brezel statt Strand'],
+        beats=[('0,15 s', 'Karte segelt mit Drall auf den Ebbelwoi-Tisch'),
+               ('1,15 s', 'landet mit Bounce und Kontaktschatten – kollisionsfrei neben Bembel, Glas und Brezel'),
+               ('1,3 s', 'Glitzer läuft über „Greetings from“'),
+               ('2,2 s', 'jeder Foto-Buchstabe glänzt nacheinander auf, exakt in Buchstabenform'),
+               ('durchgehend', 'Lichtflecken der Kastanie wandern über den Tisch, Kamera fährt auf die Lettern')],
+        caption='Echte Grüße aus Dreieich: Fahrgasse, Dreieichbahn, Buchschlag – und ein Geripptes dazu. Leonida kann einpacken. 🍏',
+        logo='v5b_greetings_dreieich_card.png'),
     dict(
         id='v6', slug='leonida_plate', no='06', name='Leonida Plate', tag='In-World-Objekt',
         idea='Ein Vanity-Kennzeichen aus Leonida: „DREIEICH“ geprägt, „SUNSHINE CITY“, Sonnenuntergangsmotiv mit Palme '
@@ -223,15 +242,16 @@ footer {{ padding: 24px 0 60px; color: var(--muted); font-size: 12px; }}
 <div class="hero"><div class="wrap">
   <div class="kicker">Stadt Dreieich · Social-Media-Konzept · GTA-VI-Hype</div>
   <h1>Dreieich <span class="x">×</span> Leonida</h1>
-  <p class="lead">Sechs Logo-Varianten, als wäre Dreieich eine Stadt im Bundesstaat Leonida – jede als Hochglanz-Key-Visual
-  (Feed 4:5, Story 9:16), als freigestelltes Logo und als fertig animierter 8-Sekunden-Reel. Stil-Hommage an die
+  <p class="lead">Sechs Logo-Varianten plus eine Dreieich-Edition mit euren echten Fotos, als wäre Dreieich eine Stadt im
+  Bundesstaat Leonida – jede als Hochglanz-Key-Visual (Feed 4:5, Story 9:16), als freigestelltes Logo und als fertig
+  animierter 8-Sekunden-Reel. Stil-Hommage an die
   Sunset-Neon-Americana des Hypes, gebaut aus Dreieichs eigener DNA: dem Dreieck, dem Swoosh, den drei Eichen, Burg Hayn,
   Fachwerk, Ebbelwoi – und den Fliegern über der Stadt.</p>
-  <div class="pill-row"><span class="pill">6 Logo-Konzepte</span><span class="pill">12 Key Visuals (4:5 + 9:16)</span>
-  <span class="pill">6 animierte Reels + Sizzle-Reel</span><span class="pill">9 Freisteller (PNG)</span><span class="pill">keine Rockstar-Marken verwendet</span></div>
+  <div class="pill-row"><span class="pill">6 Logo-Konzepte + Dreieich-Edition</span><span class="pill">14 Key Visuals (4:5 + 9:16)</span>
+  <span class="pill">7 animierte Reels + Sizzle-Reel</span><span class="pill">9 Freisteller (PNG)</span><span class="pill">keine Rockstar-Marken verwendet</span></div>
   <div class="hero-grid">
-    <figure><img src="{overview}" alt="Alle sechs Key Visuals im Überblick"><figcaption>Alle sechs Konzepte · Feed-Format 4:5</figcaption></figure>
-    <figure class="reel-box"><video src="../anim/dreieich_leonida_reel.mp4" poster="{reel_poster}" muted loop playsinline autoplay preload="metadata"></video><figcaption>Sizzle-Reel · alle sechs Animationen · 45 s</figcaption></figure>
+    <figure><img src="{overview}" alt="Alle sechs Key Visuals im Überblick"><figcaption>Alle Konzepte · Feed-Format 4:5</figcaption></figure>
+    <figure class="reel-box"><video src="../anim/dreieich_leonida_reel.mp4" poster="{reel_poster}" muted loop playsinline autoplay preload="metadata"></video><figcaption>Sizzle-Reel · alle sieben Animationen · 53 s</figcaption></figure>
   </div>
 </div></div>
 <nav class="toc"><div class="wrap">{nav}<a href="#notes">Hinweise</a></div></nav>
@@ -241,7 +261,7 @@ footer {{ padding: 24px 0 60px; color: var(--muted); font-size: 12px; }}
   <div class="note"><h3>Posting-Kit</h3>
     <ul><li>Feed: <code>final/*_4x5.jpg</code> (1080×1350)</li><li>Story/Reel-Cover: <code>final/*_9x16.jpg</code> (1080×1920)</li>
     <li>Reels/TikTok: <code>anim/*.mp4</code> – stumm, damit ihr in-App Trend-Audio drunterlegen könnt</li>
-    <li>Carousel-Idee: 01 → 06 als Swipe-Strecke „Welche Dreieich-Version bist du?“</li></ul>
+    <li>Carousel-Idee: 01 → 06 als Swipe-Strecke „Welche Dreieich-Version bist du?“, 05b als Abschluss mit echten Orten</li></ul>
     <p class="hash">{HASHTAGS}</p></div>
   <div class="note"><h3>Rechtliches & Fair Play</h3>
     <ul><li>Keine Logos, Schriften, Figuren oder Screenshots von Rockstar Games / Take-Two verwendet – reine Stil-Hommage.</li>
@@ -249,9 +269,11 @@ footer {{ padding: 24px 0 60px; color: var(--muted); font-size: 12px; }}
     <li>Empfehlung im Post: „Fan-Hommage – keine Kooperation mit Rockstar Games.“</li>
     <li>Alle Motive sind KI-generiert: Plattform-Label „Mit KI erstellt“ setzen.</li></ul></div>
   <div class="note"><h3>Wie es gebaut ist</h3>
-    <p>Motive: GPT-Image 2.5 (über Figma) mit detaillierter Art Direction und Dreieich-Easter-Eggs. 9:16-Erweiterung: Adobe Firefly
-    Generative Expand. Masken: Adobe Photoshop API + ISNet. Animationen: eigene Compositing-Engine (Python/OpenCV) mit Clean Plates,
-    Neon-Lichtsimulation, perspektivisch korrektem Grid, Parallaxe – Ausgabe H.264, 1080×1920, 30 fps.
+    <p>Motive: GPT-Image 2.5 (über Figma) mit detaillierter Art Direction und Dreieich-Easter-Eggs. 05b: KI-Lettering mit
+    Chroma-Key-Flächen, in die eure Fotos eingesetzt sind (das 360°-Panorama perspektivisch entzerrt). 9:16-Erweiterung: Adobe
+    Firefly Generative Expand. Masken: Adobe Photoshop API + ISNet. Animationen: eigene Compositing-Engine (Python/OpenCV) mit
+    Clean Plates, Neon-Lichtsimulation, perspektivisch korrektem Grid, Parallaxe und einer physikalisch korrekten Flugbahn für den
+    Jet in 03 – Ausgabe H.264, 1080×1920, 30 fps.
     Alles liegt in Ebenen vor und lässt sich in After Effects / CapCut weiterbauen.</p></div>
 </section>
 </main>

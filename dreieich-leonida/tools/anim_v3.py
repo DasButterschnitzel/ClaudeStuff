@@ -2,8 +2,21 @@
 
 2.5D parallax push-in (sign layer from an ISNet cutout grows faster than the
 background), the neon outline on the triangle stutters on, the marquee bulbs
-switch on left-to-right and then chase, an all-bulb flash, the jet drifts on
-its approach, animated sun flare with lens ghosts and floating golden dust.
+switch on left-to-right and then chase, an all-bulb flash, animated sun flare
+with lens ghosts and floating golden dust.
+
+The jet flies a physically consistent final approach: a straight line at
+constant speed, nose first, descending on a ~3° glide path towards (and over)
+the camera.  For straight-line motion the projected position and the apparent
+size scale together about the path's vanishing point VP:
+    p(t) = VP + s(t) * (p_ref - VP),   s(t) = Z_ref / Z(t) = 1 / (1 - (t - t_ref) / T_c)
+VP is where the fuselage axis, extended backwards past the tail, meets the
+glide-path elevation just above the horizon.  The jet emerges from behind the
+sign, grows and accelerates in screen space, and passes overhead out of frame.
+It carries real aircraft lighting (steady landing lights with glare, red/green
+wing-tip navigation lights on the correct sides, double-flash white strobes,
+red belly beacon), atmospheric haze while far away, occlusion by the sign and
+trees, and 180°-shutter motion blur.
 """
 import math
 import os
@@ -60,11 +73,17 @@ neon45 = neon45.astype(np.float32)
 NEON = fx.mask45_to_out(neon45)
 NEON_GLOW = np.maximum(cv2.dilate(NEON, np.ones((3, 3), np.uint8)), np.clip(fx.gblur(NEON, 6) * 2.4, 0, 1))
 
-# background plate without the plane (sky inpaint)
-img8 = (IMG * 255).astype(np.uint8)
-hole = (cv2.dilate((PLANE > 0.2).astype(np.uint8), np.ones((15, 15), np.uint8)) * 255)
-BG = fx.to_float(cv2.inpaint(img8, hole, 12, cv2.INPAINT_TELEA))
-BG = fx.gblur(BG, 0.6) * (hole[..., None] / 255.0) + IMG * (1 - hole[..., None] / 255.0)
+# background plate without the plane: Poisson-clone real cloud texture from 200 px above into the
+# plane's silhouette (gradient-domain blending matches the tones at the boundary, no smudge)
+src916 = cv2.imread(L('raw', 'v3_welcome_a_916.png'))
+pm916 = np.zeros((1820, 1024), np.uint8)
+pm916[270:1550] = (PLANE45 * 255).astype(np.uint8)
+hole916 = (cv2.dilate((pm916 > 60).astype(np.uint8), np.ones((13, 13), np.uint8)) * 255).astype(np.uint8)
+hole916[:, 1018:] = 0
+_ys, _xs = np.nonzero(hole916)
+clean916 = cv2.seamlessClone(np.roll(src916, 200, axis=0), src916, hole916,
+                             (int((_xs.min() + _xs.max()) // 2), int((_ys.min() + _ys.max()) // 2)), cv2.NORMAL_CLONE)
+BG = fx.to_float(cv2.resize(cv2.cvtColor(clean916, cv2.COLOR_BGR2RGB), (W, H), interpolation=cv2.INTER_LANCZOS4))
 
 # off states (relative to the plane-free background plate)
 BASE = BG
@@ -76,8 +95,82 @@ OFF = OFF * (1 - NEON_GLOW[..., None]) + neon_off * NEON_GLOW[..., None]
 DB = BASE - OFF                                    # light added by bulbs + neon
 
 SIGN_C = P(430, 480)
-PLANE_C = P(800, 275)
 SUN = P(632, 935)
+
+# ------------------------------------------------------------------ jet: sprite, path, lights
+_pys, _pxs = np.nonzero(PLANE > 0.02)
+PX0, PX1, PY0, PY1 = _pxs.min() - 4, _pxs.max() + 5, _pys.min() - 4, _pys.max() + 5
+PLANE_A = PLANE[PY0:PY1, PX0:PX1].copy()
+PLANE_RGB = (IMG * PLANE[..., None])[PY0:PY1, PX0:PX1].copy()          # premultiplied
+VP = P(308, 900)            # fuselage axis (nose (901,203) -> tail (765,363)) meets the glide path elevation
+T_REF, T_C = 5.4, 4.8       # at T_REF the jet is exactly where it is in the photo; T_C = Z_ref / |Vz|
+HAZE = BG[PY0:PY1, PX0:PX1].reshape(-1, 3).mean(0)
+NAV_GREEN, NAV_RED = P(599, 279), P(1009, 313)        # aircraft right wing is on image left (it faces us)
+TAIL = P(765, 363)
+BEACON = P(817, 303)
+LANDING = [P(877, 250), P(802, 310), P(855, 315)]
+LSTAR = fx.star_sprite(121, ray_len=0.46, ray_w=0.9, core=0.05)
+TREES = np.clip((0.30 - fx.lum(BG)) / 0.08, 0, 1) * (np.mgrid[0:H, 0:W][0] > 1000)   # dark foliage occludes
+
+
+def jet_scale(t):
+    return 1.0 / (1.0 - (t - T_REF) / T_C)
+
+
+def jet_xform(t, s_bg, cx, cy):
+    """Sprite-local -> output affine for time t (path scaling about VP, then the camera zoom)."""
+    s = jet_scale(t)
+    k = s_bg * s
+    tx = cx + s_bg * (VP[0] + s * (PX0 - VP[0]) - cx)
+    ty = cy + s_bg * (VP[1] + s * (PY0 - VP[1]) - cy)
+    return s, np.float32([[k, 0, tx], [0, k, ty]])
+
+
+def jet_point(p, t, s_bg, cx, cy):
+    s = jet_scale(t)
+    return (cx + s_bg * (VP[0] + s * (p[0] - VP[0]) - cx), cy + s_bg * (VP[1] + s * (p[1] - VP[1]) - cy))
+
+
+def jet_layer(t, s_bg, cx, cy):
+    """Motion-blurred (180° shutter) premultiplied RGB + alpha of the jet."""
+    s0 = jet_scale(t)
+    speed = np.hypot(*(np.array(VP) - np.array(P(803, 278)))) * s0 * s0 / T_C / fx.FPS   # px per frame
+    n = int(np.clip(np.ceil(speed / 1.5), 1, 12))
+    acc_rgb = np.zeros((H, W, 3), np.float32)
+    acc_a = np.zeros((H, W), np.float32)
+    for i in range(n):
+        ts = t - (0.5 / fx.FPS) * (i / max(1, n - 1)) if n > 1 else t
+        s, M = jet_xform(ts, s_bg, cx, cy)
+        rgb, a = PLANE_RGB, PLANE_A
+        if s * s_bg < 0.85:                                  # pre-filter before minifying
+            sig = 0.5 * (1 / (s * s_bg) - 1)
+            rgb, a = cv2.GaussianBlur(rgb, (0, 0), sig), cv2.GaussianBlur(a, (0, 0), sig)
+        acc_rgb += cv2.warpAffine(rgb, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
+        acc_a += cv2.warpAffine(a, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_CONSTANT)
+    rgb, a = acc_rgb / n, acc_a / n
+    haze = float(np.clip(0.32 * (1 - s0), 0, 0.25))          # aerial perspective while far away
+    rgb = rgb * (1 - haze) + HAZE * a[..., None] * haze
+    return rgb, a
+
+
+def jet_lights(t):
+    """(position, colour, intensity, size) of every aircraft light at time t."""
+    out = []
+    s = jet_scale(t)
+    near = float(np.clip(s, 0.3, 2.2))
+    out.append(('nav', NAV_GREEN, (0.35, 1.0, 0.45), 0.55, 0.30 * near ** 0.5))
+    out.append(('nav', NAV_RED, (1.0, 0.22, 0.18), 0.55, 0.30 * near ** 0.5))
+    ph = (t + 0.37) % 1.0                                       # Airbus-style double-flash strobes, 1 s cycle
+    strobe = 1.0 if (ph < 0.045 or 0.12 < ph < 0.165) else 0.0
+    if strobe:
+        for p_ in (NAV_GREEN, NAV_RED, TAIL):
+            out.append(('strobe', p_, (1.0, 1.0, 1.0), 1.0, 0.55 * near ** 0.5))
+    if ((t + 0.81) % 1.1) < 0.09:                               # red anti-collision beacon, belly
+        out.append(('beacon', BEACON, (1.0, 0.15, 0.10), 0.95, 0.42 * near ** 0.5))
+    land = float(np.clip(0.25 + 0.35 * (s - 0.5), 0.15, 0.95))  # landing lights point at us: brighter as it nears
+    for p_ in LANDING:
+        out.append(('landing', p_, (1.0, 0.93, 0.80), land, 0.42 * near ** 0.6))
+    return out
 STAR = fx.star_sprite(401, rays=6, ray_len=0.5, ray_w=1.5, rot=8)
 PARTS = fx.bokeh_field(np.random.default_rng(9), 60, rmin=2, rmax=7)
 yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
@@ -136,14 +229,21 @@ def frame(t):
     s_sign = 1.0 + 0.095 * u
     cx, cy = SIGN_C
     bg = fx.affine(lit, scale=s_bg, cx=cx, cy=cy)
-    # plane drifts on approach (left/up, slightly growing), drawn over the sky
-    pm = fx.affine(PLANE, scale=1.0 + 0.07 * u, cx=PLANE_C[0], cy=PLANE_C[1], tx=-95 * u, ty=-30 * u,
-                   border=cv2.BORDER_CONSTANT)
-    prgb = fx.affine(IMG * PLANE[..., None], scale=1.0 + 0.07 * u, cx=PLANE_C[0], cy=PLANE_C[1], tx=-95 * u,
-                     ty=-30 * u, border=cv2.BORDER_CONSTANT)
-    pm = fx.affine(pm, scale=s_bg, cx=cx, cy=cy, border=cv2.BORDER_CONSTANT)
-    prgb = fx.affine(prgb, scale=s_bg, cx=cx, cy=cy, border=cv2.BORDER_CONSTANT)
-    f = bg * (1 - pm[..., None]) + prgb
+    f = bg
+    # the jet: straight-line approach, drawn between sky and sign, hidden by foreground foliage
+    if jet_scale(t) > 0.3:
+        jrgb, ja = jet_layer(t, s_bg, cx, cy)
+        vis = 1 - TREES
+        f = f * (1 - (ja * vis)[..., None]) + jrgb * vis[..., None]
+        sa_now = fx.affine(SIGN, scale=s_sign, cx=cx, cy=cy, border=cv2.BORDER_CONSTANT)
+        for kind, p_, col, inten, size in jet_lights(t):
+            lx, ly = jet_point(p_, t, s_bg, cx, cy)
+            if not (0 <= lx < W and 0 <= ly < H):
+                continue
+            occl = max(float(sa_now[int(ly), int(lx)]), float(TREES[int(ly), int(lx)]))
+            if occl > 0.5:
+                continue
+            fx.add_sprite(f, LSTAR, lx, ly, col, inten * (1 - occl), scale=size)
     sa = fx.affine(SIGN, scale=s_sign, cx=cx, cy=cy, border=cv2.BORDER_CONSTANT)
     srgb = fx.affine(lit * SIGN[..., None], scale=s_sign, cx=cx, cy=cy, border=cv2.BORDER_CONSTANT)
     f = f * (1 - sa[..., None]) + srgb
@@ -154,7 +254,6 @@ def frame(t):
     pulse = 0.75 + 0.25 * math.sin(t * 2.1)
     glow = fx.radial(sx, sy, 120) * 0.55 + fx.radial(sx, sy, 380) * 0.25
     f = fx.screen(f, np.clip(glow[..., None] * np.array([1.0, 0.72, 0.38]) * pulse, 0, 1))
-    star_rot = STAR if True else None
     rot = fx.affine(STAR, scale=1.0, cx=STAR.shape[1] / 2, cy=STAR.shape[0] / 2, rot=t * 6,
                     border=cv2.BORDER_CONSTANT)
     fx.add_sprite(f, rot, sx, sy, (1.0, 0.85, 0.6), 0.55 * pulse, scale=1.5)
@@ -174,4 +273,4 @@ def frame(t):
 
 if __name__ == '__main__':
     os.environ.setdefault('SP', '/tmp')
-    main(frame, 'v3_welcome_sign', 8.0, [0.3, 0.62, 0.9, 1.3, 1.6, 1.95, 2.5, 3.2, 4.75, 5.3, 6.5, 7.9], poster_t=7.4)
+    main(frame, 'v3_welcome_sign', 8.0, [0.3, 0.9, 1.6, 2.6, 3.4, 4.0, 4.6, 5.4, 6.0, 6.6, 7.1, 7.7], poster_t=5.4)
