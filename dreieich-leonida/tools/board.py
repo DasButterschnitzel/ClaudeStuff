@@ -116,15 +116,19 @@ CONCEPTS = [
 HASHTAGS = '#Dreieich #DreieichLeonida #Leonida #GTA6 #GTAVI #ViceVibes #Hessen #Synthwave'
 
 
-def concept_html(c):
+# where the files live relative to the page (repo layout vs. download package layout)
+LAYOUT_REPO = dict(feed='final', story='final', reels='anim', logos='logos', video_prefix='../anim')
+
+
+def concept_html(c, lay=LAYOUT_REPO):
     still = b64img(L('final', f"{c['id']}_{c['slug']}_4x5.jpg"), 720, 82)
     poster = b64img(L('final', f"{c['id']}_{c['slug']}_9x16.jpg"), 405, 76)
     logo = b64img(L('logos', c['logo']), 560, 86)
-    video = f"../anim/{c['id']}_{c['slug']}.mp4"
+    video = f"{lay['video_prefix']}/{c['id']}_{c['slug']}.mp4"
     eggs = ''.join(f'<li>{html.escape(e)}</li>' for e in c['eggs'])
     beats = ''.join(f'<li><span class="t">{html.escape(t)}</span><span>{html.escape(d)}</span></li>' for t, d in c['beats'])
-    files = [f"final/{c['id']}_{c['slug']}_4x5.jpg", f"final/{c['id']}_{c['slug']}_9x16.jpg",
-             f"anim/{c['id']}_{c['slug']}.mp4", f"logos/{c['logo']}"]
+    files = [f"{lay['feed']}/{c['id']}_{c['slug']}_4x5.jpg", f"{lay['story']}/{c['id']}_{c['slug']}_9x16.jpg",
+             f"{lay['reels']}/{c['id']}_{c['slug']}.mp4", f"{lay['logos']}/{c['logo']}"]
     flist = ''.join(f'<code>{f}</code>' for f in files)
     return f'''
 <section class="concept" id="{c['id']}">
@@ -147,10 +151,10 @@ def concept_html(c):
 </section>'''
 
 
-def build():
+def build(lay=LAYOUT_REPO, out=None):
     reel_poster = b64img(L('final', 'v1_sunset_triangle_9x16.jpg'), 405, 76)
     overview = b64img(L('board', 'overview_4x5.jpg'), 1200, 80)
-    concepts = ''.join(concept_html(c) for c in CONCEPTS)
+    concepts = ''.join(concept_html(c, lay) for c in CONCEPTS)
     nav = ''.join(f'<a href="#{c["id"]}">{c["no"]} {html.escape(c["name"])}</a>' for c in CONCEPTS)
     page = f'''<!doctype html>
 <html lang="de">
@@ -251,7 +255,7 @@ footer {{ padding: 24px 0 60px; color: var(--muted); font-size: 12px; }}
   <span class="pill">7 animierte Reels + Sizzle-Reel</span><span class="pill">9 Freisteller (PNG)</span><span class="pill">keine Rockstar-Marken verwendet</span></div>
   <div class="hero-grid">
     <figure><img src="{overview}" alt="Alle sechs Key Visuals im Überblick"><figcaption>Alle Konzepte · Feed-Format 4:5</figcaption></figure>
-    <figure class="reel-box"><video src="../anim/dreieich_leonida_reel.mp4" poster="{reel_poster}" muted loop playsinline autoplay preload="metadata"></video><figcaption>Sizzle-Reel · alle sieben Animationen · 53 s</figcaption></figure>
+    <figure class="reel-box"><video src="{lay['video_prefix']}/dreieich_leonida_reel.mp4" poster="{reel_poster}" muted loop playsinline autoplay preload="metadata"></video><figcaption>Sizzle-Reel · alle sieben Animationen · 53 s</figcaption></figure>
   </div>
 </div></div>
 <nav class="toc"><div class="wrap">{nav}<a href="#notes">Hinweise</a></div></nav>
@@ -259,8 +263,8 @@ footer {{ padding: 24px 0 60px; color: var(--muted); font-size: 12px; }}
 {concepts}
 <section class="notes" id="notes">
   <div class="note"><h3>Posting-Kit</h3>
-    <ul><li>Feed: <code>final/*_4x5.jpg</code> (1080×1350)</li><li>Story/Reel-Cover: <code>final/*_9x16.jpg</code> (1080×1920)</li>
-    <li>Reels/TikTok: <code>anim/*.mp4</code> – stumm, damit ihr in-App Trend-Audio drunterlegen könnt</li>
+    <ul><li>Feed: <code>{lay['feed']}/*_4x5.jpg</code> (1080×1350)</li><li>Story/Reel-Cover: <code>{lay['story']}/*_9x16.jpg</code> (1080×1920)</li>
+    <li>Reels/TikTok: <code>{lay['reels']}/*.mp4</code> – stumm, damit ihr in-App Trend-Audio drunterlegen könnt</li>
     <li>Carousel-Idee: 01 → 06 als Swipe-Strecke „Welche Dreieich-Version bist du?“, 05b als Abschluss mit echten Orten</li></ul>
     <p class="hash">{HASHTAGS}</p></div>
   <div class="note"><h3>Rechtliches & Fair Play</h3>
@@ -280,7 +284,7 @@ footer {{ padding: 24px 0 60px; color: var(--muted); font-size: 12px; }}
 <footer><div class="wrap">Konzept-Entwurf · Dreieich × Leonida · Fan-Hommage, keine Kooperation mit Rockstar Games / Take-Two Interactive.</div></footer>
 </body>
 </html>'''
-    out = L('board', 'index.html')
+    out = out or L('board', 'index.html')
     open(out, 'w', encoding='utf-8').write(page)
     print('board ->', out, round(len(page) / 1e6, 2), 'MB')
 

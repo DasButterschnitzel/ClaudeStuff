@@ -65,6 +65,7 @@ SP=/tmp python3 anim_v1.py preview  # Kontaktbogen nach $SP
 python3 anim_v1.py video            # Master-MP4 nach ../anim/ (CRF 17)
 python3 stills.py                   # final/, logos/, board/overview_*
 python3 board.py                    # board/index.html
+python3 package.py                  # Download-Paket dist/Dreieich_x_Leonida_Paket.zip (nicht im Repo)
 ```
 
 Die MP4s in `anim/` sind für Social Media neu encodiert (H.264 High, CRF 22, max. 8 Mbit/s,
