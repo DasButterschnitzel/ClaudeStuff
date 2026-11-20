@@ -189,7 +189,7 @@ def gta_html(lay):
       <ol class="beats">
         <li><span class="t">Trailer</span><span>Intro-Karte, zwei ruhige Karten im Aufbau des Songs, auf den Drop acht Karten im Takt
         (Parallaxe, Titel stempeln auf den Schlag, der Jet fliegt, Laub wirbelt, der Schwan bebt), dann baut sich das Cover Panel für
-        Panel auf den Beats auf. Emblem knallt rein, Banderole „Jetzt verfügbar. Seit 1977.“</span></li>
+        Panel auf den Beats auf. Emblem knallt rein, Banderole „Verfügbar seit 1977“</span></li>
         <li><span class="t">Cover-Reveal</span><span>Einzählen I, II, III – auf den Drop fliegen die Panels ein, Emblem, Banderole.</span></li>
         <li><span class="t">Ladebildschirm</span><span>„Lade Dreieich …“ mit fünf Sternen Gemütlichkeitslevel und Tipps wie
         „Schwäne am Burgweiher sind keine Nebenmission.“</span></li>

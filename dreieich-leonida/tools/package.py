@@ -119,7 +119,7 @@ open(os.path.join(STAGE, '00_LIESMICH.txt'), 'w', encoding='utf-8').write(readme
 caps = ['CAPTION-IDEEN – Dreieich × Leonida', '=' * 34, '']
 for c in board.CONCEPTS:
     caps += [f"{c['no']} {c['name']}", c['caption'], '']
-caps += ['III Dreieich III – Trailer', 'Der Trailer, auf den niemand gewartet hat: Dreieich III. Jetzt verfügbar. Seit 1977.', '',
+caps += ['III Dreieich III – Trailer', 'Der Trailer, auf den niemand gewartet hat: Dreieich III. Verfügbar seit 1977.', '',
          'III Dreieich III – Cover', 'Keine Vorbestellung nötig. Fünf Stadtteile, null Fahndungssterne. 🌳🌳🌳', '',
          'III Dreieich III – Ladebildschirm', 'Lade Dreieich … Tipp: Ein Gerippter füllt die Lebensenergie auf.', '']
 caps += ['Hashtags:', board.HASHTAGS, '', 'Zusatz:', 'Fan-Hommage – keine Kooperation mit Rockstar Games. Mit KI erstellt.', '']

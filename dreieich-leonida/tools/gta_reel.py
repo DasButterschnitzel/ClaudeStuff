@@ -218,7 +218,7 @@ _ribbon = None
 def ribbon():
     global _ribbon
     if _ribbon is None:
-        rgb, a = text_layer('JETZT VERFÜGBAR. SEIT 1977.', font('Anton-Regular.ttf', 74), fill=(38, 14, 62), spacing=3)
+        rgb, a = text_layer('VERFÜGBAR SEIT 1977', font('Anton-Regular.ttf', 80), fill=(38, 14, 62), spacing=3)
         th, tw = a.shape
         rh, rw = th + 26, W + 200
         R = np.zeros((rh, rw, 4), np.float32)

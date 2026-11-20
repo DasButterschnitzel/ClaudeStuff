@@ -29,7 +29,7 @@ bei einem Spielcover, zehn Ortskarten und drei Reels, die auf den Takt eines Son
   Kingpin-Pose, Bonanzarad statt Motorrad-Stunt (Fahrgasse), Einflugschneise.
 - **Reels** (`anim/gta_*.mp4`, hier stumm):
   - `gta_trailer.mp4` (42 s): Intro-Karte, zwei ruhige Karten im Aufbau, auf den Drop acht Karten im Takt, dann
-    baut sich das Cover Panel für Panel auf den Beats auf, Emblem, Banderole „Jetzt verfügbar. Seit 1977.“
+    baut sich das Cover Panel für Panel auf den Beats auf, Emblem, Banderole „Verfügbar seit 1977“
   - `gta_cover_reveal.mp4` (13 s): Einzählen I, II, III, dann der Cover-Aufbau.
   - `gta_loading.mp4` (15 s): Ladebildschirm-Parodie mit „Gemütlichkeitslevel“ und Tipps.
 - **Song:** Die Reels folgen dem Taktraster von „Flower In A Hurricane“ (126,05 BPM, Drop bei 47,775 s). Die
