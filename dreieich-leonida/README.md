@@ -36,7 +36,7 @@ bei einem Spielcover, zehn Ortskarten und drei Reels, die auf den Takt eines Son
   Song-Datei und die Fassungen mit Ton liegen bewusst nicht im Repo (urheberrechtlich geschützt). Zum Posten die
   stumme Fassung hochladen und den Song in der App anlegen: Trailer ab 0:36,4, Cover-Reveal ab 0:45,9,
   Ladebildschirm ab 0:00.
-- Es wird kein Rockstar-Logo und kein Originalmotiv verwendet. Die Plakette unten rechts ist ein eigenes Zeichen.
+- Es wird kein Rockstar-Logo und kein Originalmotiv verwendet. Die Plakette unten rechts zeigt die offizielle Bildmarke der Stadt (`raw/brand/`), unverändert auf weißem Grund.
 
 ```bash
 cd tools

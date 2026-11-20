@@ -366,17 +366,20 @@ TR_FINALE = 18
 TR_DUR = 22 * BAR
 
 
+_plate = None
+
+
 def intro_card(t):
     f = np.ones((H, W, 3), np.float32) * PURPLE * 0.75
     f = glow(f, W / 2, H * 0.46, 560, (0.6, 0.12, 0.62), 0.55)
     a = fx.ease_out_cubic(fx.prog(t, 0.25, 1.1)) * (1 - fx.prog(t, 2 * BAR - 0.55, 2 * BAR - 0.05))
-    b = gta_cover.badge(320)
-    sc = 0.9 + 0.1 * fx.ease_out_cubic(fx.prog(t, 0.25, 2 * BAR))
-    gta_cover.paste(f, b, W / 2, H * 0.42, scale=sc, opacity=a)
-    t1 = txt('pres1', 'STADT DREIEICH', 'BebasNeue-Regular.ttf', 128, (250, 240, 204), spacing=14)
-    t2 = txt('pres2', 'PRÄSENTIERT', 'BebasNeue-Regular.ttf', 72, (200, 224, 42), spacing=22)
-    gta_cover.paste(f, t1, W / 2, H * 0.42 + 290, opacity=a * fx.prog(t, 0.6, 1.3))
-    gta_cover.paste(f, t2, W / 2, H * 0.42 + 410, opacity=a * fx.prog(t, 0.95, 1.6))
+    global _plate
+    if _plate is None:
+        _plate = gta_cover.logo_plate(860)
+    sc = 0.94 + 0.06 * fx.ease_out_cubic(fx.prog(t, 0.25, 2 * BAR))
+    gta_cover.paste(f, _plate, W / 2, H * 0.42, scale=sc, opacity=a, shadow=0.45 * a)
+    t2 = txt('pres2', 'PRÄSENTIERT', 'BebasNeue-Regular.ttf', 84, (200, 224, 42), spacing=26)
+    gta_cover.paste(f, t2, W / 2, H * 0.42 + 250, opacity=a * fx.prog(t, 0.8, 1.5))
     return f
 
 

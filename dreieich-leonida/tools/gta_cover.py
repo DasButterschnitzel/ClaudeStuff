@@ -41,28 +41,44 @@ def crop_fit(img, cx, cy, zoom, bw, bh):
     return cv2.warpAffine(img, M, (bw, bh), flags=cv2.INTER_AREA if bw < cw else cv2.INTER_CUBIC)
 
 
+def _rounded(w, h, r):
+    m = np.zeros((h, w), np.uint8)
+    cv2.rectangle(m, (r, 0), (w - r, h), 255, -1)
+    cv2.rectangle(m, (0, r), (w, h - r), 255, -1)
+    for c in ((r, r), (w - r - 1, r), (r, h - r - 1), (w - r - 1, h - r - 1)):
+        cv2.circle(m, c, r, 255, -1, cv2.LINE_AA)
+    return m.astype(np.float32) / 255
+
+
+def _on_plate(logo_rgba, w, h, pad, radius):
+    """Official artwork, unmodified, centred on a white rounded plate (the logo is the 'positiv' version)."""
+    s = 4
+    W4, H4 = w * s, h * s
+    im = np.ones((H4, W4, 4), np.float32)
+    im[..., 3] = _rounded(W4, H4, int(radius * s))
+    ys, xs = np.nonzero(logo_rgba[..., 3] > 0.02)
+    lg = logo_rgba[ys.min():ys.max() + 1, xs.min():xs.max() + 1]
+    k = min((W4 - 2 * pad * s) / lg.shape[1], (H4 - 2 * pad * s) / lg.shape[0])
+    lg = cv2.resize(lg, (int(lg.shape[1] * k), int(lg.shape[0] * k)),
+                    interpolation=cv2.INTER_AREA if k < 1 else cv2.INTER_CUBIC)
+    y0, x0 = (H4 - lg.shape[0]) // 2, (W4 - lg.shape[1]) // 2
+    reg = im[y0:y0 + lg.shape[0], x0:x0 + lg.shape[1]]
+    a = lg[..., 3:4]
+    reg[..., :3] = reg[..., :3] * (1 - a) + lg[..., :3] * a
+    return cv2.resize(im, (w, h), interpolation=cv2.INTER_AREA)
+
+
 def badge(size=120):
-    """Own little mark for the corner: lime tile with the Dreieich triangle and swoosh."""
-    s = size * 4
-    im = np.zeros((s, s, 4), np.float32)
-    tile = np.zeros((s, s), np.uint8)
-    r = s // 7
-    cv2.rectangle(tile, (r, 0), (s - r, s), 255, -1)
-    cv2.rectangle(tile, (0, r), (s, s - r), 255, -1)
-    for c in ((r, r), (s - r, r), (r, s - r), (s - r, s - r)):
-        cv2.circle(tile, c, r, 255, -1)
-    im[..., :3] = np.array([0.80, 0.89, 0.16], np.float32)
-    im[..., 3] = tile / 255
-    ink = np.zeros((s, s), np.uint8)
-    cv2.fillPoly(ink, [np.array([(0.20 * s, 0.26 * s), (0.72 * s, 0.26 * s), (0.46 * s, 0.76 * s)], np.int32)], 255)
-    sw = np.zeros((s, s), np.uint8)
-    cv2.ellipse(sw, (int(0.50 * s), int(0.47 * s)), (int(0.36 * s), int(0.33 * s)), 0, -62, 58, 255, int(0.075 * s),
-                cv2.LINE_AA)
-    navy = np.array([0.04, 0.11, 0.22], np.float32)
-    for m, col in ((ink, np.array([1, 1, 1], np.float32)), (sw, navy)):
-        a = (m / 255.0)[..., None]
-        im[..., :3] = im[..., :3] * (1 - a) + col * a
-    return cv2.resize(im, (size, size), interpolation=cv2.INTER_AREA)
+    """Corner tile: the official Dreieich mark (triangle + arc) on a white rounded tile."""
+    mark = imread(L('raw', 'brand', 'Dreieich_Bildmarke.png')).astype(np.float32) / 255
+    return _on_plate(mark, size, size, pad=size * 0.07, radius=size * 0.16)
+
+
+def logo_plate(width=860):
+    """The full official logo (word mark + mark) on a white plate, for the intro card."""
+    logo = imread(L('raw', 'brand', 'logo_full.png')).astype(np.float32) / 255
+    h = int(width * 0.34)
+    return _on_plate(logo, width, h, pad=width * 0.06, radius=width * 0.035)
 
 
 def build(w, h, kind):
@@ -86,7 +102,7 @@ def build(w, h, kind):
     tot = sum(r[0] for r in rows)
     yc = h * (rows[0][0] + rows[1][0] / 2) / tot + 0.012 * h
     emblem = dict(rgba=em, centre=(w / 2, yc))
-    bsz = int(0.105 * w)
+    bsz = int(0.125 * w)
     bd = dict(rgba=badge(bsz), centre=(w - int(0.026 * w) - int(0.0145 * w) - bsz / 2 - 14,
                                        h - int(0.026 * w) - int(0.0145 * w) - bsz / 2 - 14))
     return dict(panels=panels, emblem=emblem, badge=bd, w=w, h=h)
