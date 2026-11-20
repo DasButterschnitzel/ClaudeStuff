@@ -47,14 +47,6 @@ def layers(name):
         d['title_rgb'] = d['full'] * d['title'][..., None]
         ys, xs = np.nonzero(d['title'] > 0.3)
         d['tbox'] = (xs.min(), ys.min(), xs.max(), ys.max()) if len(xs) else None
-        if name == 'einflugschneise':            # the jet gets its own layer
-            n, lab = cv2.connectedComponents((d['fg'] > 0.5).astype(np.uint8))
-            jl = lab[int(0.12 * H), int(0.62 * W)]
-            jm = cv2.dilate((lab == jl).astype(np.uint8), np.ones((9, 9), np.uint8)).astype(np.float32)
-            d['jet'] = d['fg'] * jm
-            d['jet_rgb'] = d['art'] * d['jet'][..., None]
-            d['fg'] = d['fg'] * (1 - jm)
-            d['fg_rgb'] = d['art'] * d['fg'][..., None]
         _layers[name] = d
     return _layers[name]
 
@@ -132,23 +124,17 @@ def shot(name, tl, dur, t_abs, kick, fast, mode='in', title_mode='stamp'):
     piv = (fxp, fyp)
     if name == 'burg_hayn':                                    # the swan trembles with rage
         f_tx, f_ty = 4.5 * math.sin(2 * math.pi * 11 * t_abs), 3.0 * math.cos(2 * math.pi * 13 * t_abs)
+    if name == 'hirschsprung':                                 # the stag travels along its leap
+        u = tl / dur - 0.5
+        f_tx, f_ty = 190 * u, -70 * (1 - (2 * u) ** 2) + 40
+        f_rot = -5 * u
+        piv = (0.52 * W, 0.38 * H)
     if name == 'fahrgasse':                                    # wheelie: the bike rocks about the rear wheel
         piv = (0.40 * W, 0.74 * H)
         f_rot = 2.2 * math.sin(2 * math.pi * t_abs / (2 * BEAT))
     Mb = sim(s_bg, fxp, fyp)
     Mf = sim(s_fg, piv[0], piv[1], f_tx, f_ty, f_rot)
     f = warp(Ld['bg'], Mb, cv2.BORDER_REFLECT101)
-
-    if name == 'einflugschneise':                              # jet: straight approach, scaling about its VP
-        vp = (0.585 * W, 0.50 * H)
-        sj = 1.0 / (1.0 - (tl - 0.55 * dur) / (dur * 2.6))
-        Mj = sim(sj, vp[0], vp[1])
-        Mj = np.vstack([Mb, [0, 0, 1]]) @ np.vstack([Mj, [0, 0, 1]])
-        ja = warp(Ld['jet'], Mj[:2])
-        f = f * (1 - ja[..., None]) + warp(Ld['jet_rgb'], Mj[:2])
-        for lx, ly in ((0.617, 0.062), (0.602, 0.105), (0.640, 0.105)):       # landing lights flare on the kick
-            p = Mj @ np.array([lx * W, ly * H, 1.0])
-            fx.add_sprite(f, SMALLSTAR, p[0], p[1], (1.0, 0.95, 0.8), 0.35 + 0.6 * kick, scale=0.8 + 0.5 * kick)
 
     fa = warp(Ld['fg'], Mf)
     f = f * (1 - fa[..., None]) + warp(Ld['fg_rgb'], Mf)
@@ -158,6 +144,11 @@ def shot(name, tl, dur, t_abs, kick, fast, mode='in', title_mode='stamp'):
         f = rain(f, t_abs)
     if name == 'sprendlingen':
         f = leaves(f, t_abs)
+    if name == 'parkschwimmbad':                               # sparkles on the water
+        for k, (lx, ly) in enumerate(((0.70, 0.545), (0.82, 0.60), (0.30, 0.93), (0.74, 0.90), (0.16, 0.66))):
+            v = max(0.0, math.sin(t_abs * 5.5 + k * 1.9)) ** 4
+            p = Mb @ np.array([lx * W, ly * H, 1.0])
+            fx.add_sprite(f, SMALLSTAR, p[0], p[1], (1.0, 0.97, 0.9), 0.9 * v, scale=0.7 + 0.5 * v)
     if name == 'burgfestspiele':
         p = Mb @ np.array([0.058 * W, 0.175 * H, 1.0])
         f = glow(f, p[0], p[1], 150, (1.0, 0.25, 0.95), 0.25 + 0.55 * kick)
@@ -358,8 +349,9 @@ def kick_pulse(t_song):
 TR_T0 = DROP - 6 * BAR
 TR_SHOTS = [  # (start bar, bars, name, zoom mode)
     (2, 2, 'offenthal', 'in'), (4, 2, 'villenkolonie', 'in'),
-    (6, 2, 'bahnhof', 'in'), (8, 2, 'burgfestspiele', 'out'), (10, 1, 'sprendlingen', 'in'),
-    (11, 1, 'burg_hayn', 'in'), (12, 2, 'einflugschneise', 'in'), (14, 1, 'ebbelwoi', 'in'),
+    (6, 1, 'hirschsprung', 'in'), (7, 1, 'bahnhof', 'in'), (8, 2, 'burgfestspiele', 'out'),
+    (10, 1, 'sprendlingen', 'in'), (11, 1, 'burg_hayn', 'in'), (12, 2, 'parkschwimmbad', 'in'),
+    (14, 1, 'ebbelwoi', 'in'),
     (15, 1, 'goetzenhain', 'out'), (16, 2, 'fahrgasse', 'in'),
 ]
 TR_FINALE = 18
@@ -445,7 +437,7 @@ LD_T0 = 0.0
 LD_PHASE = 0.16                                                  # first beat of the song
 LD_SHOTS = [('burg_hayn', 'TIPP', 'Schwäne am Burgweiher sind keine Nebenmission. Abstand halten.'),
             ('ebbelwoi', 'TIPP', 'Ein Gerippter Ebbelwoi füllt die Lebensenergie vollständig auf.'),
-            ('bahnhof', 'TIPP', 'Die Dreieichbahn bringt dich ganz ohne Verfolgungsjagd nach Frankfurt.'),
+            ('bahnhof', 'TIPP', 'Vom Bahnhof Buchschlag geht es ganz ohne Verfolgungsjagd nach Frankfurt.'),
             ('goetzenhain', 'TIPP', 'Fünf Stadtteile, null Fahndungssterne. Erkunde sie alle.')]
 LD_SEG = 2 * BAR
 LD_DUR = LD_PHASE + 4 * LD_SEG

@@ -26,7 +26,7 @@ CONCEPTS = [
              'neben Eichen, Burg Hayn auf dem Hügel, ein Jet im Anflug. Der Stadt-Swoosh umkreist alles in Chrom, '
              'darüber der fette Stack-Schriftzug „drei / eich“.',
         eggs=['Burg Hayn als Silhouette', 'Palmen + Eichen = „Drei Eichen“ trifft Leonida',
-              'Jet im Landeanflug – die Einflugschneise kennt hier jede:r', 'Grün-Limette-Verlauf und Swoosh aus dem Stadtlogo'],
+              'Grün-Limette-Verlauf und Swoosh aus dem Stadtlogo'],
         beats=[('0,0 s', 'Anamorph-Lichtstreifen zündet'), ('0,3 s', 'Dreieck öffnet sich, Sonnenuntergang zoomt rein'),
                ('0,7 s', 'Chrom-Swoosh fliegt als Komet einmal ums Dreieck'),
                ('1,8 s', '„drei/eich“ knallt rein: Flash, Schockwelle, Shake, RGB-Split'),
@@ -154,7 +154,8 @@ def concept_html(c, lay=LAYOUT_REPO):
 
 GTA_POSTERS = [('offenthal', 'Offenthal'), ('burgfestspiele', 'Burgfestspiele'), ('villenkolonie', 'Villenkolonie'),
                ('bahnhof', 'Bahnhof Buchschlag'), ('sprendlingen', 'Sprendlingen'), ('burg_hayn', 'Burg Hayn'),
-               ('einflugschneise', 'Einflugschneise'), ('ebbelwoi', 'Ebbelwoi'), ('goetzenhain', 'Götzenhain'),
+               ('hirschsprung', 'Hirschsprung'), ('parkschwimmbad', 'Parkschwimmbad'), ('ebbelwoi', 'Ebbelwoi'),
+               ('goetzenhain', 'Götzenhain'),
                ('fahrgasse', 'Fahrgasse')]
 GTA_REELS = [('gta_trailer', 'Trailer · 42 s', 'gta_cover_9x16.jpg'),
              ('gta_cover_reveal', 'Cover-Reveal · 13 s', 'gta_cover_9x16.jpg'),
@@ -181,14 +182,14 @@ def gta_html(lay):
     <figure><img src="{cover}" alt="Dreieich III Cover"><figcaption>Cover · Feed 4:5 (auch als 9:16)</figcaption></figure>
     <div class="info">
       <p class="idea">Aus der Sechs wird die Drei: „III“ für Drei-Eich, mit Eichen statt Palmen im Verlauf. Drumherum das schräge
-      Panel-Raster mit zehn Ortskarten – eure vier Poster (Offenthal, Burgfestspiele, Villenkolonie, Bahnhof Buchschlag) und sechs
+      Panel-Raster, auf dem kein Stadtteilname zu lesen ist. Dazu elf Ortskarten – eure vier Poster (Offenthal, Burgfestspiele, Villenkolonie, Bahnhof Buchschlag) und sieben
       neue im selben Stil. Jede neue Karte parodiert ein typisches Cover-Motiv: der Actionheld hält einen Laubbläser, das Raubtier im
       Wasser ist ein Schwan am Burgweiher, der Supersportwagen ist ein gelber Traktor in Götzenhain, der Kingpin bestellt Ebbelwoi,
-      der Motorrad-Stunt ist ein Bonanzarad in der Fahrgasse, und über allem donnert die Einflugschneise.</p>
+      der Motorrad-Stunt ist ein Bonanzarad in der Fahrgasse, der Stunt-Sprung ist der Sprendlinger Hirschsprung aus der Sage, und statt Speedboot gibt es den Flamingo-Schwimmreifen im Parkschwimmbad.</p>
       <h3>Die drei Reels</h3>
       <ol class="beats">
         <li><span class="t">Trailer</span><span>Intro-Karte, zwei ruhige Karten im Aufbau des Songs, auf den Drop acht Karten im Takt
-        (Parallaxe, Titel stempeln auf den Schlag, der Jet fliegt, Laub wirbelt, der Schwan bebt), dann baut sich das Cover Panel für
+        (Parallaxe, Titel stempeln auf den Schlag, der Hirsch springt, Laub wirbelt, der Schwan bebt), dann baut sich das Cover Panel für
         Panel auf den Beats auf. Emblem knallt rein, Banderole „Verfügbar seit 1977“</span></li>
         <li><span class="t">Cover-Reveal</span><span>Einzählen I, II, III – auf den Drop fliegen die Panels ein, Emblem, Banderole.</span></li>
         <li><span class="t">Ladebildschirm</span><span>„Lade Dreieich …“ mit fünf Sternen Gemütlichkeitslevel und Tipps wie
@@ -313,8 +314,8 @@ footer {{ padding: 24px 0 60px; color: var(--muted); font-size: 12px; }}
   Bundesstaat Leonida – jede als Hochglanz-Key-Visual (Feed 4:5, Story 9:16), als freigestelltes Logo und als fertig
   animierter 8-Sekunden-Reel. Stil-Hommage an die
   Sunset-Neon-Americana des Hypes, gebaut aus Dreieichs eigener DNA: dem Dreieck, dem Swoosh, den drei Eichen, Burg Hayn,
-  Fachwerk, Ebbelwoi – und den Fliegern über der Stadt.</p>
-  <div class="pill-row"><span class="pill">NEU: Dreieich-III-Cover, 10 Ortskarten, 3 Reels zum Song</span><span class="pill">6 Logo-Konzepte + Dreieich-Edition</span><span class="pill">14 Key Visuals (4:5 + 9:16)</span>
+  Fachwerk und Ebbelwoi.</p>
+  <div class="pill-row"><span class="pill">NEU: Dreieich-III-Cover, 11 Ortskarten, 3 Reels zum Song</span><span class="pill">6 Logo-Konzepte + Dreieich-Edition</span><span class="pill">14 Key Visuals (4:5 + 9:16)</span>
   <span class="pill">7 animierte Reels + Sizzle-Reel</span><span class="pill">9 Freisteller (PNG)</span><span class="pill">keine Rockstar-Marken verwendet</span></div>
   <div class="hero-grid">
     <figure><img src="{overview}" alt="Alle sechs Key Visuals im Überblick"><figcaption>Alle Konzepte · Feed-Format 4:5</figcaption></figure>

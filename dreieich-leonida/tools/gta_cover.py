@@ -12,15 +12,16 @@ from gta_common import CACHE, L, PURPLE, cover_layout, imread, imwrite, poly_mas
 
 # (poster, crop centre x, y in the poster, zoom)  — row by row
 PANELS = [
-    [('burg_hayn', 0.55, 0.43, 1.05), ('einflugschneise', 0.50, 0.30, 1.0), ('offenthal', 0.50, 0.50, 1.35)],
+    [('burg_hayn', 0.55, 0.43, 1.05), ('parkschwimmbad', 0.47, 0.62, 1.15), ('offenthal', 0.50, 0.50, 1.35)],
     [('burgfestspiele', 0.42, 0.37, 1.45), ('ebbelwoi', 0.27, 0.36, 2.0)],
     [('sprendlingen', 0.45, 0.41, 1.25), ('villenkolonie', 0.31, 0.33, 1.65), ('fahrgasse', 0.48, 0.42, 1.30)],
-    [('goetzenhain', 0.50, 0.62, 1.0), ('bahnhof', 0.50, 0.31, 1.0)],
+    [('goetzenhain', 0.50, 0.62, 1.0), ('hirschsprung', 0.60, 0.40, 1.22)],
 ]
 ROWS = {
     'story': [(0.23, [1, 1.08, 1]), (0.30, [1, 1]), (0.25, [1, 1.05, 1]), (0.22, [1.05, 1])],
-    'feed':  [(0.25, [1, 1.08, 1]), (0.31, [1, 1]), (0.25, [1, 1.05, 1]), (0.19, [1.05, 1])],
+    'feed':  [(0.24, [1, 1.08, 1]), (0.31, [1, 1]), (0.24, [1, 1.05, 1]), (0.21, [1.05, 1])],
 }
+FEED_CROP = {'hirschsprung': (0.50, 0.365, 1.0)}        # the 4:5 bottom row is flatter: show the whole leap
 _art = {}
 
 
@@ -86,6 +87,8 @@ def build(w, h, kind):
     panels = []
     for (r, c, poly) in polys:
         name, cx, cy, zoom = PANELS[r][c]
+        if kind == 'feed' and name in FEED_CROP:
+            cx, cy, zoom = FEED_CROP[name]
         x0, y0 = np.floor(poly.min(0)).astype(int)
         x1, y1 = np.ceil(poly.max(0)).astype(int)
         x0, y0, x1, y1 = max(0, x0), max(0, y0), min(w, x1), min(h, y1)

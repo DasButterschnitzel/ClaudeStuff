@@ -15,12 +15,15 @@ CREAM = np.array([0.98, 0.94, 0.80], np.float32)
 # name -> file, title band (y0, y1 as fractions, None = no separate title), focus point of the subject
 POSTERS = {
     'offenthal':       dict(file='u_offenthal.png',          title=(0.035, 0.235), focus=(0.52, 0.46)),
-    'burgfestspiele':  dict(file='u_burgfestspiele.png',     title=(0.035, 0.225), focus=(0.24, 0.34)),
+    # the Burgfestspiele take place in the castle in Dreieichenhain -> the capitals line is re-set ('caps')
+    'burgfestspiele':  dict(file='u_burgfestspiele.png',     title=(0.035, 0.225), focus=(0.24, 0.34),
+                            caps='DREIEICHENHAIN'),
     'villenkolonie':   dict(file='u_villenkolonie.png',      title=(0.765, 0.960), focus=(0.27, 0.30)),
     'bahnhof':         dict(file='u_bahnhof_buchschlag.png', title=None,           focus=(0.27, 0.40)),
     'sprendlingen':    dict(file='n_sprendlingen.png',       title=(0.015, 0.185), focus=(0.42, 0.42)),
     'burg_hayn':       dict(file='n_burg_hayn.png',          title=(0.015, 0.185), focus=(0.58, 0.55)),
-    'einflugschneise': dict(file='n_einflugschneise.png',    title=(0.775, 0.965), focus=(0.45, 0.40)),
+    'hirschsprung':    dict(file='n_hirschsprung.png',       title=(0.015, 0.215), focus=(0.50, 0.40)),
+    'parkschwimmbad':  dict(file='n_parkschwimmbad.png',     title=(0.015, 0.175), focus=(0.50, 0.62)),
     'ebbelwoi':        dict(file='n_ebbelwoi.png',           title=(0.015, 0.215), focus=(0.42, 0.40)),
     'goetzenhain':     dict(file='n_goetzenhain.png',        title=(0.020, 0.215), focus=(0.55, 0.62)),
     'fahrgasse':       dict(file='n_fahrgasse.png',          title=(0.015, 0.210), focus=(0.44, 0.42)),

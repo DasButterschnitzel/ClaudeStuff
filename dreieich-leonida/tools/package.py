@@ -79,7 +79,7 @@ ORDNER
                            (v2 zusätzlich „on_black“ für den Mischmodus „Negativ multiplizieren“)
   07_Dreieich_III/         NEU: die Parodie im Cover-Stil
      Cover/                  Cover als Feed (4:5) und Story (9:16) + Emblem „III / drei eich“ als PNG
-     Ortskarten_9x16/        zehn Ortskarten als Story-Bilder
+     Ortskarten_9x16/        elf Ortskarten als Story-Bilder
      Reels_mit_Song/         Trailer (42 s), Cover-Reveal (13 s), Ladebildschirm (15 s) mit dem Song
      Reels_stumm/            dieselben drei Reels ohne Ton
   Captions_und_Hashtags.txt  Caption-Ideen zum Kopieren

@@ -14,13 +14,13 @@ import numpy as np
 from rembg import new_session, remove
 from PIL import Image
 
-from gta_common import CACHE, H, L, POSTERS, W, imread, imwrite
+from gta_common import CACHE, H, L, POSTERS, W, font, imread, imwrite, text_layer
 
 os.makedirs(CACHE, exist_ok=True)
 sess = new_session('isnet-general-use')
 sess_alt = new_session('u2net')
 ALT_MODEL = {'burg_hayn'}
-DIM_CAPS = {'burgfestspiele', 'goetzenhain'}      # posters whose small capitals are dimmer than the script
+DIM_CAPS = {'burgfestspiele', 'goetzenhain', 'parkschwimmbad'}      # posters whose small capitals are dimmer than the script
 ell = lambda r: cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (2 * r + 1, 2 * r + 1))
 
 
@@ -47,6 +47,36 @@ def inpaint(img8, mask8, radius=7, scale=0.5, shiftmap=False):
     a = cv2.GaussianBlur(mask8.astype(np.float32) / 255, (0, 0), 2.0)[..., None]
     a = np.clip(a * 1.6, 0, 1)
     return (img8 * (1 - a) + res * a).astype(np.uint8)
+
+
+def recaption(full, art, m, text):
+    """Replace the small capitals line under the script title (keeps the original script pixels)."""
+    n, lab, st, _ = cv2.connectedComponentsWithStats(m)
+    ybot = np.nonzero(m.any(1))[0].max()
+    caps = np.zeros_like(m)
+    for k in range(1, n):
+        if st[k, cv2.CC_STAT_HEIGHT] < 70 and st[k, cv2.CC_STAT_TOP] > ybot - 80 and st[k, cv2.CC_STAT_AREA] > 30:
+            caps[lab == k] = 1
+    ys, xs = np.nonzero(caps)
+    hc, cx, cy = ys.max() - ys.min() + 1, (xs.min() + xs.max()) / 2, (ys.min() + ys.max()) / 2
+    script = m & (1 - caps)
+    col = np.median(full[cv2.erode(script, ell(2)) > 0].reshape(-1, 3), axis=0)
+    fnt = font('Inter-SemiBold.otf', int(round(hc / 0.727)))
+    target = 0.70 * W
+    spacing = (target - sum(fnt.getlength(c) for c in text)) / (len(text) - 1)
+    rgb, a = text_layer(text, fnt, fill=tuple(int(v) for v in col), spacing=spacing)
+    iy, ix = np.nonzero(a > 0.05)
+    rgb, a = rgb[iy.min():iy.max() + 1, ix.min():ix.max() + 1], a[iy.min():iy.max() + 1, ix.min():ix.max() + 1]
+    x0 = int(np.clip(round(cx - a.shape[1] / 2), 40, W - 40 - a.shape[1]))
+    y0 = int(round(cy - a.shape[0] / 2))
+    sa = cv2.GaussianBlur(cv2.dilate(script, ell(1)) * 255, (0, 0), 0.8).astype(np.float32) / 255
+    out = art.astype(np.float32) * (1 - sa[..., None]) + full.astype(np.float32) * sa[..., None]
+    ca = np.zeros((H, W), np.float32)
+    ca[y0:y0 + a.shape[0], x0:x0 + a.shape[1]] = a
+    crgb = np.zeros((H, W, 3), np.float32)
+    crgb[y0:y0 + a.shape[0], x0:x0 + a.shape[1]] = rgb * 255
+    out = out * (1 - ca[..., None]) + crgb * ca[..., None]
+    return out.clip(0, 255).astype(np.uint8), (np.maximum(sa, ca) * 255).astype(np.uint8)
 
 
 import sys
@@ -101,11 +131,28 @@ for name, cfg in POSTERS.items():
     # --- art without title
     art = inpaint(full, cv2.dilate((title > 30).astype(np.uint8), ell(7)) * 255) if cfg['title'] else full
     imwrite(os.path.join(CACHE, f'{name}_art.jpg'), art)
+    if cfg.get('caps'):
+        full, title = recaption(full, art, m, cfg['caps'])
+        imwrite(os.path.join(CACHE, f'{name}_full.png'), full)
+        imwrite(os.path.join(CACHE, f'{name}_title.png'), title)
 
     # --- subject alpha
     fg = np.asarray(remove(Image.fromarray(art), session=sess_alt if name in ALT_MODEL else sess,
                            only_mask=True)).copy()
     yy, xx = np.mgrid[0:H, 0:W]
+    if name == 'hirschsprung':
+        # only the leaping stag is the foreground layer: segment it on a crop where it stands against the sky
+        cy0, cy1, cx0, cx1 = int(0.225 * H), int(0.50 * H), int(0.16 * W), int(0.90 * W)
+        part = np.asarray(remove(Image.fromarray(art[cy0:cy1, cx0:cx1]), session=sess, only_mask=True))
+        fg = np.zeros((H, W), np.uint8)
+        fg[cy0:cy1, cx0:cx1] = part
+        n_, lab_, st_, _ = cv2.connectedComponentsWithStats((fg > 100).astype(np.uint8))
+        if n_ > 1:
+            fg = fg * (lab_ == 1 + int(np.argmax(st_[1:, cv2.CC_STAT_AREA])))
+        # thin antler tips the model misses: dark pixels right next to the mask, against the bright sky
+        near = cv2.dilate((fg > 100).astype(np.uint8), ell(22)) > 0
+        dark = cv2.cvtColor(art, cv2.COLOR_RGB2GRAY) < 95
+        fg = np.maximum(fg, ((near & dark & (yy < 0.36 * H)) * 255).astype(np.uint8))
     if name == 'bahnhof':
         # the segmentation models miss the cropped figure: rough hand-drawn outline, refined with GrabCut
         pts = np.array([(0, 95), (40, 92), (85, 105), (105, 130), (113, 150), (118, 170), (121, 190), (112, 205),

@@ -20,13 +20,15 @@ Videos werden aus `anim/` geladen.
 ## Neu: „Dreieich III“ – Parodie im Cover-Stil
 
 Aus der VI wird die III (Drei-Eich), mit Eichen statt Palmen im Verlauf. Dazu ein schräges Panel-Raster wie
-bei einem Spielcover, zehn Ortskarten und drei Reels, die auf den Takt eines Songs geschnitten sind.
+bei einem Spielcover, elf Ortskarten und drei Reels, die auf den Takt eines Songs geschnitten sind.
 
 - **Cover:** `final/gta_cover_4x5.jpg`, `final/gta_cover_9x16.jpg`, Emblem `logos/gta_dreieich_III_emblem.png`
 - **Ortskarten:** `final/gta_poster_*_9x16.jpg`. Vier stammen von euch (Offenthal, Burgfestspiele, Villenkolonie,
-  Bahnhof Buchschlag), sechs sind neu im selben Stil und parodieren typische Cover-Motive: Laubbläser statt Waffe
+  Bahnhof Buchschlag), sieben sind neu im selben Stil und parodieren typische Cover-Motive: Laubbläser statt Waffe
   (Sprendlingen), Schwan statt Alligator (Burg Hayn), Traktor statt Supersportwagen (Götzenhain), Ebbelwoi statt
-  Kingpin-Pose, Bonanzarad statt Motorrad-Stunt (Fahrgasse), Einflugschneise.
+  Kingpin-Pose, Bonanzarad statt Motorrad-Stunt (Fahrgasse), der Sprendlinger Hirschsprung als Stunt-Sprung und
+  ein Flamingo-Schwimmreifen im Parkschwimmbad statt Speedboot. Auf dem Cover ist bewusst kein Stadtteilname
+  zu lesen; die Karte „Burgfestspiele“ trägt die Unterzeile „Dreieichenhain“.
 - **Reels** (`anim/gta_*.mp4`, hier stumm):
   - `gta_trailer.mp4` (42 s): Intro-Karte, zwei ruhige Karten im Aufbau, auf den Drop acht Karten im Takt, dann
     baut sich das Cover Panel für Panel auf den Beats auf, Emblem, Banderole „Verfügbar seit 1977“
