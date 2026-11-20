@@ -2,7 +2,7 @@
 
 Layout inside the ZIP:
   Dreieich_x_Leonida/
-    00_LIESMICH.txt, Captions_und_Hashtags.txt
+    00_LIESMICH.txt, Posting-Texte_und_Hashtags.txt
     01_Praesentation/      Praesentation.html (+ overview images); videos are linked from 04_Reels_9x16
     02_Feed_4x5/           1080x1350 JPG
     03_Story_9x16/         1080x1920 JPG
@@ -82,7 +82,7 @@ ORDNER
      Ortskarten_9x16/        elf Ortskarten als Story-Bilder
      Reels_mit_Song/         Trailer (42 s), Cover-Reveal (13 s), Ladebildschirm (15 s) mit dem Song
      Reels_stumm/            dieselben drei Reels ohne Ton
-  Captions_und_Hashtags.txt  Caption-Ideen zum Kopieren
+  Posting-Texte_und_Hashtags.txt  fertige Texte, Hashtags, Alt-Texte, Hinweise zu Musik und Rechten
 
 DIE KONZEPTE
 {concepts}
@@ -95,20 +95,19 @@ POSTING-TIPPS
     05b mit den echten Orten als Abschluss.
   - Als Reel-Cover ein Bild aus 05_Reel-Cover oder 03_Story_9x16 nehmen.
 
-DREIEICH III UND DER SONG
+DIE REELS UND DER SONG
   Die drei Reels sind auf den Takt von „Flower In A Hurricane“ geschnitten (126 BPM).
-  Der Song ist urheberrechtlich geschützt. Sicherer Weg: die stumme Fassung hochladen und den
-  Song in der App aus der Musikbibliothek anlegen, mit diesen Startzeiten im Song:
+  Der Song ist urheberrechtlich geschützt. Die Fassungen mit Song sind nur zum Zeigen und
+  Abstimmen im Haus gedacht, nicht zum Hochladen. Zum Posten die stumme Fassung nehmen und
+  die Musik in der App anlegen. Startzeiten im Song:
      Trailer        ab 0:36,4   (der Drop liegt im Video bei 0:11,4)
      Cover-Reveal   ab 0:45,9   (der Drop liegt im Video bei 0:01,9)
      Ladebildschirm ab 0:00,0
-  Die Fassungen mit Song sind zum Zeigen und Abstimmen gedacht. Wer sie direkt postet,
-  braucht die Rechte am Song (Geschäftskonten haben oft nur eine eingeschränkte Bibliothek).
+  Alle Einzelheiten und die Alternativen stehen in Posting-Texte_und_Hashtags.txt, Abschnitt 8.
 
 HINWEISE
   - Es werden keine Logos, Schriften, Figuren oder Screenshots von Rockstar Games / Take-Two
-    verwendet, alles ist eine reine Stil-Hommage. Empfohlener Zusatz im Post:
-    „Fan-Hommage – keine Kooperation mit Rockstar Games.“
+    verwendet, alles ist eine reine Stil-Hommage. Der Zusatz dazu steht in den Posting-Texten.
   - „Leonida“ ist ein Ortsname aus GTA VI. Für normale Posts als Anspielung üblich;
     vor Werbeanzeigen, Print oder Merch rechtlich prüfen lassen.
   - Alle Motive sind KI-generiert (05b: KI-Lettering mit echten Fotos der Stadt).
@@ -116,14 +115,12 @@ HINWEISE
 """
 open(os.path.join(STAGE, '00_LIESMICH.txt'), 'w', encoding='utf-8').write(readme)
 
-caps = ['CAPTION-IDEEN – Dreieich × Leonida', '=' * 34, '']
+# posting texts (main copy, hashtags, alt texts, music and rights) + the older caption ideas per logo variant
+caps = [open(L('texte', 'Posting-Texte.txt'), encoding='utf-8').read().rstrip(), '', '',
+        'ANHANG: CAPTION-IDEEN ZU DEN LOGO-VARIANTEN 01–06', '-' * 49, '']
 for c in board.CONCEPTS:
     caps += [f"{c['no']} {c['name']}", c['caption'], '']
-caps += ['III Dreieich III – Trailer', 'Der Trailer, auf den niemand gewartet hat: Dreieich III. Verfügbar seit 1977.', '',
-         'III Dreieich III – Cover', 'Keine Vorbestellung nötig. Fünf Stadtteile, null Fahndungssterne. 🌳🌳🌳', '',
-         'III Dreieich III – Ladebildschirm', 'Lade Dreieich … Tipp: Ein Gerippter füllt die Lebensenergie auf.', '']
-caps += ['Hashtags:', board.HASHTAGS, '', 'Zusatz:', 'Fan-Hommage – keine Kooperation mit Rockstar Games. Mit KI erstellt.', '']
-open(os.path.join(STAGE, 'Captions_und_Hashtags.txt'), 'w', encoding='utf-8').write('\n'.join(caps))
+open(os.path.join(STAGE, 'Posting-Texte_und_Hashtags.txt'), 'w', encoding='utf-8').write('\n'.join(caps) + '\n')
 
 if os.path.exists(ZIP):
     os.remove(ZIP)
