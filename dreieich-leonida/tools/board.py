@@ -117,7 +117,8 @@ HASHTAGS = '#Dreieich #DreieichLeonida #Leonida #GTA6 #GTAVI #ViceVibes #Hessen 
 
 
 # where the files live relative to the page (repo layout vs. download package layout)
-LAYOUT_REPO = dict(feed='final', story='final', reels='anim', logos='logos', video_prefix='../anim')
+LAYOUT_REPO = dict(feed='final', story='final', reels='anim', logos='logos', video_prefix='../anim',
+                   gta_prefix='../anim', gta_suffix='', gta_dir='final / anim', gta_sound=False)
 
 
 def concept_html(c, lay=LAYOUT_REPO):
@@ -148,6 +149,60 @@ def concept_html(c, lay=LAYOUT_REPO):
       <div class="files">{flist}</div>
     </div>
   </div>
+</section>'''
+
+
+GTA_POSTERS = [('offenthal', 'Offenthal'), ('burgfestspiele', 'Burgfestspiele'), ('villenkolonie', 'Villenkolonie'),
+               ('bahnhof', 'Bahnhof Buchschlag'), ('sprendlingen', 'Sprendlingen'), ('burg_hayn', 'Burg Hayn'),
+               ('einflugschneise', 'Einflugschneise'), ('ebbelwoi', 'Ebbelwoi'), ('goetzenhain', 'Götzenhain'),
+               ('fahrgasse', 'Fahrgasse')]
+GTA_REELS = [('gta_trailer', 'Trailer · 42 s', 'gta_cover_9x16.jpg'),
+             ('gta_cover_reveal', 'Cover-Reveal · 13 s', 'gta_cover_9x16.jpg'),
+             ('gta_loading', 'Ladebildschirm · 15 s', 'gta_poster_ebbelwoi_9x16.jpg')]
+
+
+def gta_html(lay):
+    cover = b64img(L('final', 'gta_cover_4x5.jpg'), 820, 84)
+    vids = ''
+    for name, cap, poster in GTA_REELS:
+        ps = b64img(L('final', poster), 405, 76)
+        src = f"{lay['gta_prefix']}/{name}{lay['gta_suffix']}.mp4"
+        vids += (f'<figure class="reel"><video src="{src}" poster="{ps}" muted loop playsinline controls '
+                 f'preload="metadata"></video><figcaption>{cap}</figcaption></figure>')
+    thumbs = ''.join(f'<figure><img src="{b64img(L("final", f"gta_poster_{n}_9x16.jpg"), 300, 74)}" alt="{t}" '
+                     f'loading="lazy"><figcaption>{t}</figcaption></figure>' for n, t in GTA_POSTERS)
+    sound = ('Die Videos hier laufen mit dem Song (Ton am Player einschalten).' if lay['gta_sound'] else
+             'Die Videos hier im Repo sind stumm; die Fassungen mit Song liegen im Download-Paket.')
+    return f'''
+<section class="concept gta" id="gta">
+  <header class="c-head"><span class="no">III</span>
+    <div><h2>Dreieich III – das Cover und der Trailer</h2><p class="tag">Parodie im Cover-Stil · zum Song geschnitten</p></div></header>
+  <div class="gta-top">
+    <figure><img src="{cover}" alt="Dreieich III Cover"><figcaption>Cover · Feed 4:5 (auch als 9:16)</figcaption></figure>
+    <div class="info">
+      <p class="idea">Aus der Sechs wird die Drei: „III“ für Drei-Eich, mit Eichen statt Palmen im Verlauf. Drumherum das schräge
+      Panel-Raster mit zehn Ortskarten – eure vier Poster (Offenthal, Burgfestspiele, Villenkolonie, Bahnhof Buchschlag) und sechs
+      neue im selben Stil. Jede neue Karte parodiert ein typisches Cover-Motiv: der Actionheld hält einen Laubbläser, das Raubtier im
+      Wasser ist ein Schwan am Burgweiher, der Supersportwagen ist ein gelber Traktor in Götzenhain, der Kingpin bestellt Ebbelwoi,
+      der Motorrad-Stunt ist ein Bonanzarad in der Fahrgasse, und über allem donnert die Einflugschneise.</p>
+      <h3>Die drei Reels</h3>
+      <ol class="beats">
+        <li><span class="t">Trailer</span><span>Intro-Karte, zwei ruhige Karten im Aufbau des Songs, auf den Drop acht Karten im Takt
+        (Parallaxe, Titel stempeln auf den Schlag, der Jet fliegt, Laub wirbelt, der Schwan bebt), dann baut sich das Cover Panel für
+        Panel auf den Beats auf. Emblem knallt rein, Banderole „Jetzt verfügbar. Seit 1977.“</span></li>
+        <li><span class="t">Cover-Reveal</span><span>Einzählen I, II, III – auf den Drop fliegen die Panels ein, Emblem, Banderole.</span></li>
+        <li><span class="t">Ladebildschirm</span><span>„Lade Dreieich …“ mit fünf Sternen Gemütlichkeitslevel und Tipps wie
+        „Schwäne am Burgweiher sind keine Nebenmission.“</span></li>
+      </ol>
+      <h3>Zum Song</h3>
+      <p class="caption">Geschnitten auf das Taktraster von „Flower In A Hurricane“ (126 BPM, Drop bei 0:47,8). {sound}
+      Der Song ist urheberrechtlich geschützt: Für den Post die stumme Fassung hochladen und den Song in der App aus der
+      Musikbibliothek an derselben Stelle anlegen (Startzeiten stehen in der LIESMICH) – oder vorher die Lizenz klären.</p>
+      <div class="files"><code>{lay['gta_dir']}</code></div>
+    </div>
+  </div>
+  <div class="gta-reels">{vids}</div>
+  <div class="gta-posters">{thumbs}</div>
 </section>'''
 
 
@@ -221,6 +276,10 @@ ol.beats .t {{ color: var(--gold); font-variant-numeric: tabular-nums; font-weig
 .logo-chip span {{ font-size: 12px; color: var(--muted); }}
 .files {{ display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }}
 .files code {{ font-size: 11px; background: var(--bg2); border: 1px solid var(--line); padding: 3px 7px; border-radius: 6px; color: #cbb9ee; overflow-wrap: anywhere; }}
+.gta-top {{ display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 26px; align-items: start; }}
+.gta-reels {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; margin-top: 26px; max-width: 980px; }}
+.gta-posters {{ display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin-top: 26px; }}
+.gta ol.beats li {{ grid-template-columns: 118px 1fr; }}
 .notes {{ padding: 64px 0 80px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }}
 .note {{ background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 22px; }}
 .note h3 {{ margin: 0 0 10px; font-family: Anton, Impact, sans-serif; font-weight: 400; font-size: 26px; letter-spacing: .01em; }}
@@ -234,8 +293,12 @@ footer {{ padding: 24px 0 60px; color: var(--muted); font-size: 12px; }}
   .c-grid {{ grid-template-columns: minmax(0, 1fr) minmax(0, .7fr); }}
   .info {{ grid-column: 1 / -1; }}
   .notes {{ grid-template-columns: minmax(0, 1fr); }}
+  .gta-top {{ grid-template-columns: minmax(0, 1fr); }}
+  .gta-posters {{ grid-template-columns: repeat(3, minmax(0, 1fr)); }}
 }}
 @media (max-width: 560px) {{
+  .gta-reels {{ grid-template-columns: minmax(0, 1fr); max-width: 320px; }}
+  .gta-posters {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }}
   .c-grid {{ grid-template-columns: minmax(0, 1fr); }}
   figure.reel {{ max-width: 320px; }}
   ol.beats li {{ grid-template-columns: 74px 1fr; }}
@@ -251,15 +314,16 @@ footer {{ padding: 24px 0 60px; color: var(--muted); font-size: 12px; }}
   animierter 8-Sekunden-Reel. Stil-Hommage an die
   Sunset-Neon-Americana des Hypes, gebaut aus Dreieichs eigener DNA: dem Dreieck, dem Swoosh, den drei Eichen, Burg Hayn,
   Fachwerk, Ebbelwoi – und den Fliegern über der Stadt.</p>
-  <div class="pill-row"><span class="pill">6 Logo-Konzepte + Dreieich-Edition</span><span class="pill">14 Key Visuals (4:5 + 9:16)</span>
+  <div class="pill-row"><span class="pill">NEU: Dreieich-III-Cover, 10 Ortskarten, 3 Reels zum Song</span><span class="pill">6 Logo-Konzepte + Dreieich-Edition</span><span class="pill">14 Key Visuals (4:5 + 9:16)</span>
   <span class="pill">7 animierte Reels + Sizzle-Reel</span><span class="pill">9 Freisteller (PNG)</span><span class="pill">keine Rockstar-Marken verwendet</span></div>
   <div class="hero-grid">
     <figure><img src="{overview}" alt="Alle sechs Key Visuals im Überblick"><figcaption>Alle Konzepte · Feed-Format 4:5</figcaption></figure>
     <figure class="reel-box"><video src="{lay['video_prefix']}/dreieich_leonida_reel.mp4" poster="{reel_poster}" muted loop playsinline autoplay preload="metadata"></video><figcaption>Sizzle-Reel · alle sieben Animationen · 53 s</figcaption></figure>
   </div>
 </div></div>
-<nav class="toc"><div class="wrap">{nav}<a href="#notes">Hinweise</a></div></nav>
+<nav class="toc"><div class="wrap"><a href="#gta">III Cover &amp; Trailer</a>{nav}<a href="#notes">Hinweise</a></div></nav>
 <main class="wrap">
+{gta_html(lay)}
 {concepts}
 <section class="notes" id="notes">
   <div class="note"><h3>Posting-Kit</h3>

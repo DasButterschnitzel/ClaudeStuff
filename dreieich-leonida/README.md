@@ -17,6 +17,35 @@ Videos werden aus `anim/` geladen.
 | 05b | **Greetings from Dreieich – Dreieich-Edition** | Dieselbe Postkartenidee, aber mit euren echten Fotos in den Buchstaben (Fahrgasse/„Alte Burg“, Dreieichbahn, Buchschlag, Fachwerk, 360°-Drohnenpanorama), dahinter Frankfurter Skyline, Stadtmauer und Fachwerk | Die Karte landet auf einem Ebbelwoi-Tisch (Bembel, Geripptes, Brezel, Eichenlaub), kollisionsfrei neben den Requisiten, jeder Foto-Buchstabe glänzt auf |
 | 06 | **Leonida Plate** | Vanity-Kennzeichen „DREIEICH · SUNSHINE CITY“ an einem pinken 80er-Sportwagen | Rack-Focus, Glanzlicht über die geprägten Lettern, Holo-Plakette, Hitzeflimmern, Palmenschatten |
 
+## Neu: „Dreieich III“ – Parodie im Cover-Stil
+
+Aus der VI wird die III (Drei-Eich), mit Eichen statt Palmen im Verlauf. Dazu ein schräges Panel-Raster wie
+bei einem Spielcover, zehn Ortskarten und drei Reels, die auf den Takt eines Songs geschnitten sind.
+
+- **Cover:** `final/gta_cover_4x5.jpg`, `final/gta_cover_9x16.jpg`, Emblem `logos/gta_dreieich_III_emblem.png`
+- **Ortskarten:** `final/gta_poster_*_9x16.jpg`. Vier stammen von euch (Offenthal, Burgfestspiele, Villenkolonie,
+  Bahnhof Buchschlag), sechs sind neu im selben Stil und parodieren typische Cover-Motive: Laubbläser statt Waffe
+  (Sprendlingen), Schwan statt Alligator (Burg Hayn), Traktor statt Supersportwagen (Götzenhain), Ebbelwoi statt
+  Kingpin-Pose, Bonanzarad statt Motorrad-Stunt (Fahrgasse), Einflugschneise.
+- **Reels** (`anim/gta_*.mp4`, hier stumm):
+  - `gta_trailer.mp4` (42 s): Intro-Karte, zwei ruhige Karten im Aufbau, auf den Drop acht Karten im Takt, dann
+    baut sich das Cover Panel für Panel auf den Beats auf, Emblem, Banderole „Jetzt verfügbar. Seit 1977.“
+  - `gta_cover_reveal.mp4` (13 s): Einzählen I, II, III, dann der Cover-Aufbau.
+  - `gta_loading.mp4` (15 s): Ladebildschirm-Parodie mit „Gemütlichkeitslevel“ und Tipps.
+- **Song:** Die Reels folgen dem Taktraster von „Flower In A Hurricane“ (126,05 BPM, Drop bei 47,775 s). Die
+  Song-Datei und die Fassungen mit Ton liegen bewusst nicht im Repo (urheberrechtlich geschützt). Zum Posten die
+  stumme Fassung hochladen und den Song in der App anlegen: Trailer ab 0:36,4, Cover-Reveal ab 0:45,9,
+  Ladebildschirm ab 0:00.
+- Es wird kein Rockstar-Logo und kein Originalmotiv verwendet. Die Plakette unten rechts ist ein eigenes Zeichen.
+
+```bash
+cd tools
+python3 gta_build.py                    # Ebenen pro Karte (Figur, Hintergrund, Titel) + Emblem -> tools/cache/
+python3 gta_cover.py                    # Cover + Ortskarten nach final/
+SP=/tmp python3 gta_reel.py trailer preview          # Kontaktbogen
+SP=/tmp python3 gta_reel.py trailer render 0 4       # Teil 0 von 4 (parallel renderbar), danach mit ffmpeg verbinden
+```
+
 ## Ordner
 
 ```
@@ -24,6 +53,7 @@ board/    index.html (Präsentation), overview_4x5.jpg, overview_9x16.jpg
 final/    Key Visuals: *_4x5.jpg (1080×1350, Feed) und *_9x16.jpg (1080×1920, Story/Reel-Cover)
 anim/     *.mp4 (1080×1920, 30 fps, 8 s, stumm) + dreieich_leonida_reel.mp4 (alle sieben, 53 s) + Poster-JPGs
 logos/    Freisteller als PNG mit Alpha (V2 zusätzlich „on black“ für Screen-Blending, V6 entzerrte Frontansicht)
+raw/gta/  Ortskarten (u_* = eure Poster, n_* = neu generiert) und das Emblem auf Chroma-Key-Grün
 raw/      KI-Master: 4:5-Originale und per Adobe Firefly auf 9:16 erweiterte Fassungen, explorations/ = verworfene Varianten,
           photos/ = eure Dreieich-Fotos für 05b, v5b_card_key.png = KI-Lettering mit Chroma-Key-Flächen
 tools/    Pipeline (Python/OpenCV): Clean Plates, Masken, Animationen, Stills, Board
