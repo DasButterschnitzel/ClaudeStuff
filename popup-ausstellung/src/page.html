@@ -77,6 +77,35 @@ h1, h2, h3, p { margin: 0; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
 .tool { background: var(--card); box-shadow: var(--shadow); border-radius: 10px; padding: 9px 12px; }
 .tool[aria-pressed="true"] { background: var(--orange); color: #fff; }
+.lsel { font: inherit; font-size: 12.5px; font-weight: 600; color: var(--ink); background: var(--card); border: 0; border-radius: 10px; box-shadow: var(--shadow); padding: 7px 10px; max-width: 210px; cursor: pointer; }
+.lay { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 9px; }
+.lay.act { border-color: var(--ink); }
+.lay header { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 10px; align-items: start; }
+.lay .lk { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--ink); color: var(--panel); font-family: var(--font-display); font-weight: 700; font-size: 13px; }
+.lay h3 { font-size: 14px; font-weight: 700; }
+.lay header p { font-size: 12.5px; color: var(--ink-2); }
+.lay p { max-width: 62ch; }
+.lay .sm { font-size: 12.5px; color: var(--ink-2); }
+.lay .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.mini { background: var(--chip); border-radius: 9px; padding: 4px; }
+.mini svg { display: block; width: 100%; height: auto; }
+.mini .rm { fill: var(--card); stroke: var(--ink-3); stroke-width: 0.08; }
+.mini .blk { fill: var(--ink-2); }
+.mini .th { fill: var(--ink-3); }
+.mini .sw { stroke: var(--ink-2); stroke-width: 0.12; }
+.mini .ov { stroke: var(--lila); stroke-width: 0.22; stroke-linecap: round; }
+.mini .in { fill: var(--orange); }
+.mini .mn { font: 700 0.95px var(--font-mono); fill: #fff; text-anchor: middle; }
+.mini .mn.dk { fill: var(--ink); }
+.route { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.route .eyebrow { margin-right: 6px; }
+.route b { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-family: var(--font-mono); font-size: 11px; font-weight: 500; }
+.route i { font-style: normal; color: var(--ink-3); }
+ul.pm { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+ul.pm li { padding-left: 20px; position: relative; max-width: 62ch; }
+ul.pm li::before { position: absolute; left: 2px; top: 0; font-weight: 700; font-family: var(--font-mono); }
+ul.pm .plus::before { content: '+'; color: var(--ok); }
+ul.pm .minus::before { content: '−'; color: var(--open); }
 .spacer { flex: 1 1 auto; }
 .float { position: absolute; z-index: 6; background: var(--card); box-shadow: var(--shadow); border-radius: 12px; padding: 10px 12px; font-size: 12.5px; }
 #inspect { top: 56px; right: var(--gr); width: min(250px, calc(100% - 32px)); }
@@ -206,6 +235,7 @@ table.mat td:nth-child(2) { font-family: var(--font-mono); font-size: 11.5px; }
           <button type="button" id="t-dims" aria-pressed="false" title="Maße aus dem Bestandsplan">Maße</button>
           <button type="button" id="t-people" aria-pressed="true" title="Figuren als Größenvergleich">Figuren</button>
         </div>
+        <select id="layout-sel" class="lsel" aria-label="Layout wählen"></select>
       </div>
 
       <div class="float" id="inspect" hidden></div>
@@ -228,12 +258,14 @@ table.mat td:nth-child(2) { font-family: var(--font-mono); font-size: 11.5px; }
     <aside class="panel" aria-label="Planungsakte">
       <div class="tabs" role="tablist" id="tabs">
         <button type="button" role="tab" data-tab="ueber" aria-selected="true">Überblick</button>
-        <button type="button" role="tab" data-tab="inseln" aria-selected="false">Themeninseln</button>
+        <button type="button" role="tab" data-tab="layouts" aria-selected="false">Layouts</button>
+        <button type="button" role="tab" data-tab="inseln" aria-selected="false">Inseln</button>
         <button type="button" role="tab" data-tab="todos" aria-selected="false">To-dos<span class="cnt" id="cnt-open"></span></button>
         <button type="button" role="tab" data-tab="rechner" aria-selected="false">Rechner</button>
       </div>
       <div class="tabbody" id="tabbody">
         <section id="tab-ueber"></section>
+        <section id="tab-layouts" hidden></section>
         <section id="tab-inseln" hidden></section>
         <section id="tab-todos" hidden></section>
         <section id="tab-rechner" hidden></section>

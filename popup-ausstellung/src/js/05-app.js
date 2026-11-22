@@ -3,10 +3,10 @@
    ===================================================================== */
 const LS = 'popup3-plan-v1';
 const DEF_CALC = { litfass: { d: 100, h: 190, gap: 0 }, kreise: 11 };
-const state = { tab: 'ueber', view: 'iso', expo: true, dims: false, people: true, move: false, walk: false, tour: -1, sel: null, filter: 'alle', done: {}, pos: {}, calc: JSON.parse(JSON.stringify(DEF_CALC)), open: new Set() };
+const state = { tab: 'ueber', view: 'iso', expo: true, dims: false, people: true, move: false, walk: false, tour: -1, sel: null, filter: 'alle', done: {}, layout: 'a', moves: {}, calc: JSON.parse(JSON.stringify(DEF_CALC)), open: new Set() };
 const mergeCalc = c => { state.calc = { kreise: clamp(Number(c.kreise) || DEF_CALC.kreise, 6, 16), litfass: { ...DEF_CALC.litfass, ...(c.litfass || {}) } }; };
-try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s) { state.done = s.done || {}; state.pos = s.pos || {}; if (s.calc) mergeCalc(s.calc); } } catch (e) { /* ohne Speicher weiter */ }
-const saveLocal = () => { try { localStorage.setItem(LS, JSON.stringify({ done: state.done, pos: state.pos, calc: state.calc })); } catch (e) { /* egal */ } };
+try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s) { state.done = s.done || {}; state.moves = s.moves || {}; if (LAYOUTS.some(l => l.key === s.layout)) state.layout = s.layout; if (s.calc) mergeCalc(s.calc); } } catch (e) { /* ohne Speicher weiter */ }
+const saveLocal = () => { try { localStorage.setItem(LS, JSON.stringify({ done: state.done, moves: state.moves, layout: state.layout, calc: state.calc })); } catch (e) { /* egal */ } };
 
 function litfassParams() {
   const { d, h, gap } = state.calc.litfass, U = PI * d;
@@ -24,6 +24,10 @@ FIGUREN.forEach(([x, z, r, col]) => { const f = buildFigur(col); f.position.set(
 const items = {}, proxies = [];
 const defOf = id => items[id].def;
 const defPose = d => ({ x: d.pos[0], z: d.pos[1], r: d.rot });
+const curLayout = () => LAYOUTS.find(l => l.key === state.layout) || LAYOUTS[0];
+/* Stellung eines Teils in einem Layout: von Hand verschoben > Layout > Ausgangslage */
+const poseIn = (l, id) => (state.moves[l.key] || {})[id] || l.pos[id] || (DEFS[id].optional ? null : defPose(DEFS[id]));
+const fullPlan = () => ({ moves: state.moves, calc: state.calc });
 function mount(def) {
   const group = new THREE.Group(); let inner = def.make(); group.add(inner);
   const [sx, sz, sy] = def.size, off = def.off || [0, 0];
@@ -39,7 +43,7 @@ function mount(def) {
 }
 function place(id) {
   const { def, group } = items[id]; if (def.fixed) return;
-  const p = state.pos[id] || defPose(def);
+  const p = poseIn(curLayout(), id); group.visible = !!p; if (!p) return;
   group.position.set(p.x, 0, p.z); group.rotation.y = (p.r || 0) * PI / 180;
 }
 [...ST, ...EXTRA].forEach(mount);
@@ -55,13 +59,13 @@ ST.forEach(def => {
   labels.push({ el: b, expo: true, at: v => (def.anchor ? v.set(...def.anchor) : v.copy(items[def.id].group.position).setY(def.size[2] + 0.3)) });
 });
 const addTag = (text, at, isExpo, high) => { const s = document.createElement('span'); s.className = 'tag3d'; s.textContent = text; labelsEl.append(s); labels.push({ el: s, expo: isExpo, at, high }); };
-EXTRA.forEach(def => addTag(def.name, v => items[def.id].group.localToWorld(v.set((def.off || [0, 0])[0], def.size[2] + 0.18, (def.off || [0, 0])[1])), !def.bestand));
+EXTRA.forEach(def => { addTag(def.name, v => items[def.id].group.localToWorld(v.set((def.off || [0, 0])[0], def.size[2] + 0.18, (def.off || [0, 0])[1])), !def.bestand); labels[labels.length - 1].id = def.id; });
 room.tags.forEach(t => addTag(t.t, v => v.set(...t.p), false, true));
 function updateLabels() {
   const w = stageEl.clientWidth, h = stageEl.clientHeight;
   for (const l of labels) {
     l.at(tmp).project(camera);
-    const vis = tmp.z < 1 && tmp.z > -1 && Math.abs(tmp.x) < 1.02 && Math.abs(tmp.y) < 1.02 && (!l.expo || state.expo) && (!l.high || camera.position.y > 4);
+    const vis = tmp.z < 1 && tmp.z > -1 && Math.abs(tmp.x) < 1.02 && Math.abs(tmp.y) < 1.02 && (!l.expo || state.expo) && (!l.high || camera.position.y > 4) && (!l.id || items[l.id].group.visible);
     l.el.hidden = !vis;
     if (vis) l.el.style.transform = `translate(${((tmp.x * 0.5 + 0.5) * w).toFixed(1)}px,${((-tmp.y * 0.5 + 0.5) * h).toFixed(1)}px)`;
   }
@@ -114,7 +118,7 @@ function setRay(e) { const r = canvas.getBoundingClientRect(); ndc.set(((e.clien
 const floorPoint = e => { setRay(e); return ray.ray.intersectPlane(ground, new V3()); };
 function pick(e) {
   setRay(e); scene.updateMatrixWorld();
-  const hit = ray.intersectObjects(proxies.filter(p => state.expo || items[p.userData.id].def.bestand), false)[0];
+  const hit = ray.intersectObjects(proxies.filter(p => items[p.userData.id].group.visible && (state.expo || items[p.userData.id].def.bestand)), false)[0];
   return hit ? hit.object.userData.id : null;
 }
 function setMove(on) {
@@ -126,10 +130,20 @@ function setMove(on) {
   updateInspect(); invalidate();
 }
 const curPose = id => { const g = items[id].group; return { x: +g.position.x.toFixed(2), z: +g.position.z.toFixed(2), r: Math.round(g.rotation.y * 180 / PI) }; };
-function commitPose(id) { state.pos[id] = curPose(id); write('plan', { pos: { [id]: state.pos[id] } }, () => ({ pos: state.pos, calc: state.calc })); updateInspect(); }
+function moveSet(id, p) { (state.moves[state.layout] = state.moves[state.layout] || {})[id] = p; write('plan', { moves: { [state.layout]: { [id]: p } } }, fullPlan); }
+function commitPose(id) { moveSet(id, curPose(id)); updateInspect(); renderLayouts(); }
 function rotateSel(deg) { const id = state.sel; if (!id || defOf(id).fixed) return; const g = items[id].group; g.rotation.y = ((Math.round(g.rotation.y * 180 / PI) + deg + 360) % 360) * PI / 180; commitPose(id); touch(); }
-function resetPose(id) { state.pos[id] = defPose(defOf(id)); place(id); write('plan', { pos: { [id]: state.pos[id] } }, () => ({ pos: state.pos, calc: state.calc })); updateInspect(); touch(); }
-function resetAll() { for (const id of Object.keys(items)) if (!defOf(id).fixed) state.pos[id] = defPose(defOf(id)); applyLayout(); write('plan', { pos: state.pos }, () => ({ pos: state.pos, calc: state.calc })); }
+function resetPose(id) { delete (state.moves[state.layout] || {})[id]; const p = poseIn(curLayout(), id); if (p) moveSet(id, p); place(id); updateInspect(); touch(); renderLayouts(); }
+function resetAll() {
+  const l = curLayout(), m = {}; state.moves[l.key] = {};
+  for (const id of Object.keys(items)) { if (defOf(id).fixed) continue; const p = poseIn(l, id); if (p) m[id] = p; }
+  state.moves[l.key] = m; applyLayout(); write('plan', { moves: { [l.key]: m } }, fullPlan); renderLayouts();
+}
+function setLayout(key) {
+  if (!LAYOUTS.some(l => l.key === key)) return;
+  state.layout = key; saveLocal(); stopTour(); select(null); applyLayout(); renderLayouts(); renderInseln();
+  $('#layout-sel').value = key; if (!state.walk && !state.move) setView(state.view || 'iso');
+}
 function updateInspect() {
   const el = $('#inspect'), id = state.sel;
   if (!state.move) { el.hidden = true; return; }
@@ -165,8 +179,9 @@ function stepWalk(dt) {
 /* ---------- Rundgang ---------- */
 let tourTimer = 0;
 function tourGo(i) {
-  state.tour = (i + ST.length) % ST.length; const d = ST[state.tour];
-  $('#tourbar').hidden = false; $('#tour-n').textContent = `${d.n}/8`; $('#tour-name').textContent = d.name;
+  const list = curLayout().rundgang.map(id => DEFS[id]).filter(Boolean);
+  state.tour = (i + list.length) % list.length; const d = list[state.tour];
+  $('#tourbar').hidden = false; $('#tour-n').textContent = `${state.tour + 1}/${list.length}`; $('#tour-name').textContent = `${d.n} · ${d.name}`;
   select(d.id, { fly: true, tab: true });
   clearTimeout(tourTimer); if (!REDUCED) tourTimer = setTimeout(() => tourGo(state.tour + 1), 7000);
 }
@@ -248,7 +263,7 @@ async function initStore() {
     }, () => { delete store.docs[name]; setSync('local'); });
   };
   sub('todos', d => { state.done = d.done || {}; saveLocal(); renderTodoViews(); });
-  sub('plan', d => { if (drag) return; state.pos = d.pos || {}; if (d.calc) mergeCalc(d.calc); saveLocal(); applyLayout(); syncCalc(true); });
+  sub('plan', d => { if (drag) return; state.moves = d.moves || {}; if (d.calc) mergeCalc(d.calc); saveLocal(); applyLayout(); syncCalc(true); renderLayouts(); });
 }
 function write(name, patch, full) {
   saveLocal(); const ref = store.docs[name]; if (!ref || store.ro) return;
@@ -262,7 +277,7 @@ function write(name, patch, full) {
 function setTab(t) {
   state.tab = t;
   $$('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
-  for (const k of ['ueber', 'inseln', 'todos', 'rechner']) $(`#tab-${k}`).hidden = k !== t;
+  for (const k of ['ueber', 'layouts', 'inseln', 'todos', 'rechner']) $(`#tab-${k}`).hidden = k !== t;
 }
 $('#tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { setTab(b.dataset.tab); if (matchMedia('(min-width: 901px)').matches) $('#tabbody').scrollTop = 0; } });
 
@@ -337,7 +352,7 @@ function renderInseln() {
       <summary><span class="num" style="background:${d.color}">${d.n}</span><span><span class="nm">${esc(d.name)}</span><br><span class="sub">${open.length ? `${open.length} von ${mine.length} offen` : 'alles erledigt'}</span></span>
         <span>${nob ? `<span class="pill open">${nob} ohne Zuständigkeit</span>` : open.length ? '' : '<span class="pill ok">fertig</span>'}</span></summary>
       <div class="body"><p>${esc(d.kurz)}</p>
-        <div class="blk"><span class="eyebrow">Platz im Raum (Vorschlag)</span><p>${esc(d.ort)}</p><button type="button" class="btn ghost" data-show="${d.id}">Im Raum zeigen</button></div>
+        <div class="blk"><span class="eyebrow">Platz im Raum · Layout ${esc(curLayout().name)}</span><p>${esc((curLayout().gruende || {})[d.id] || d.ort)}</p><button type="button" class="btn ghost" data-show="${d.id}">Im Raum zeigen</button></div>
         <ul class="plain">${d.punkte.map(p => `<li>${esc(p)}</li>`).join('')}</ul>
         <div class="grp">${mine.map(t => todoRow(t, 'i')).join('')}</div></div></details>`;
   }).join('');
@@ -352,6 +367,36 @@ function renderTodos() {
     (list.length ? GRUPPEN.map(g => { const rows = list.filter(t => t.st === g.id); return rows.length ? `<div class="grp"><h3><i style="background:${g.color}"></i>${esc(g.name)}</h3>${rows.map(t => todoRow(t, 't')).join('')}</div>` : ''; }).join('') : '<p class="empty">Keine Aufgaben in dieser Auswahl.</p>');
 }
 function renderCounts() { const s = stats(); $('#cnt-open').textContent = s.open; }
+/* ---------- Layouts ---------- */
+function miniPlan(l) {
+  const P = id => poseIn(l, id), col = id => DEFS[id].color, f2 = v => +v.toFixed(2);
+  const item = id => { const p = P(id); if (!p) return ''; const r = RECTS[id], thin = id === 'fahne' || id.startsWith('wand');
+    const shape = id === 's5' ? `<circle r="0.6" fill="${col(id)}"/>` : `<rect x="${r[0]}" y="${r[1]}" width="${r[2] - r[0]}" height="${r[3] - r[1]}" rx="0.1" fill="${thin ? 'var(--ink-2)' : col(id)}"/>` + (thin ? '' : `<rect x="${r[0] + 0.2}" y="${r[3] - 0.16}" width="${r[2] - r[0] - 0.4}" height="0.16" fill="#fff" opacity=".65"/>`);
+    return `<g transform="translate(${f2(p.x)} ${f2(p.z)}) rotate(${f2(-p.r)})">${shape}</g>` + (DEFS[id].n ? `<text x="${f2(p.x)}" y="${f2(p.z + 0.32)}" class="mn">${DEFS[id].n}</text>` : ''); };
+  const ov = [1.9, 5.9, 9.8, 13.4].map(x => `<line x1="${x - 1.4}" y1="10.75" x2="${x + 1.4}" y2="10.75" class="ov"/>`).join('') + [5.3, 8.8].map(z => `<line x1="-0.55" y1="${z - 1.4}" x2="-0.55" y2="${z + 1.4}" class="ov"/>`).join('');
+  return `<svg viewBox="-1 -0.7 21.2 12.6" role="img" aria-label="Grundriss Layout ${esc(l.name)}">
+    <path d="M-0.5 0H19.45V9.35H16.55V10.7H-0.5Z" class="rm"/><path d="M5.55 0H11.4V5.2H8.15V3.1H5.55Z" class="blk"/>
+    <rect x="0.05" y="0.02" width="4.4" height="2.9" rx="0.1" fill="${col('s1')}"/><text x="2.25" y="1.8" class="mn">1</text>
+    <rect x="1" y="3.12" width="3.2" height="0.66" class="th"/><rect x="19.05" y="0.1" width="0.4" height="9.1" fill="${col('s6')}"/><text x="18.55" y="4.95" class="mn dk">6</text>
+    <line x1="4.52" y1="0.1" x2="4.52" y2="2.3" class="sw"/>${ov}${['s2', 's3', 's4', 's5', 's7', 's8', 'wand2', 'wand3', 'fahne'].map(item).join('')}
+    <path d="M17.72 10.1l0.55 1h-1.1z" class="in"/></svg>`;
+}
+function renderLayouts() {
+  const el = $('#tab-layouts'); if (!el) return;
+  el.innerHTML = `<p class="note">Fünf Layouts zum Vergleichen. A ist die Ausgangslage, B bis E haben vier Gestalter-Agenten entworfen; je eine zweite Instanz hat Wege, Engstellen und Vorgaben nachgemessen und korrigiert. Fest sind überall das Wohnzimmer in der Ecke, die Theke und die orange Wand. Welches Layout du ansiehst, gilt nur für dich; verschobene Inseln gelten für alle.</p>` + LAYOUTS.map((l, i) => {
+    const act = l.key === state.layout, moved = Object.keys(state.moves[l.key] || {}).some(id => { const m = state.moves[l.key][id], d = l.pos[id] || (DEFS[id].optional ? null : defPose(DEFS[id])); return !d || Math.abs(m.x - d.x) > 0.01 || Math.abs(m.z - d.z) > 0.01 || Math.abs(m.r - d.r) > 0.5; });
+    return `<article class="lay${act ? ' act' : ''}" id="lay-${l.key}">
+      <header><span class="lk">${String.fromCharCode(65 + i)}</span><div><h3>${esc(l.name)}</h3><p>${esc(l.leitidee)}</p></div></header>
+      <div class="mini">${miniPlan(l)}</div>
+      <p>${esc(l.weg)}</p>
+      <div class="route"><span class="eyebrow">Rundgang</span>${l.rundgang.map(id => `<b style="background:${DEFS[id].color}" title="${esc(DEFS[id].name)}">${DEFS[id].n}</b>`).join('<i>›</i>')}</div>
+      <ul class="pm">${l.staerken.map(t => `<li class="plus">${esc(t)}</li>`).join('')}${l.schwaechen.map(t => `<li class="minus">${esc(t)}</li>`).join('')}</ul>
+      <p class="sm"><b>Theke:</b> ${esc((l.gruende || {}).theke || '–')}</p>
+      <p class="sm"><b>Frei begehbar:</b> ${de(l.freieFlaeche, 0)} m² bei 90 cm Durchgang${l.pruefung ? ` · <b>Prüfung:</b> ${esc(l.pruefung)}` : ''}</p>
+      ${l.warnungen && l.warnungen.length ? `<p class="sm"><b>Bewusst in Kauf genommen:</b> ${l.warnungen.map(esc).join(' · ')}</p>` : ''}
+      <div class="row">${act ? '<span class="pill ok">wird gezeigt</span>' : `<button type="button" class="btn" data-layout="${l.key}">Dieses Layout zeigen</button>`}${moved ? '<span class="pill warn">von Hand verändert</span>' : ''}</div>
+    </article>`; }).join('');
+}
 function renderTodoViews() { renderUeber(); renderInseln(); renderTodos(); renderCounts(); }
 $('#tabbody').addEventListener('change', e => {
   const id = e.target.dataset.todo; if (!id) return;
@@ -362,6 +407,7 @@ $('#tabbody').addEventListener('change', e => {
 $('#tabbody').addEventListener('click', e => {
   const f = e.target.closest('[data-filter]'); if (f) { state.filter = f.dataset.filter; renderTodos(); return; }
   const s = e.target.closest('[data-show]'); if (s) { if (!state.expo) toggleExpo(true); select(s.dataset.show, { fly: true }); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
+  const lb = e.target.closest('[data-layout]'); if (lb) { setLayout(lb.dataset.layout); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
   const g = e.target.closest('[data-go]'); if (g) { setMove(true); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); }
 });
 $('#tabbody').addEventListener('toggle', e => { const d = e.target; if (d.classList?.contains('st')) { const id = d.id.slice(5); if (d.open) state.open.add(id); else state.open.delete(id); } }, true);
@@ -395,7 +441,7 @@ let calcT = 0, saveT = 0;
 function calcChanged(id) {
   syncCalc(false);
   clearTimeout(calcT); calcT = setTimeout(() => items[id].remake(), 90);
-  clearTimeout(saveT); saveT = setTimeout(() => write('plan', { calc: state.calc }, () => ({ pos: state.pos, calc: state.calc })), 500);
+  clearTimeout(saveT); saveT = setTimeout(() => write('plan', { calc: state.calc }, fullPlan), 500);
 }
 function syncCalc(remake) {
   if (!$('#lf-d')) return;
@@ -439,7 +485,9 @@ function resize() {
 }
 new ResizeObserver(resize).observe(stageEl);
 resize();
-renderTodoViews(); renderRechner(); setTab('ueber');
+renderTodoViews(); renderRechner(); renderLayouts(); setTab('ueber');
+$('#layout-sel').innerHTML = LAYOUTS.map((l, i) => `<option value="${l.key}">${String.fromCharCode(65 + i)} · ${esc(l.name)}</option>`).join(''); $('#layout-sel').value = state.layout;
+$('#layout-sel').addEventListener('change', e => setLayout(e.target.value));
 if (controls) { const [p, t] = POSES.iso(); camera.position.copy(p); controls.target.copy(t); controls.update(); }
 let last = performance.now(), tvNext = 0; const tvPos = new V3();
 function frame(now) {
@@ -466,4 +514,4 @@ function frame(now) {
 }
 requestAnimationFrame(frame);
 initStore();
-window.__popup = { state, items, setView, select, setMove, setWalk, startTour, setTab, camera, controls, invalidate };
+window.__popup = { state, items, setView, select, setMove, setWalk, startTour, setTab, setLayout, camera, controls, invalidate };

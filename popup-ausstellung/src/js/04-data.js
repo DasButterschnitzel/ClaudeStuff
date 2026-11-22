@@ -41,6 +41,8 @@ const ST = [
 const EXTRA = [
   { id: 'theke', name: 'Theke (Lage geschätzt)', color: '#5a5266', make: () => buildTheke(state.expo), pos: [2.6, 3.45], rot: 0, size: [3.3, 0.75, 0.92], bestand: true },
   { id: 'wand', name: 'Stellwand', color: '#5a5266', make: buildStellwand, pos: [4.52, 1.2], rot: 90, size: [2.2, 0.5, 2.05] },
+  { id: 'wand2', name: 'Stellwand 2', color: '#5a5266', make: buildStellwand, pos: [0, 0], rot: 0, size: [2.2, 0.5, 2.05], optional: true },
+  { id: 'wand3', name: 'Stellwand 3', color: '#5a5266', make: buildStellwand, pos: [0, 0], rot: 0, size: [2.2, 0.5, 2.05], optional: true },
   { id: 'fahne', name: 'Willkommens-Fahne', color: '#5a5266', make: buildFahne, pos: [15.3, 5.9], rot: 35, size: [1.3, 0.4, 2.4] },
 ];
 const FIGUREN = [[18.55, 2.3, 0.9, '#8f879c'], [13.0, 3.9, -1.2, '#a59bb3'], [6.9, 4.6, 0.3, '#8f879c'], [1.5, 9.1, 2.2, '#a59bb3'], [10.9, 7.3, -2.6, '#8f879c']];

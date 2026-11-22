@@ -48,12 +48,15 @@ function buildRoom() {
 
   /* Wände: Innenflächen einseitig, damit man von außen hineinsieht */
   const { W, H, zG, xG, zWW, lager: L, core: K, door: D, xRet } = R;
-  g.add(wall(0, 0, L.x0, 0, mWall), wall(K.x1, 0, W, 0, mWall), wall(W, 0, W, D.z, mWall));
-  g.add(wall(0, zWW, 0, 0, M('#ffffff', { map: TEX.stein, roughness: 1 })));
-  g.add(wall(xG, zWW, 0, zWW, mWall));
+  /* Außenwände massiv: innen Putz bzw. Naturstein, außen Fassade, oben die dunkle Schnittfläche */
+  const mAussen = M('#dcd8d2', { roughness: 1 }), mStein = M('#ffffff', { map: TEX.stein, roughness: 1 });
+  const mauer = (x0, z0, x1, z1, innen) => { const m = [mAussen, mAussen, mCut, mAussen, mAussen, mAussen]; for (const i in innen) m[i] = innen[i]; g.add(box(x1 - x0, H, z1 - z0, m, (x0 + x1) / 2, 0, (z0 + z1) / 2, false)); };
+  mauer(xG, -0.3, L.x0, 0, { 4: mWall });           // Rückwand links, Innenseite zeigt nach +z
+  mauer(K.x1, -0.3, W + 0.3, 0, { 4: mWall });      // Rückwand rechts
+  mauer(W, 0, W + 0.3, D.z, { 1: mWall });          // Brandmauer, Innenseite zeigt nach −x
+  mauer(xG, 0, 0, zWW, { 0: mStein, 4: mWall });    // Natursteinwand, Innenseite zeigt nach +x
   /* Mauerstreifen am Boden (Grundriss-Lesbarkeit) */
   const strip = (x0, z0, x1, z1) => g.add(box(x1 - x0, 0.02, z1 - z0, mCut, (x0 + x1) / 2, 0, (z0 + z1) / 2, false));
-  strip(-0.3, -0.3, W + 0.3, 0); strip(W, 0, W + 0.3, D.z); strip(-0.3, 0, 0, zWW);
   /* Lager, Treppenhaus, Pfeiler am Eingang: massive Körper mit dunkler Schnittfläche oben */
   const solid = (x0, z0, x1, z1) => { const b = box(x1 - x0, H, z1 - z0, [mWall, mWall, mCut, mWall, mWall, mWall], (x0 + x1) / 2, 0, (z0 + z1) / 2); g.add(b); return b; };
   solid(L.x0, -0.3, L.x1, L.z1); solid(K.x0, -0.3, K.x1, K.z1); solid(D.x1, D.z, W + 0.3, zG);
@@ -102,11 +105,12 @@ function buildRoom() {
   const win = (x0, x1) => {
     const p = wall(x0, 0.012, x1, 0.012, mGB, { h: 1.2, y0: 1.0 }), cx = (x0 + x1) / 2, w = x1 - x0;
     g.add(p, box(w - 0.1, 0.55, 0.1, mWhite, cx, 0.22, 0.08));
+    g.add(wall(x1, -0.306, x0, -0.306, mGB, { h: 1.2, y0: 1.0 }), box(w + 0.1, 1.3, 0.03, mWhite, cx, 0.95, -0.3, false));   // dasselbe Fenster in der Außenansicht
     /* Rahmen und Sprosse, von beiden Seiten zu sehen */
     g.add(box(w + 0.08, 0.05, 0.08, mWhite, cx, 0.96, -0.012), box(w + 0.08, 0.05, 0.08, mWhite, cx, 2.19, -0.012), box(0.05, 1.28, 0.08, mWhite, x0 - 0.015, 0.96, -0.012), box(0.05, 1.28, 0.08, mWhite, x1 + 0.015, 0.96, -0.012), box(0.035, 1.2, 0.06, mWhite, cx, 1.0, -0.012));
   };
   win(1.5, 2.7); win(11.9, 13.05);
-  const doorLeaf = (x0, x1) => g.add(box(x1 - x0, 2.05, 0.05, mDoor, (x0 + x1) / 2, 0, 0.03, false), box(0.03, 0.12, 0.05, mFrame, x1 - 0.12, 1.02, 0.07, false));
+  const doorLeaf = (x0, x1) => g.add(box(x1 - x0, 2.05, 0.05, mDoor, (x0 + x1) / 2, 0, 0.03, false), box(0.03, 0.12, 0.05, mFrame, x1 - 0.12, 1.02, 0.07, false), box(x1 - x0, 2.05, 0.03, mDoor, (x0 + x1) / 2, 0, -0.305, false));
   doorLeaf(4.5, 5.5); doorLeaf(17.1, 17.95);
   g.add(box(0.05, 2.05, 0.9, mDoor, L.x0 - 0.03, 0, 1.05, false));                         // Tür zum Lager
   g.add(box(0.85, 0.28, 0.2, mWhite, 3.6, 2.05, 0.1), box(0.1, 0.6, 0.8, mWhite, W - 0.06, 0.15, 8.75));   // Klimagerät, Heizkörper an der Brandmauer

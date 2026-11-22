@@ -1,7 +1,8 @@
 // Baut aus src/ die eine veröffentlichte Datei dist/index.html (+ preview.html zum lokalen Testen)
 import { readFileSync, writeFileSync, readdirSync, mkdirSync } from 'node:fs';
 const foil = `// ---- Schaufensterfolierung als Textur ----\nconst FOIL_SRC = 'data:image/webp;base64,${readFileSync('src/foil.webp').toString('base64')}';\n`;
-const js = foil + readdirSync('src/js').filter(f => f.endsWith('.js')).sort().map(f => `// ---- ${f} ----\n` + readFileSync('src/js/' + f, 'utf8')).join('\n');
+const layouts = `// ---- Layouts aus dem Gestalter-Workflow ----\nconst LAYOUT_DATA = ${readFileSync('src/layouts.json', 'utf8').trim()};\n`;
+const js = foil + layouts + readdirSync('src/js').filter(f => f.endsWith('.js')).sort().map(f => `// ---- ${f} ----\n` + readFileSync('src/js/' + f, 'utf8')).join('\n');
 const page = readFileSync('src/page.html', 'utf8').replace('<!--APP-->', () => `<script type="module">\n${js}\n</script>`);
 mkdirSync('dist', { recursive: true });
 writeFileSync('dist/index.html', page.replace('window.__popup = {', 'void {'));

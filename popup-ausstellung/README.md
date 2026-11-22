@@ -26,6 +26,8 @@ Die Lage der Theke ist nach einem Foto aus dem Exposé geschätzt.
 - Mero-System als Raumfachwerk im 75-cm-Raster: Kugelknoten mit 18 Anschlussflächen, Stäbe mit konischen Enden, Farbtafeln, Texte, Fotos, Vitrinen mit Exponaten
 - Wohnzimmer um 1977 in der Ecke an der Natursteinwand: tapezierte Rückwand, Cordsofa, Sessel, Fernseher mit laufender Simulation (Nachrichten, Kinderstunde, Testbild)
 - Dauerhafte Schaufensterfolierung (Skyline-Band, POP-UP, klares Oval) als Textur aus der Vorlage, `src/foil.webp`; von oben blendet sie aus, damit man in den Raum sieht
+- **Fünf Layouts** zum Umschalten und Vergleichen (Reiter „Layouts“ mit Mini-Grundriss, Rundgang, Stärken und Schwächen); verschobene Inseln werden je Layout gespeichert
+- Außenwände sind massiv und von außen sichtbar; in den Raum sieht man von oben und durch die Schaufenster
 - Weiche Kontaktschatten (Umgebungsverdeckung) auf Geräten mit Maus; Schatten werden nur neu gerechnet, wenn sich etwas bewegt
 - Akte mit Zusammenfassung, Themeninseln, 34 To-dos mit Filter nach Person, Rechner für die Litfaß-Säule (DIN A2 hochkant) und die runden Forexplatten, Materialliste
 - Haken, Stellungen und Rechnerwerte werden als Artifact über die `db`-Capability für alle gespeichert (`state/todos`, `state/plan`), sonst im Browser
@@ -39,6 +41,10 @@ src/js/02-room.js        Raum aus dem Bestandsplan, Maße
 src/js/03-exhibits.js    Themeninseln, Theke, Fahne, Sitzkissen
 src/js/04-data.js        Inseln, To-dos, Zuständigkeiten aus den Protokollen
 src/js/05-app.js         Kamera, Verschieben, Begehen, Rundgang, Akte, Speicher
+src/js/04b-layouts.js    Layout A und Einbindung der Entwürfe B–E
+src/layouts.json         Entwürfe B–E aus dem Gestalter-Workflow (Entwurf + unabhängige Prüfung)
+src/foil.webp            Schaufensterfolierung als Textur
+tools/layout-check.mjs   Prüfwerkzeug: Überschneidungen, freie Türen, Erreichbarkeit mit 90 cm und 1,20 m
 build.mjs                baut dist/index.html (eine Datei) + dist/preview.html
 ```
 
