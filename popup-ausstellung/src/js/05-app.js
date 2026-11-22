@@ -370,7 +370,7 @@ function renderUeber() {
     <li>Die Schaufensterfolierung stammt aus deiner Vorlage. Wie sie auf die einzelnen Scheiben verteilt ist, habe ich angenommen: je ein Motiv auf den vier Scheiben der langen und den zwei Scheiben der kurzen Front.</li>
     <li>Orange und Lila stammen aus dem Protokoll. Die Farbwelt des Mero-Systems fehlt noch.</li>
     <li>Im Modell gibt es keine Prilblume, solange die Freigabe von Henkel offen ist.</li></ul>
-    <div class="row"><button type="button" class="btn" data-jump="layouts">Neun Layouts vergleichen</button><button type="button" class="btn ghost" data-go="move">Inseln selbst verschieben</button></div></div>`;
+    <div class="row"><button type="button" class="btn" data-jump="layouts">13 Layouts vergleichen</button><button type="button" class="btn ghost" data-go="move">Inseln selbst verschieben</button></div></div>`;
 }
 function renderInseln() {
   $('#tab-inseln').innerHTML = `<p class="note">Eine Insel antippen, um sie im Raum zu zeigen. Stellung und Maße sind ein Vorschlag und lassen sich über „Inseln verschieben“ ändern.</p>` + ST.map(d => {
@@ -410,8 +410,10 @@ function miniPlan(l) {
 }
 function renderLayouts() {
   const el = $('#tab-layouts'); if (!el) return;
-  el.innerHTML = `<p class="note">Neun Layouts zum Vergleichen. A ist die Ausgangslage. B bis E stellen dieselben Inseln neu; vier Gestalter-Agenten haben sie entworfen, je eine zweite Instanz hat nachgemessen und korrigiert. F bis I sind radikale Konzepte mit eigenem Stil. Fest sind überall das Wohnzimmer in der Ecke, die Theke und die orange Wand. Welches Layout du ansiehst, gilt nur für dich; verschobene Inseln gelten für alle.</p>` + LAYOUTS.map((l, i) => {
-    const kopf = l.stil && !(LAYOUTS[i - 1] || {}).stil ? '<h2 class="grp-h">Radikal: anderer Stil, andere Bühne</h2><p class="note">Diese vier Konzepte ändern nicht nur die Stellung, sondern Boden, Wände, Licht, Farben und Material. Beim Umschalten baut sich der Raum um.</p>' : '';
+  el.innerHTML = `<p class="note">Dreizehn Layouts zum Vergleichen. A ist die Ausgangslage. B bis E stellen dieselben Inseln neu; vier Gestalter-Agenten haben sie entworfen, je eine zweite Instanz hat nachgemessen und korrigiert. F bis I sind radikale Konzepte mit eigenem Stil, J bis M ganz neue Ideen zum Jubiläum. Fest sind überall das Wohnzimmer in der Ecke, die Theke und die orange Wand. Welches Layout du ansiehst, gilt nur für dich; verschobene Inseln gelten für alle.</p>` + LAYOUTS.map((l, i) => {
+    const gr = l.gruppe || (l.stil ? 'radikal' : ''), vor = LAYOUTS[i - 1] || {}, grVor = vor.gruppe || (vor.stil ? 'radikal' : '');
+    const kopf = gr === grVor ? '' : gr === 'radikal' ? '<h2 class="grp-h">Radikal: anderer Stil, andere Bühne</h2><p class="note">Diese vier Konzepte ändern nicht nur die Stellung, sondern Boden, Wände, Licht, Farben und Material. Beim Umschalten baut sich der Raum um.</p>'
+      : '<h2 class="grp-h">Ganz neue Ideen zum 50. Geburtstag</h2><p class="note">Vier Ideen, die vom Anlass ausgehen: vom Stadtnamen, von der Dreieichbahn, vom Geburtstag und von den fünf Orten. Jede bringt ein eigenes großes Bild mit; die acht Inseln bleiben als Inhalt erhalten.</p>';
     const stil = l.stil ? `<div class="stil"><div class="sw">${l.stil.farben.map(f => `<i style="background:${f}"></i>`).join('')}</div><p class="sm"><b>Stil:</b> ${esc(l.stil.text)}</p><p class="sm"><b>Material:</b> ${esc(l.stil.material)}</p></div>` : '';
     const act = l.key === state.layout, moved = Object.keys(state.moves[l.key] || {}).some(id => { const m = state.moves[l.key][id], d = l.pos[id] || (DEFS[id].optional ? null : defPose(DEFS[id])); return !d || Math.abs(m.x - d.x) > 0.01 || Math.abs(m.z - d.z) > 0.01 || Math.abs(m.r - d.r) > 0.5; });
     return kopf + `<article class="lay${act ? ' act' : ''}" id="lay-${l.key}">

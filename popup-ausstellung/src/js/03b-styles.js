@@ -107,3 +107,126 @@ const BUEHNE = {
     return g;
   },
 };
+
+/* =====================================================================
+   NEUE IDEEN zum Jubiläum: Drei Eichen, Endstation 1977, Geburtstagstafel, Fünf Häuser
+   ===================================================================== */
+const mitte = ([x0, z0, x1, z1]) => [(x0 + x1) / 2, (z0 + z1) / 2];
+const farbInst = (geo, n, mat) => { const im = new THREE.InstancedMesh(geo, mat, n); im.castShadow = true; im.receiveShadow = true; return im; };
+
+/* J · Drei Eichen: Stamm mit Rundbank, Krone unter der Decke, Blattkarten der Besucher */
+BUEHNE.eichen = l => {
+  const g = new THREE.Group(), rinde = M('#8a6a44', { roughness: 1 }), holz = M('#c8a26a', { roughness: 0.8 }), r = rng(41);
+  const krone = col => new THREE.MeshStandardMaterial({ color: col, roughness: 1, transparent: true, opacity: 0.62, depthWrite: false });
+  const blatt = ['#f5b70a', '#f2690d', '#8fbf7a', '#ffffff', '#d9772b'];
+  Object.entries(l.fest).forEach(([name, rc]) => {
+    const [x, z] = mitte(rc), jahr = name.replace('Eiche ', '');
+    g.add(cyl(0.24, 2.44, rinde, x, 0, z, 12, 0.17), cyl(0.78, 0.4, holz, x, 0, z, 40), cyl(0.8, 0.05, M(C.oliv, { roughness: 1 }), x, 0.4, z, 40));
+    [[1.9, 2.26, '#2f6b3a'], [1.45, 2.34, '#4d8a4f'], [0.95, 2.42, '#8fbf7a']].forEach(([rad, y, col]) => { const k = cyl(rad, 0.04, krone(col), x, y, z, 11); k.castShadow = false; k.userData.noAO = true; k.rotation.y = r() * 3; g.add(k); });
+    for (const s of [1, -1]) { const t = schild(jahr, 0.56, 0.26, '#f7f5ef', '#1f3a26'); t.position.set(x, 1.55, z + s * 0.235); if (s < 0) t.rotation.y = PI; g.add(t); }
+    for (let i = 0; i < 26; i++) { const a = r() * PI * 2, d = 0.45 + r() * 1.25, y = 1.55 + r() * 0.55, k = box(0.1, 0.14, 0.004, new THREE.MeshStandardMaterial({ color: blatt[i % 5], side: THREE.DoubleSide, roughness: 0.9 }), x + Math.cos(a) * d, y, z + Math.sin(a) * d, false); k.rotation.y = r() * 3; g.add(k, box(0.003, 2.26 - y - 0.14, 0.003, mDark, x + Math.cos(a) * d, y + 0.14, z + Math.sin(a) * d, false)); }
+  });
+  return g;
+};
+
+/* K · Endstation 1977: Gleis als Bodenbild, Haltepunkte mit Stempel, Abfahrtstafel, Zugabteil um die Medienstelen */
+BUEHNE.bahn = l => {
+  const g = new THREE.Group(), pfad = [[17.7, 8.3], [17.7, 4.1], [12.6, 4.1], [12.6, 6.9], [7.0, 6.9], [7.0, 5.8], [0.6, 5.8], [0.6, 3.7]];
+  const schiene = new THREE.MeshBasicMaterial({ color: '#4b4f55' }), sw = [];
+  for (let i = 0; i < pfad.length - 1; i++) {
+    const [ax, az] = pfad[i], [bx, bz] = pfad[i + 1], len = Math.hypot(bx - ax, bz - az), horiz = Math.abs(bx - ax) > Math.abs(bz - az);
+    for (const o of [-0.19, 0.19]) { const s = box(horiz ? len + 0.42 : 0.045, 0.006, horiz ? 0.045 : len + 0.42, schiene, (ax + bx) / 2 + (horiz ? 0 : o), 0.014, (az + bz) / 2 + (horiz ? o : 0), false); s.userData.noAO = true; g.add(s); }
+    for (let d = 0.2; d < len; d += 0.42) sw.push([ax + (bx - ax) * d / len, az + (bz - az) * d / len, horiz]);
+  }
+  const im = farbInst(new THREE.BoxGeometry(0.6, 0.004, 0.11), sw.length, new THREE.MeshBasicMaterial({ color: '#8a6f55' })), o = new THREE.Object3D(); im.castShadow = false;
+  sw.forEach(([x, z, horiz], i) => { o.position.set(x, 0.011, z); o.rotation.y = horiz ? PI / 2 : 0; o.updateMatrix(); im.setMatrixAt(i, o.matrix); }); im.userData.noAO = true; g.add(im);
+  const ziel = flatText('Endstation 1977', { size: 0.34, color: '#14253d', weight: 700 }); ziel.position.set(1.9, 0.02, 5.25); g.add(ziel);
+  Object.entries(l.fest).forEach(([name, rc]) => {
+    const [x, z] = mitte(rc);
+    if (name === 'Abfahrtstafel') {
+      const zeilen = l.rundgang.map((id, i) => `${String(i + 1).padStart(2, '0')}   ${DEFS[id].name}`);
+      const t = sign(1.8, 1.25, (c, w, h) => { c.fillStyle = '#14253d'; c.fillRect(0, 0, w, h); c.fillStyle = '#f5c518'; c.textAlign = 'left'; c.textBaseline = 'middle'; c.font = `700 ${h * 0.085}px ${FD}`; c.fillText('Abfahrt', w * 0.06, h * 0.09); c.font = `600 ${h * 0.05}px ${FB}`; c.fillText('50 Jahre Dreieich · Gleis 1', w * 0.42, h * 0.095);
+        zeilen.forEach((zl, i) => { c.fillStyle = i % 2 ? '#1f3a5f' : '#1a3152'; c.fillRect(w * 0.04, h * (0.17 + i * 0.098), w * 0.92, h * 0.085); c.fillStyle = '#ffffff'; c.font = `600 ${h * 0.058}px ${FB}`; c.fillText(zl, w * 0.07, h * (0.215 + i * 0.098)); }); }, { res: 220 });
+      t.position.set(x, 1.45, z + 0.045); g.add(t, box(1.86, 1.31, 0.06, mDark, x, 0.8, z, false), box(0.06, 0.8, 0.06, mDark, x - 0.8, 0, z), box(0.06, 0.8, 0.06, mDark, x + 0.8, 0, z), box(0.5, 0.03, 0.5, mDark, x - 0.8, 0, z), box(0.5, 0.03, 0.5, mDark, x + 0.8, 0, z));
+      return;
+    }
+    const ort = name.replace('Haltepunkt ', '');
+    g.add(cyl(0.15, 0.03, mDark, x, 0, z, 20), cyl(0.022, 2.0, mDark, x, 0.03, z, 8), rbox(0.14, 0.18, 0.12, M('#d6332a', { roughness: 0.4 }), x, 0.95, z + 0.08, 0.02));
+    for (const s of [1, -1]) { const t = sign(0.86, 0.3, (c, w, h) => { c.fillStyle = '#ffffff'; c.fillRect(0, 0, w, h); c.fillStyle = '#1f3a5f'; c.fillRect(0, 0, w, h * 0.16); c.fillRect(0, h * 0.84, w, h * 0.16); wrapText(c, ort, w / 2, h / 2, w * 0.94, h * (ort.length > 10 ? 0.3 : 0.38), FB, 700); }, { res: 300 }); t.position.set(x, 1.85, z + s * 0.014); if (s < 0) t.rotation.y = PI; g.add(t); }
+  });
+  /* Zugabteil: Rückwand, Stirnwände, Dach und Zielanzeige um die drei Bildschirme */
+  const abteil = amPlatz(l, 's7', s => {
+    const rot = M('#d6332a', { roughness: 0.5 }), hell = M('#f6f2e8', { roughness: 0.6 }), dach = M('#8a9099', { roughness: 0.5, metalness: 0.3 });
+    s.add(box(3.4, 0.9, 0.05, rot, 0, 0, -0.34, false), box(3.4, 1.2, 0.05, hell, 0, 0.9, -0.34, false), box(3.4, 0.06, 0.05, M('#f5c518'), 0, 0.84, -0.31, false));
+    for (const x of [-1.68, 1.68]) s.add(box(0.05, 0.9, 2.0, rot, x, 0, 0.65), box(0.05, 1.2, 2.0, hell, x, 0.9, 0.65), box(0.052, 1.5, 0.7, M('#cfd6dc', { roughness: 0.2 }), x, 0.35, 1.0, false));
+    s.add(rbox(3.5, 0.08, 2.1, dach, 0, 2.1, 0.65, 0.03), box(3.4, 0.05, 2.0, M('#5a5248', { roughness: 1 }), 0, 0, 0.65, false));
+    const zielanzeige = sign(1.7, 0.2, (c, w, h) => { c.fillStyle = '#17141b'; c.fillRect(0, 0, w, h); c.fillStyle = '#ff9a2e'; wrapText(c, 'Dreieich 1977 – 2027', w / 2, h / 2, w, h * 0.6, FB, 700); }, { emissive: true, res: 300 }); zielanzeige.position.set(0, 2.03, 1.705); s.add(zielanzeige, box(3.4, 0.24, 0.05, dach, 0, 1.9, 1.68, false));
+  });
+  if (abteil) g.add(abteil);
+  /* Bahnhofsuhr am Eingang */
+  const uhr = new THREE.Group(); uhr.position.set(16.1, 2.05, 5.0);
+  for (const s of [1, -1]) { const zb = sign(0.56, 0.56, (c, w) => { c.fillStyle = '#ffffff'; c.beginPath(); c.arc(w / 2, w / 2, w / 2, 0, 7); c.fill(); c.strokeStyle = '#17141b'; c.lineWidth = w * 0.045; c.beginPath(); c.arc(w / 2, w / 2, w * 0.46, 0, 7); c.stroke(); for (let i = 0; i < 12; i++) { c.save(); c.translate(w / 2, w / 2); c.rotate(i * PI / 6); c.fillStyle = '#17141b'; c.fillRect(-w * 0.015, -w * 0.42, w * 0.03, w * 0.1); c.restore(); } c.lineCap = 'round'; c.lineWidth = w * 0.05; c.beginPath(); c.moveTo(w / 2, w / 2); c.lineTo(w * 0.5, w * 0.22); c.moveTo(w / 2, w / 2); c.lineTo(w * 0.7, w * 0.6); c.stroke(); }, { res: 300 }); zb.material.transparent = true; zb.position.z = s * 0.04; if (s < 0) zb.rotation.y = PI; uhr.add(zb); }
+  const ring = cyl(0.3, 0.075, mDark, 0, 0, 0, 32); ring.rotation.x = PI / 2; ring.position.set(0, 0, 0); uhr.add(ring, box(0.02, 0.2, 0.02, mDark, 0, 0.28, 0, false)); g.add(uhr);
+  return g;
+};
+
+/* L · Geburtstagstafel: 50 Gedecke für 50 Jahre, Tischläufer als Zeitstrahl, Torte mit 50 Kerzen, Wimpel und Ballons */
+BUEHNE.tafel = l => {
+  const g = new THREE.Group(), [x0, , x1] = l.fest.Geburtstagstafel, len = x1 - x0, cx = (x0 + x1) / 2, tz = 9.55, r = rng(50), bunt = [C.orange, C.lila, C.gelb, C.pink, C.tuerkis], col = new THREE.Color(), o = new THREE.Object3D();
+  g.add(box(len, 0.3, 0.74, M('#ffffff', { roughness: 0.9 }), cx, 0.44, tz), box(len - 0.3, 0.7, 0.06, mDark, cx, 0, tz, false));
+  const laeufer = sign(len - 0.1, 0.2, (c, w, h) => { c.fillStyle = C.orange; c.fillRect(0, 0, w, h); c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `700 ${h * 0.5}px ${FD}`; for (let i = 0; i < 50; i++) c.fillText(String(1977 + i), (i + 0.5) * w / 50, h * 0.54); }, { res: 180 });
+  laeufer.rotation.x = -PI / 2; laeufer.position.set(cx, 0.742, tz); g.add(laeufer);
+  /* 23 Gedecke je Längsseite, je 2 an den Enden = 50 */
+  const platz = []; for (let i = 0; i < 23; i++) { const x = x0 + 0.3 + i * (len - 0.6) / 22; platz.push([x, tz - 0.24, 0], [x, tz + 0.24, PI]); }
+  for (const s of [-1, 1]) platz.push([s < 0 ? x0 + 0.16 : x1 - 0.16, tz - 0.13, s * PI / 2], [s < 0 ? x0 + 0.16 : x1 - 0.16, tz + 0.13, s * PI / 2]);
+  const teller = farbInst(new THREE.CylinderGeometry(0.1, 0.085, 0.012, 20), platz.length, M('#ffffff', { roughness: 0.3 })), karte = farbInst(new THREE.BoxGeometry(0.1, 0.075, 0.006), platz.length, M('#ffffff', { roughness: 0.8 })); teller.castShadow = karte.castShadow = false;
+  platz.forEach(([x, z, ry], i) => { o.rotation.set(0, 0, 0); o.position.set(x, 0.748, z); o.updateMatrix(); teller.setMatrixAt(i, o.matrix); o.position.set(x + 0.14, 0.78, z); o.rotation.y = ry + 0.2; o.updateMatrix(); karte.setMatrixAt(i, o.matrix); karte.setColorAt(i, col.set(bunt[i % 5])); });
+  g.add(teller, karte);
+  /* 25 Stühle auf der Raumseite; die Fensterbank mit den Sitzkissen ist die andere Bank */
+  const sitz = farbInst(new THREE.BoxGeometry(0.4, 0.04, 0.4), 25, M('#ffffff', { roughness: 0.7 })), lehne = farbInst(new THREE.BoxGeometry(0.4, 0.42, 0.035), 25, M('#ffffff', { roughness: 0.7 })), bein = farbInst(new THREE.BoxGeometry(0.03, 0.44, 0.03), 100, mDark);
+  for (let i = 0; i < 25; i++) {
+    const x = x0 + 0.26 + i * (len - 0.52) / 24; o.rotation.set(0, 0, 0);
+    o.position.set(x, 0.46, 8.98); o.updateMatrix(); sitz.setMatrixAt(i, o.matrix); sitz.setColorAt(i, col.set(bunt[i % 5]));
+    o.position.set(x, 0.69, 8.79); o.updateMatrix(); lehne.setMatrixAt(i, o.matrix); lehne.setColorAt(i, col.set(bunt[i % 5]));
+    [[-0.17, -0.17], [0.17, -0.17], [-0.17, 0.17], [0.17, 0.17]].forEach(([dx, dz], k) => { o.position.set(x + dx, 0.22, 8.98 + dz); o.updateMatrix(); bein.setMatrixAt(i * 4 + k, o.matrix); });
+  }
+  g.add(sitz, lehne, bein);
+  /* Torte: das Jahr 2027 */
+  const [kx, kz] = mitte(l.fest.Torte), creme = M('#fff3e0', { roughness: 0.6 }), rosa = M(C.pink, { roughness: 0.5 });
+  g.add(cyl(0.8, 0.72, M('#ffffff', { roughness: 0.9 }), kx, 0, kz, 40), cyl(0.56, 0.28, creme, kx, 0.72, kz, 40), cyl(0.41, 0.24, rosa, kx, 1.0, kz, 40), cyl(0.27, 0.2, creme, kx, 1.24, kz, 40));
+  for (const [rad, y] of [[0.56, 1.0], [0.41, 1.24], [0.27, 1.44]]) { const t = new THREE.Mesh(new THREE.TorusGeometry(rad - 0.02, 0.028, 8, 40), M(C.orange, { roughness: 0.4 })); t.rotation.x = PI / 2; t.position.set(kx, y, kz); g.add(t); }
+  const kerzen = [[0.49, 1.0, 24], [0.34, 1.24, 16], [0.18, 1.44, 10]], kz50 = farbInst(new THREE.CylinderGeometry(0.008, 0.008, 0.11, 6), 50, M('#ffffff')), fl = new THREE.InstancedMesh(new THREE.SphereGeometry(0.014, 6, 5), new THREE.MeshBasicMaterial({ color: '#ffd23c' }), 50); let n = 0; kz50.castShadow = false;
+  for (const [rad, y, cnt] of kerzen) for (let i = 0; i < cnt; i++) { const a = i / cnt * PI * 2; o.rotation.set(0, 0, 0); o.position.set(kx + Math.cos(a) * rad, y + 0.055, kz + Math.sin(a) * rad); o.updateMatrix(); kz50.setMatrixAt(n, o.matrix); kz50.setColorAt(n, col.set(bunt[n % 5])); o.position.y = y + 0.125; o.updateMatrix(); fl.setMatrixAt(n++, o.matrix); }
+  g.add(kz50, fl); const topper = schild('50', 0.3, 0.22, C.tief, C.gelb); topper.position.set(kx, 1.68, kz); const topper2 = topper.clone(); topper2.rotation.y = PI; topper2.position.z -= 0.004; g.add(topper, topper2, box(0.012, 0.14, 0.012, mDark, kx, 1.44, kz, false));
+  /* Wimpelketten, Ballons, Konfetti */
+  const tri = new THREE.Shape(); tri.moveTo(-0.09, 0); tri.lineTo(0.09, 0); tri.lineTo(0, -0.2); tri.closePath();
+  const ketten = [[[0.4, 5.6], [11.2, 5.5]], [[11.6, 0.4], [19.2, 5.4]], [[11.6, 5.6], [19.2, 0.6]], [[1.0, 10.0], [13.4, 8.4]]], wim = new THREE.InstancedMesh(new THREE.ShapeGeometry(tri), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), ketten.length * 26); n = 0;
+  for (const [[ax, az], [bx, bz]] of ketten) for (let i = 0; i < 26; i++) { const t = (i + 0.5) / 26; o.position.set(ax + (bx - ax) * t, 2.42 - Math.sin(t * PI) * 0.28, az + (bz - az) * t); o.rotation.set(0, -Math.atan2(bz - az, bx - ax), 0); o.updateMatrix(); wim.setMatrixAt(n, o.matrix); wim.setColorAt(n++, col.set(bunt[i % 5])); }
+  wim.userData.noAO = true; g.add(wim);
+  for (const [bx, bz] of [[15.9, 5.3], [13.6, 6.0], [1.2, 8.2], [8.8, 7.6], [12.4, 0.8]]) for (let i = 0; i < 3; i++) { const x = bx + (r() - 0.5) * 0.5, z = bz + (r() - 0.5) * 0.5, y = 1.95 + r() * 0.3, b = ball(0.17, M(bunt[Math.floor(r() * 5)], { roughness: 0.25 }), x, y, z); b.scale.y = 1.18; g.add(b, box(0.004, y - 0.2, 0.004, mDark, x, 0, z, false)); }
+  const konf = new THREE.InstancedMesh(new THREE.CircleGeometry(0.03, 8), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }), 220);
+  for (let i = 0; i < 220; i++) { o.position.set(0.5 + r() * 18.5, 0.013 + (i % 3) * 0.001, 5.4 + r() * 3.2); o.rotation.set(-PI / 2, 0, 0); o.updateMatrix(); konf.setMatrixAt(i, o.matrix); konf.setColorAt(i, col.set(bunt[i % 5])); }
+  konf.userData.noAO = true; g.add(konf);
+  return g;
+};
+
+/* M · Fünf Häuser: offene Hausgerüste in fünf Farben, je eines pro Stadtteil, Dorfplatz um die Litfaß-Säule */
+BUEHNE.haeuser = l => {
+  const g = new THREE.Group();
+  const HAUS = [['s1', 'Sprendlingen', '#f2690d', [-2.2, -1.45, 2.2, 1.45], false], ['s3', 'Dreieichenhain', '#7b3fa0', null, false], ['s4', 'Buchschlag', '#7fb069', null, true], ['s7', 'Götzenhain', '#f5b70a', [-1.5, -0.3, 1.5, 1.6], false], ['s8', 'Offenthal', '#1d9aa6', null, true]];
+  for (const [id, ort, col, eigen, rueck] of HAUS) {
+    const h = amPlatz(l, id, (s, rcStd) => {
+      const rc = eigen || rcStd, m = M(col, { roughness: 0.6 }), x0 = rc[0] - 0.1, x1 = rc[2] + 0.1, z0 = rc[1] - 0.06, z1 = rc[3] + 0.1, w = x1 - x0, d = z1 - z0, e = 1.98, first = 2.44, zc = (z0 + z1) / 2, B = 0.07;
+      for (const x of [x0, x1]) for (const z of [z0, z1]) s.add(box(B, e, B, m, x, 0, z));
+      s.add(box(w + B, B, B, m, (x0 + x1) / 2, e, z0), box(w + B, B, B, m, (x0 + x1) / 2, e, z1), box(w + 0.3, B, B, m, (x0 + x1) / 2, first, zc));
+      for (const x of [x0, x1]) { s.add(box(B, B, d, m, x, e, zc)); for (const sgn of [-1, 1]) { const len = Math.hypot(d / 2, first - e), b = box(B, B, len, m, x, 0, 0); b.position.set(x, (e + first) / 2 + B / 2, zc + sgn * d / 4); b.rotation.x = sgn * Math.atan2(first - e, d / 2); s.add(b); } }
+      const name = schild(ort, Math.min(w - 0.3, 1.9), 0.3, col, '#ffffff', FB); name.position.set((x0 + x1) / 2, e - 0.2, z1 + B / 2 + 0.004); s.add(name);
+      if (rueck) { s.add(box(w, e, 0.03, m, (x0 + x1) / 2, 0, z0 - 0.02)); const hinten = schild(ort, Math.min(w - 0.3, 1.9), 0.42, col, '#ffffff', FB); hinten.rotation.y = PI; hinten.position.set((x0 + x1) / 2, 1.3, z0 - 0.04); s.add(hinten); }
+    });
+    if (h) g.add(h);
+  }
+  const platz = amPlatz(l, 's5', s => { [['#d9cdb4', 2.3], ['#efe6d2', 2.05], ['#d9cdb4', 0.95]].forEach(([c, rad], i) => { const k = cyl(rad, 0.006, M(c, { roughness: 1 }), 0, 0.004 + i * 0.003, 0, 64); k.castShadow = false; s.add(k); }); });
+  if (platz) g.add(platz);
+  const t = flatText('Dorfplatz', { size: 0.3, color: '#6b5d45', weight: 700 }); const p5 = poseIn(l, 's5'); if (p5) { t.position.set(p5.x, 0.02, p5.z + 1.55); g.add(t); }
+  return g;
+};

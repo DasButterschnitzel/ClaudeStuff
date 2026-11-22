@@ -1,0 +1,523 @@
+[
+ {
+  "key": "eichen",
+  "gruppe": "idee",
+  "name": "Drei Eichen",
+  "leitidee": "Der Stadtname wörtlich genommen: Drei große Eichen aus Pappe und Holz stehen im Raum – eine für 1977, eine für heute, eine für 2077. In ihren Kronen hängen die Blätter der Besucher: Erinnerungen, Lieblingsorte, Wünsche.",
+  "weg": "Vom Eingang geht es an der orangen Wand nach hinten zur Eiche 2077 mit Zukunft und Slide-Show. Um das Treppenhaus herum steht die Eiche von heute bei Statistik und Litfaß-Säule, ganz links die Eiche 1977 zwischen Selfie-Koje, Wohnzimmer und Mero-System. Unter jeder Eiche läuft eine Rundbank.",
+  "rundgang": [
+   "s6",
+   "s8",
+   "s7",
+   "s4",
+   "s5",
+   "s3",
+   "s1",
+   "s2"
+  ],
+  "pos": {
+   "s2": {
+    "x": 2.2,
+    "z": 8.95,
+    "r": 180
+   },
+   "s3": {
+    "x": 6.88,
+    "z": 4.15,
+    "r": 0
+   },
+   "s4": {
+    "x": 9.78,
+    "z": 5.72,
+    "r": 0
+   },
+   "s5": {
+    "x": 9.6,
+    "z": 8.8,
+    "r": 0
+   },
+   "s7": {
+    "x": 11.73,
+    "z": 2.4,
+    "r": 90
+   },
+   "s8": {
+    "x": 15.4,
+    "z": 0.65,
+    "r": 0
+   },
+   "fahne": {
+    "x": 16.0,
+    "z": 6.6,
+    "r": 35
+   }
+  },
+  "fest": {
+   "Eiche 1977": [
+    5.4,
+    6.6,
+    7.0,
+    8.2
+   ],
+   "Eiche heute": [
+    11.8,
+    6.8,
+    13.4,
+    8.4
+   ],
+   "Eiche 2077": [
+    14.8,
+    2.8,
+    16.4,
+    4.4
+   ]
+  },
+  "gruende": {
+   "s2": "Unter der Eiche 1977 am Schaufenster: die Stadtgeschichte in Objekten.",
+   "s3": "In der Nische neben der Eiche 1977, mit Blick ins Wohnzimmer.",
+   "s4": "An der Stirnwand des Treppenhauses, bei der Eiche von heute.",
+   "s5": "Am Fenster bei der Eiche von heute, im Oval von der Straße zu sehen.",
+   "s7": "An der Treppenhauswand, quer zur Fensterfront.",
+   "s8": "Bei der Eiche 2077: Hier schreibt man das Blatt, das in die Krone gehängt wird.",
+   "fahne": "Hängt im Eingang vor der Eiche von heute.",
+   "theke": "Blätterausgabe: Karten in Blattform, Stifte, Schnur."
+  },
+  "staerken": [
+   "Ein Bild, das jeder sofort mit dem Namen Dreieich verbindet und das über die Laufzeit wächst.",
+   "Drei Zeiten, drei Orte: Die Gliederung erklärt sich ohne Text.",
+   "Die Rundbänke geben Sitzplätze mitten in der Ausstellung; die Bäume lassen sich aus Wabenpappe oder Sperrholz bauen."
+  ],
+  "schwaechen": [
+   "Die Stämme mit Bank nehmen Platz: frei begehbar bleiben rund 73 m².",
+   "Kronen an der Decke brauchen Deckenhaken oder standfeste Stämme – beides ist noch nicht geklärt.",
+   "Ob der Name wirklich von drei Eichen kommt, ist eine Deutung; das sollte ein Text einordnen."
+  ],
+  "freieFlaeche": 73.0,
+  "warnungen": [],
+  "pruefung": "Von mir entworfen und mit dem Prüfwerkzeug nachgemessen (0 Fehler). Keine zweite, unabhängige Prüfung.",
+  "stil": {
+   "buehne": "eichen",
+   "palette": {
+    "lila": "#2f6b3a",
+    "tuerkis": "#8fbf7a",
+    "pink": "#d9772b",
+    "oliv": "#5b7d2e",
+    "tief": "#2f5d3a",
+    "tinte": "#1f3a26"
+   },
+   "boden": {
+    "color": "#78936a",
+    "tex": null
+   },
+   "wand": "#f7f5ef",
+   "decke": "#f4f6ee",
+   "licht": {
+    "hemi": [
+     "#fbfff4",
+     "#b9c9a8",
+     0.7
+    ],
+    "sonne": [
+     "#fff3d6",
+     2.4
+    ],
+    "exp": 1.06
+   },
+   "farben": [
+    "#2f6b3a",
+    "#8fbf7a",
+    "#78936a",
+    "#8a6a44",
+    "#f2690d",
+    "#f5b70a"
+   ],
+   "text": "Waldgrün und Holz, dazu Orange und Gelb wie Herbstlaub. Moosgrüner Teppich statt Vinyl.",
+   "material": "Drei Baumstämme mit Rundbank (Wabenpappe oder Sperrholz), Kronenscheiben, Blattkarten mit Schnur, grüner Teppichboden."
+  }
+ },
+ {
+  "key": "bahn",
+  "gruppe": "idee",
+  "name": "Endstation 1977",
+  "leitidee": "Die Dreieichbahn verbindet die Stadtteile – hier verbindet sie die Jahre. Gleise auf dem Boden führen von heute zurück bis 1977 ins Wohnzimmer. Jede Insel ist ein Haltepunkt, an jedem gibt es einen Stempel in die Fahrkarte.",
+  "weg": "An der Tür hängt die Abfahrtstafel mit allen Halten. Das Gleis führt an der orangen Wand nach hinten, biegt zum Zugabteil ab, in dem die Slide-Show als Blick aus dem Fenster läuft, und fährt um das Treppenhaus durch den ganzen Raum bis zur Endstation 1977, dem Wohnzimmer.",
+  "rundgang": [
+   "s6",
+   "s8",
+   "s7",
+   "s4",
+   "s5",
+   "s3",
+   "s2",
+   "s1"
+  ],
+  "pos": {
+   "s2": {
+    "x": 2.2,
+    "z": 8.95,
+    "r": 180
+   },
+   "s3": {
+    "x": 6.88,
+    "z": 4.15,
+    "r": 0
+   },
+   "s4": {
+    "x": 9.78,
+    "z": 5.72,
+    "r": 0
+   },
+   "s5": {
+    "x": 13.0,
+    "z": 7.9,
+    "r": 0
+   },
+   "s7": {
+    "x": 11.73,
+    "z": 2.4,
+    "r": 90
+   },
+   "s8": {
+    "x": 15.4,
+    "z": 0.65,
+    "r": 0
+   },
+   "fahne": {
+    "x": 13.9,
+    "z": 6.3,
+    "r": 30
+   }
+  },
+  "fest": {
+   "Abfahrtstafel": [
+    14.9,
+    6.5,
+    16.7,
+    6.7
+   ],
+   "Haltepunkt Offenthal": [
+    16.95,
+    6.0,
+    17.15,
+    6.2
+   ],
+   "Haltepunkt Götzenhain": [
+    14.9,
+    3.5,
+    15.1,
+    3.7
+   ],
+   "Haltepunkt Dreieichenhain": [
+    11.9,
+    5.5,
+    12.1,
+    5.7
+   ],
+   "Haltepunkt Sprendlingen": [
+    7.5,
+    7.4,
+    7.7,
+    7.6
+   ],
+   "Haltepunkt Buchschlag": [
+    3.4,
+    6.3,
+    3.6,
+    6.5
+   ]
+  },
+  "gruende": {
+   "s2": "Letzter Halt vor der Endstation: das Gepäck der Stadtgeschichte am Schaufenster.",
+   "s3": "Haltepunkt mit Fotoautomat: die Koje in der Nische.",
+   "s4": "An der Stirnwand des Treppenhauses, direkt am Gleis.",
+   "s5": "Bahnhofssäule mit Plakaten neben dem Gleis.",
+   "s7": "Wird zum Zugabteil: Man sitzt auf der Bank und schaut durch drei Fenster auf Dreieich von 1970 bis heute.",
+   "s8": "An der Rückwand: der Fahrplan in die Zukunft.",
+   "fahne": "Hängt neben der Abfahrtstafel.",
+   "theke": "Fahrkartenschalter: Hier gibt es die Stempelkarte, am Ende einen Preis für die volle Karte."
+  },
+  "staerken": [
+   "Die Dreieichbahn kennt in Dreieich jeder; das Bild holt alle Stadtteile in einen Raum.",
+   "Gleis und Abfahrtstafel führen von selbst durch die Ausstellung, die Stempelkarte zieht Kinder bis zum Ende.",
+   "Das Zugabteil macht aus den Medienstelen ein Erlebnis; Gleise sind nur Bodenfolie."
+  ],
+  "schwaechen": [
+   "Das Abteil ist der einzige echte Einbau und braucht einen Schreiner oder den Bauhof.",
+   "Man fährt rückwärts durch die Zeit – wer lieber 1977 beginnt, muss das Gleis umdrehen.",
+   "Bahn-Gestaltung darf keinem echten Verkehrsunternehmen zu ähnlich sehen."
+  ],
+  "freieFlaeche": 83.7,
+  "warnungen": [],
+  "pruefung": "Von mir entworfen und mit dem Prüfwerkzeug nachgemessen (0 Fehler). Keine zweite, unabhängige Prüfung.",
+  "stil": {
+   "buehne": "bahn",
+   "palette": {
+    "lila": "#1f3a5f",
+    "pink": "#d6332a",
+    "tuerkis": "#2c7da0",
+    "oliv": "#4d6b53",
+    "tief": "#1f3a5f",
+    "tinte": "#14253d"
+   },
+   "boden": {
+    "color": "#dedbd5",
+    "tex": "beton"
+   },
+   "wand": "#f6f2e8",
+   "decke": "#f4f2ec",
+   "licht": {
+    "hemi": [
+     "#ffffff",
+     "#cfc9bd",
+     0.66
+    ],
+    "sonne": [
+     "#fff2dc",
+     2.4
+    ],
+    "exp": 1.06
+   },
+   "farben": [
+    "#d6332a",
+    "#1f3a5f",
+    "#f5c518",
+    "#f2690d",
+    "#f6f2e8"
+   ],
+   "text": "Signalrot, Dunkelblau und Emaille-Weiß wie auf alten Bahnhofsschildern; die Gründungswand bleibt orange.",
+   "material": "Gleise als Bodenfolie, fünf Haltepunktschilder mit Stempel, Abfahrtstafel, ein Zugabteil aus Holz um die Medienstelen, gedruckte Fahrkarten."
+  }
+ },
+ {
+  "key": "tafel",
+  "gruppe": "idee",
+  "name": "Geburtstagstafel",
+  "leitidee": "Dreieich wird 50 und lädt an eine lange Tafel: 50 Gedecke, eines für jedes Jahr von 1977 bis 2026, an jedem Platz ein Foto, eine Schlagzeile, ein Gegenstand. Das Jahr 2027 ist die Torte mit 50 Kerzen.",
+  "weg": "Hinter der Tür steht die Torte. Die Tafel läuft knapp zwölf Meter an der Fensterfront entlang, von der Straße sieht man sie durch die Ovale. Man geht die Jahre ab, setzt sich dazu, und findet die Inseln im Rücken der Tafel: rechts hinten Gründung, Zukunft und Slide-Show, in der Mitte Statistik, links Selfie, Wohnzimmer und Mero-System.",
+  "rundgang": [
+   "s6",
+   "s8",
+   "s7",
+   "s5",
+   "s4",
+   "s3",
+   "s1",
+   "s2"
+  ],
+  "pos": {
+   "s2": {
+    "x": 1.38,
+    "z": 6.75,
+    "r": 90
+   },
+   "s3": {
+    "x": 6.88,
+    "z": 4.15,
+    "r": 0
+   },
+   "s4": {
+    "x": 9.78,
+    "z": 5.72,
+    "r": 0
+   },
+   "s5": {
+    "x": 15.3,
+    "z": 3.4,
+    "r": 0
+   },
+   "s7": {
+    "x": 11.73,
+    "z": 2.4,
+    "r": 90
+   },
+   "s8": {
+    "x": 15.4,
+    "z": 0.65,
+    "r": 0
+   },
+   "fahne": {
+    "x": 16.9,
+    "z": 5.9,
+    "r": 45
+   }
+  },
+  "fest": {
+   "Geburtstagstafel": [
+    1.5,
+    8.7,
+    13.2,
+    9.9
+   ],
+   "Torte": [
+    14.0,
+    6.3,
+    15.8,
+    8.1
+   ]
+  },
+  "gruende": {
+   "s2": "Am Kopf der Tafel links, mit den Vitrinen zum Raum.",
+   "s3": "In der Nische: das Gruppenfoto zur Feier, in Kostümen von 1977.",
+   "s4": "An der Stirnwand des Treppenhauses, gegenüber der Tafelmitte.",
+   "s5": "Im hinteren Raumteil als Einladungssäule mit den Plakaten.",
+   "s7": "An der Treppenhauswand, quer zur Fensterfront.",
+   "s8": "An der Rückwand: Hier schreibt man der Stadt eine Glückwunschkarte.",
+   "fahne": "Hängt im Eingang neben der Torte.",
+   "theke": "Kuchenbuffet und Getränke bei Veranstaltungen, sonst Gabentisch."
+  },
+  "staerken": [
+   "Jeder versteht eine Geburtstagsfeier, und die Tafel ist zugleich Zeitstrahl mit 50 festen Plätzen für 50 Jahre.",
+   "Die Tafel ist der Ort für das Begleitprogramm: Kaffeetafel, Erzählcafé, Pubquiz finden mitten in der Ausstellung statt.",
+   "Vereine, Schulen und Stadtteile können je ein Gedeck gestalten – so entsteht die Ausstellung mit der Stadt."
+  ],
+  "schwaechen": [
+   "Die Tafel belegt die ganze Fensterfront; frei begehbar bleiben rund 64 m².",
+   "50 Gedecke zu füllen ist viel Recherche und braucht Mitmacher; lose Gegenstände müssen gesichert sein.",
+   "Wimpelketten und Ballons brauchen Deckenhaken, die noch nicht geklärt sind."
+  ],
+  "freieFlaeche": 63.9,
+  "warnungen": [],
+  "pruefung": "Von mir entworfen und mit dem Prüfwerkzeug nachgemessen (0 Fehler). Keine zweite, unabhängige Prüfung.",
+  "stil": {
+   "buehne": "tafel",
+   "palette": {},
+   "boden": {
+    "color": "#efe9de",
+    "tex": "holz"
+   },
+   "wand": "#fbf8f2",
+   "decke": "#f7f6f3",
+   "licht": {
+    "hemi": [
+     "#ffffff",
+     "#d6ccc0",
+     0.68
+    ],
+    "sonne": [
+     "#fff0d8",
+     2.5
+    ],
+    "exp": 1.08
+   },
+   "farben": [
+    "#f2690d",
+    "#7b3fa0",
+    "#f5b70a",
+    "#d9457e",
+    "#1d9aa6",
+    "#ffffff"
+   ],
+   "text": "Weißes Tischtuch, bunte Wimpel, Ballons und Konfetti in den Farben der Ausstellung.",
+   "material": "Biertischgarnituren oder Tapeziertische für 11,7 m, Tischtuch, Tischläufer mit Jahreszahlen, 50 Gedecke, 25 Stühle, eine Torten-Attrappe, Wimpelketten, Ballons."
+  }
+ },
+ {
+  "key": "haeuser",
+  "gruppe": "idee",
+  "name": "Fünf Häuser",
+  "leitidee": "1977 zogen fünf Orte unter ein Dach. Fünf offene Hausgerüste in fünf Farben stehen für Buchschlag, Sprendlingen, Dreieichenhain, Götzenhain und Offenthal; jedes beherbergt eine Insel. Dazwischen liegt der Dorfplatz mit der Litfaß-Säule.",
+  "weg": "Rechts die Wand der Gebietsreform, links das Mero-System als Rohbau. Hinten steht das erste Haus mit der Slide-Show. Um das Treppenhaus herum öffnet sich links der Dorfplatz: Litfaß-Säule in der Mitte, ringsum die Häuser von Selfie, Statistik und Zukunft und ganz hinten das Wohnzimmer als fünftes Haus.",
+  "rundgang": [
+   "s6",
+   "s7",
+   "s2",
+   "s5",
+   "s3",
+   "s4",
+   "s8",
+   "s1"
+  ],
+  "pos": {
+   "s4": {
+    "x": 1.9,
+    "z": 6.45,
+    "r": 90
+   },
+   "s8": {
+    "x": 4.6,
+    "z": 9.2,
+    "r": 180
+   },
+   "s3": {
+    "x": 6.88,
+    "z": 4.15,
+    "r": 0
+   },
+   "s5": {
+    "x": 5.2,
+    "z": 6.3,
+    "r": 0
+   },
+   "s7": {
+    "x": 11.73,
+    "z": 2.4,
+    "r": 90
+   },
+   "s2": {
+    "x": 13.4,
+    "z": 7.6,
+    "r": 180
+   },
+   "fahne": {
+    "x": 16.6,
+    "z": 6.3,
+    "r": 40
+   }
+  },
+  "gruende": {
+   "s2": "Der Rohbau: steht im rechten Raumteil mit dem Rücken zum Schaufenster und zeigt 1977/2027 zur Straße.",
+   "s3": "Haus in der Nische am Dorfplatz.",
+   "s4": "Haus an der kurzen Fensterfront, blickt über den Dorfplatz; die geschlossene Rückwand zeigt Farbe und Ortsnamen zur Straße.",
+   "s5": "Steht als Säule mitten auf dem Dorfplatz.",
+   "s7": "Haus an der Treppenhauswand, das Kino des Ortes.",
+   "s8": "Haus am Schaufenster, blickt über den Dorfplatz; die Rückwand ist von der Straße zu sehen.",
+   "fahne": "Hängt im Eingang zwischen Rohbau und Gebietsreform-Wand.",
+   "theke": "Rathaus-Tresen: Info und Anmeldung zum Begleitprogramm."
+  },
+  "staerken": [
+   "Erklärt die Gebietsreform räumlich: fünf Häuser, eine Stadt.",
+   "Die geschlossenen Rückwände lösen das Problem der rohen Rückseiten – Statistik und Zukunft können frei stehen.",
+   "Hausgerüste aus Dachlatten sind günstig, schnell gebaut und zerlegbar; jeder Stadtteil könnte sein Haus selbst gestalten."
+  ],
+  "schwaechen": [
+   "Welche Insel in welchem Stadtteil-Haus sitzt, ist willkürlich und kann Diskussionen auslösen.",
+   "Die Firste liegen bei 2,45 m knapp unter der Decke; Strahler und Rauchmelder müssen frei bleiben.",
+   "Die Gerüste müssen gegen Kippen gesichert sein."
+  ],
+  "freieFlaeche": 84.4,
+  "warnungen": [],
+  "pruefung": "Von mir entworfen und mit dem Prüfwerkzeug nachgemessen (0 Fehler). Keine zweite, unabhängige Prüfung.",
+  "stil": {
+   "buehne": "haeuser",
+   "palette": {},
+   "boden": {
+    "color": "#ece5d6",
+    "tex": "beton"
+   },
+   "wand": "#fbfaf6",
+   "decke": "#f7f6f3",
+   "licht": {
+    "hemi": [
+     "#ffffff",
+     "#d3ccbe",
+     0.68
+    ],
+    "sonne": [
+     "#fff2dc",
+     2.4
+    ],
+    "exp": 1.07
+   },
+   "farben": [
+    "#7fb069",
+    "#f2690d",
+    "#7b3fa0",
+    "#f5b70a",
+    "#1d9aa6",
+    "#ece5d6"
+   ],
+   "text": "Jedes Haus in einer eigenen kräftigen Farbe, Boden wie ein heller Platzbelag, Wände weiß.",
+   "material": "Fünf Hausgerüste aus Dachlatten oder Kantholz, farbig gestrichen, Giebelschilder mit den Ortsnamen, zwei Rückwände aus Platten."
+  }
+ }
+]

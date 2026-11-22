@@ -15,4 +15,4 @@ const LAYOUT_A = {
   schwaechen: ['Kein eindeutiger Rundweg, die Reihenfolge ergibt sich zufällig.', 'Die Zukunftsinsel steht im Betrachtungsraum der Medienstelen.', 'Wohnzimmer und Hoftür sind nur über Durchgänge unter 1,20 m erreichbar.'],
   freieFlaeche: 86.1, warnungen: [], pruefung: '',
 };
-const LAYOUTS = [LAYOUT_A, ...LAYOUT_DATA, ...RADIKAL_DATA];   // F–I: radikale Konzepte mit eigenem Stil
+const LAYOUTS = [LAYOUT_A, ...LAYOUT_DATA, ...RADIKAL_DATA, ...IDEEN_DATA];   // J–M: ganz neue Ideen zum Jubiläum   // F–I: radikale Konzepte mit eigenem Stil

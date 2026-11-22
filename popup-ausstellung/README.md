@@ -26,7 +26,7 @@ Die Lage der Theke ist nach einem Foto aus dem Exposé geschätzt.
 - Mero-System als Raumfachwerk im 75-cm-Raster: Kugelknoten mit 18 Anschlussflächen, Stäbe mit konischen Enden, Farbtafeln, Texte, Fotos, Vitrinen mit Exponaten
 - Wohnzimmer um 1977 in der Ecke an der Natursteinwand: tapezierte Rückwand, Cordsofa, Sessel, Fernseher mit laufender Simulation (Nachrichten, Kinderstunde, Testbild)
 - Dauerhafte Schaufensterfolierung (Skyline-Band, POP-UP, klares Oval) als Textur aus der Vorlage, `src/foil.webp`; von oben blendet sie aus, damit man in den Raum sieht
-- **Neun Layouts** zum Umschalten und Vergleichen: A Ausgangslage, B–E aus dem Gestalter-Workflow, F–I radikale Konzepte mit eigenem Stil (Begehbarer Stadtplan, Tag und Nacht, Alles Orange, Baustelle Dreieich), die Boden, Wände, Licht, Farbwelt und Bühnenelemente umbauen
+- **13 Layouts** zum Umschalten und Vergleichen: A Ausgangslage, B–E aus dem Gestalter-Workflow, F–I radikale Konzepte mit eigenem Stil (Begehbarer Stadtplan, Tag und Nacht, Alles Orange, Baustelle Dreieich), J–M neue Ideen zum Jubiläum (Drei Eichen, Endstation 1977, Geburtstagstafel, Fünf Häuser). F–M bauen Boden, Wände, Licht, Farbwelt und Bühnenelemente um
 - Vergleich im Reiter „Layouts“ (Reiter „Layouts“ mit Mini-Grundriss, Rundgang, Stärken und Schwächen); verschobene Inseln werden je Layout gespeichert
 - Außenwände sind massiv und von außen sichtbar; in den Raum sieht man von oben und durch die Schaufenster
 - Weiche Kontaktschatten (Umgebungsverdeckung) auf Geräten mit Maus; Schatten werden nur neu gerechnet, wenn sich etwas bewegt
@@ -45,6 +45,7 @@ src/js/05-app.js         Kamera, Verschieben, Begehen, Rundgang, Akte, Speicher
 src/js/04b-layouts.js    Layout A und Einbindung der Entwürfe B–E
 src/js/03b-styles.js     Stile und Bühnenelemente der radikalen Konzepte
 src/radikal.json         Konzepte F–I mit Stellungen, Stil und festen Einbauten
+src/ideen.json           Ideen J–M mit Stellungen, Stil und festen Einbauten
 src/layouts.json         Entwürfe B–E aus dem Gestalter-Workflow (Entwurf + unabhängige Prüfung)
 src/foil.webp            Schaufensterfolierung als Textur
 tools/layout-check.mjs   Prüfwerkzeug: Überschneidungen, freie Türen, Erreichbarkeit mit 90 cm und 1,20 m
