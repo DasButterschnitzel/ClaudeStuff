@@ -1,0 +1,133 @@
+/* =====================================================================
+   RAUM: Pop-up³, Offenbacher Straße 1, Erdgeschoss
+   Quelle: Exposé der Stadt Dreieich, Bestandsplan M 1:100 (Planstand 15.04.2025).
+   Aus dem Scan abgegriffen und an den Planmaßen 8,05⁵ m (rechter Raumteil) und
+   9,83⁵ m (Tiefe) geeicht. Genauigkeit etwa ±15 cm – vor dem Bau nachmessen.
+   ===================================================================== */
+const R = {
+  W: 19.45, H: 2.5, SILL: 0.42, BENCH: 0.5,
+  zG: 10.7,            // Glas der langen Fensterfront
+  xG: -0.5,            // Glas der kurzen Fensterfront (links)
+  zWW: 3.65,           // bis hier ist die linke Wand massiv (Naturstein), danach Fenster
+  lager: { x0: 5.55, x1: 8.15, z1: 3.1 },
+  core: { x0: 8.15, x1: 11.4, z1: 5.2 },      // Treppenhaus
+  door: { x0: 16.6, x1: 18.85, z: 9.35 },      // Eingang, zurückgesetzt
+  xRet: 16.55,
+  sq: [[2.74, 4.93], [5.52, 4.93]],            // Vierkantstützen
+  rd: [[13.92, 5.07], [16.73, 5.03]],          // Rundstützen
+  frontX: [3.9, 7.93, 11.58, 15.22], westZ: [6.97],
+  fenster: { west: ['3,25', '3,61'], sued: ['4,33', '3,91', '3,57', '3,63'], eingang: '2,35' },
+};
+R.colZ = R.zG - 0.42; R.colX = R.xG + 0.42;
+
+function roomShape() {
+  const P = [[0, 0], [R.lager.x0, 0], [R.lager.x0, R.lager.z1], [R.core.x0, R.lager.z1], [R.core.x0, R.core.z1], [R.core.x1, R.core.z1], [R.core.x1, 0],
+    [R.W, 0], [R.W, R.door.z], [R.xRet, R.door.z], [R.xRet, R.zG], [R.xG, R.zG], [R.xG, R.zWW], [0, R.zWW]];
+  const s = new THREE.Shape();
+  P.forEach(([x, z], i) => (i ? s.lineTo(x, -z) : s.moveTo(x, -z)));
+  s.closePath();
+  return s;
+}
+
+function buildRoom() {
+  const g = new THREE.Group(), dims = new THREE.Group(), tags = [];
+  const mWall = M('#f3f1ed', { roughness: 0.95 }), mWhite = M('#f6f5f2', { roughness: 0.6 }), mCut = M('#3b3344', { roughness: 1 });
+  const mFrame = M('#2f2a35', { roughness: 0.5 }), mDoor = M('#e4e1db', { roughness: 0.7 });
+  const mGlass = new THREE.MeshStandardMaterial({ color: '#bfdcea', transparent: true, opacity: 0.16, roughness: 0.05, side: THREE.DoubleSide, depthWrite: false });
+
+  /* Gehweg / Umgebung */
+  g.add(box(26, 0.06, 28.5, M('#d3cfda', { roughness: 1 }), 9.2, -0.08, 0.1, false));
+
+  /* Boden + Decke (Decke nur von innen sichtbar) */
+  const fGeo = new THREE.ShapeGeometry(roomShape()); fGeo.rotateX(-PI / 2);
+  const floor = new THREE.Mesh(fGeo, M('#ffffff', { map: TEX.holz, roughness: 0.7 })); floor.receiveShadow = true; floor.name = 'floor';
+  g.add(floor);
+  const ceil = new THREE.Mesh(fGeo, M('#f7f6f3', { side: THREE.BackSide, roughness: 1 })); ceil.position.y = R.H; g.add(ceil);
+
+  /* Wände: Innenflächen einseitig, damit man von außen hineinsieht */
+  const { W, H, zG, xG, zWW, lager: L, core: K, door: D, xRet } = R;
+  g.add(wall(0, 0, L.x0, 0, mWall), wall(K.x1, 0, W, 0, mWall), wall(W, 0, W, D.z, mWall));
+  g.add(wall(0, zWW, 0, 0, M('#ffffff', { map: TEX.stein, roughness: 1 })));
+  g.add(wall(xG, zWW, 0, zWW, mWall));
+  /* Mauerstreifen am Boden (Grundriss-Lesbarkeit) */
+  const strip = (x0, z0, x1, z1) => g.add(box(x1 - x0, 0.02, z1 - z0, mCut, (x0 + x1) / 2, 0, (z0 + z1) / 2, false));
+  strip(-0.3, -0.3, W + 0.3, 0); strip(W, 0, W + 0.3, D.z); strip(-0.3, 0, 0, zWW);
+  /* Lager, Treppenhaus, Pfeiler am Eingang: massive Körper mit dunkler Schnittfläche oben */
+  const solid = (x0, z0, x1, z1) => { const b = box(x1 - x0, H, z1 - z0, [mWall, mWall, mCut, mWall, mWall, mWall], (x0 + x1) / 2, 0, (z0 + z1) / 2); g.add(b); return b; };
+  solid(L.x0, -0.3, L.x1, L.z1); solid(K.x0, -0.3, K.x1, K.z1); solid(D.x1, D.z, W + 0.3, zG);
+
+  /* Fensterfronten: Glas, Bank mit Lamellenfront, Stützen */
+  const glass = (x0, z0, x1, z1, y0 = R.SILL) => g.add(wall(x0, z0, x1, z1, mGlass, { h: H - y0, y0 }));
+  glass(xRet, zG, xG, zG); glass(xG, zG, xG, zWW); glass(xRet, D.z, xRet, zG, 0);
+  const mBench = M('#ffffff', { map: TEX.lamellen, roughness: 0.6 }), mTop = M('#d8d0c2', { roughness: 0.5 });
+  const bench = (x0, z0, x1, z1) => {
+    g.add(box(x1 - x0, R.SILL - 0.03, z1 - z0, mBench, (x0 + x1) / 2, 0, (z0 + z1) / 2));
+    g.add(box(x1 - x0 + 0.04, 0.03, z1 - z0 + 0.04, mTop, (x0 + x1) / 2, R.SILL - 0.03, (z0 + z1) / 2));
+  };
+  bench(xG, zG - R.BENCH, xRet, zG); bench(xG, zWW, xG + R.BENCH, zG - R.BENCH);
+  g.add(box(xRet - xG, 0.05, 0.05, mFrame, (xRet + xG) / 2, H - 0.05, zG, false), box(0.05, 0.05, zG - zWW, mFrame, xG, H - 0.05, (zG + zWW) / 2, false));
+  for (const x of [R.colX, ...R.frontX]) g.add(cyl(0.11, H, mWhite, x, 0, R.colZ));
+  for (const z of R.westZ) g.add(cyl(0.11, H, mWhite, R.colX, 0, z));
+  g.add(box(0.07, H, 0.07, mFrame, xRet, 0, zG, false));
+  for (const [x, z] of R.sq) g.add(box(0.3, H, 0.3, mWhite, x, 0, z));
+  for (const [x, z] of R.rd) g.add(cyl(0.125, H, mWhite, x, 0, z));
+
+  /* Eingang: Doppeltür aus Glas, Fußmatte, Pfeil */
+  const dw = D.x1 - D.x0, dx = (D.x0 + D.x1) / 2;
+  g.add(wall(D.x1, D.z, D.x0, D.z, mGlass, { h: 2.1 }));
+  g.add(box(dw, H - 2.1, 0.08, mFrame, dx, 2.1, D.z, false), box(0.06, 2.1, 0.06, mFrame, dx, 0, D.z, false), box(0.06, 2.1, 0.06, mFrame, D.x0, 0, D.z, false), box(0.06, 2.1, 0.06, mFrame, D.x1, 0, D.z, false));
+  g.add(box(1.9, 0.012, 1.1, M('#4a4553', { roughness: 1 }), dx, 0, D.z - 0.75, false));
+  const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.5, 3), M(C.orange)); arrow.rotation.x = -PI / 2; arrow.position.set(dx, 0.03, D.z + 0.85); arrow.scale.y = 1; g.add(arrow);
+
+  /* Rückwand: Glasbaustein-Fenster mit Heizkörper, Türen, Klimagerät */
+  const mGB = new THREE.MeshStandardMaterial({ map: TEX.glasbaustein, emissive: '#6aa6c9', emissiveIntensity: 0.25, roughness: 0.3 });
+  const win = (x0, x1) => { const p = wall(x0, 0.012, x1, 0.012, mGB, { h: 1.2, y0: 1.0 }); g.add(p, box(x1 - x0 - 0.1, 0.55, 0.1, mWhite, (x0 + x1) / 2, 0.22, 0.08)); };
+  win(1.5, 2.7); win(11.9, 13.05);
+  const doorLeaf = (x0, x1) => g.add(box(x1 - x0, 2.05, 0.05, mDoor, (x0 + x1) / 2, 0, 0.03, false), box(0.03, 0.12, 0.05, mFrame, x1 - 0.12, 1.02, 0.07, false));
+  doorLeaf(4.5, 5.5); doorLeaf(17.1, 17.95);
+  g.add(box(0.05, 2.05, 0.9, mDoor, L.x0 - 0.03, 0, 1.05, false));                         // Tür zum Lager
+  g.add(box(0.85, 0.28, 0.2, mWhite, 3.6, 2.05, 0.1), box(0.1, 0.6, 0.8, mWhite, W - 0.06, 0.15, 8.75));   // Klimagerät, Heizkörper an der Brandmauer
+  /* Pendelleuchten an der Fensterfront */
+  const mLamp = M('#eeeae2', { roughness: 0.4 });
+  for (const x of [2.1, 9.9, 13.3]) {
+    const d = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 12, 0, PI * 2, 0, PI / 2), mLamp); d.position.set(x, 1.98, 8.85); g.add(d);
+    g.add(box(0.01, 0.3, 0.01, mFrame, x, 2.2, 8.85, false));
+  }
+
+  /* Nebenräume hinter dem Laden: nur als Umriss */
+  const nb = [[13.72, -0.4], [13.72, -12.11], [17.91, -12.98], [19.51, -5.74], [19.51, -0.4]];
+  const ns = new THREE.Shape(); nb.forEach(([x, z], i) => (i ? ns.lineTo(x, -z) : ns.moveTo(x, -z))); ns.closePath();
+  const ng = new THREE.ShapeGeometry(ns); ng.rotateX(-PI / 2);
+  const nm = new THREE.Mesh(ng, new THREE.MeshBasicMaterial({ color: '#8f879c', transparent: true, opacity: 0.22 })); nm.position.y = -0.015; g.add(nm);
+  g.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(nb.map(([x, z]) => new V3(x, 0, z))), new THREE.LineBasicMaterial({ color: '#5d5569' })));
+
+  /* Raumnamen (HTML-Marken) */
+  tags.push({ p: [dx, 0.1, D.z + 1.5], t: 'Eingang' }, { p: [(L.x0 + L.x1) / 2, H, 1.4], t: 'Lager 6,3 m²' }, { p: [(K.x0 + K.x1) / 2, H, 2.4], t: 'Treppenhaus' },
+    { p: [16.6, 0, -5.5], t: 'Nebenräume 42,5 m² · WC 6,5 m²' }, { p: [0.05, 1.6, 1.8], t: 'Naturstein' });
+
+  /* Maße aus dem Bestandsplan */
+  const mLine = new THREE.LineBasicMaterial({ color: '#3a3145' });
+  const dim = (x0, z0, x1, z1, text) => {
+    const pts = [new V3(x0, 0.02, z0), new V3(x1, 0.02, z1)], horiz = Math.abs(x1 - x0) > Math.abs(z1 - z0);
+    const tk = 0.14, t = horiz ? [0, tk] : [tk, 0];
+    for (const [x, z] of [[x0, z0], [x1, z1]]) pts.push(new V3(x - t[0], 0.02, z - t[1]), new V3(x + t[0], 0.02, z + t[1]));
+    dims.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), mLine));
+    const lab = flatText(text, { size: 0.3 });
+    lab.position.set((x0 + x1) / 2 + (horiz ? 0 : (x0 < 5 ? -0.28 : 0.28)), 0.03, (z0 + z1) / 2 + (horiz ? 0.28 : 0));
+    if (!horiz) lab.rotation.y = x0 < 5 ? PI / 2 : -PI / 2;
+    dims.add(lab);
+  };
+  const fx = [R.colX, ...R.frontX, xRet];
+  R.fenster.sued.forEach((t, i) => dim(fx[i] + 0.11, zG + 0.45, fx[i + 1] - 0.11, zG + 0.45, t));
+  dim(xRet, zG + 0.45, D.x1, zG + 0.45, R.fenster.eingang + ' (Eingang)');
+  const fz = [zWW, ...R.westZ, zG];
+  R.fenster.west.forEach((t, i) => dim(xG - 0.45, fz[i] + 0.08, xG - 0.45, fz[i + 1] - 0.08, t));
+  dim(xG, zG + 1.25, W, zG + 1.25, 'Laden innen ≈ 19,9 m · Fensterfront gesamt 24,65 m');
+  dim(W + 0.75, 0, W + 0.75, 9.84, '9,83⁵ (2,90 + 6,93⁵)');
+  dim(K.x1, 5.75, W, 5.75, '8,05⁵');
+  dim(0, 4.3, K.x0, 4.3, '≈ 8,15');
+  const info = flatText('Raumhöhe ca. 2,50 m · Fensterhöhe rund 2,08 m · Brüstung ≈ 0,42 m', { size: 0.3 }); info.position.set(7.2, 0.03, zG + 2.0); dims.add(info);
+  dims.visible = false;
+  g.add(dims);
+  return { g, dims, tags, floor };
+}

@@ -1,0 +1,1367 @@
+<title>Pop-up³ Ausstellungsplaner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: 3D-Bühne links (Grundriss + Themeninseln) · Planungsakte rechts mit Reitern · mobil: Bühne oben, Akte darunter */
+:root {
+  --bg: #efedf3; --stage-a: #f7f6fa; --stage-b: #dcd8e4;
+  --panel: #fbfafc; --card: #ffffff; --ink: #1d1626; --ink-2: #5a5266; --ink-3: #8a8296;
+  --line: rgba(29, 22, 38, 0.12); --chip: rgba(29, 22, 38, 0.06);
+  --orange: #d9540a; --orange-bg: #fde6d6; --lila: #74399a; --lila-bg: #eee1f6;
+  --ok: #2a7d4f; --warn: #a15c00; --warn-bg: #fdefd2; --open: #b3261e; --open-bg: #fbe3e0;
+  --shadow: 0 10px 28px -14px rgba(29, 22, 38, 0.4), 0 2px 6px -2px rgba(29, 22, 38, 0.14);
+  --font-display: 'Unbounded', 'Arial Black', system-ui, sans-serif;
+  --font-body: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  --gl: max(16px, env(safe-area-inset-left, 0px)); --gr: max(16px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15111b; --stage-a: #2a2433; --stage-b: #17131d;
+    --panel: #1c1724; --card: #241e2e; --ink: #f0ebf6; --ink-2: #b5acc2; --ink-3: #8d849b;
+    --line: rgba(240, 235, 246, 0.13); --chip: rgba(240, 235, 246, 0.08);
+    --orange: #ff8b45; --orange-bg: #47250f; --lila: #c79be6; --lila-bg: #37234a;
+    --ok: #74c798; --warn: #eab054; --warn-bg: #43310f; --open: #f59088; --open-bg: #4a1f1c;
+    --shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.75), 0 2px 6px -2px rgba(0, 0, 0, 0.45);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15111b; --stage-a: #2a2433; --stage-b: #17131d;
+  --panel: #1c1724; --card: #241e2e; --ink: #f0ebf6; --ink-2: #b5acc2; --ink-3: #8d849b;
+  --line: rgba(240, 235, 246, 0.13); --chip: rgba(240, 235, 246, 0.08);
+  --orange: #ff8b45; --orange-bg: #47250f; --lila: #c79be6; --lila-bg: #37234a;
+  --ok: #74c798; --warn: #eab054; --warn-bg: #43310f; --open: #f59088; --open-bg: #4a1f1c;
+  --shadow: 0 12px 32px -12px rgba(0, 0, 0, 0.75), 0 2px 6px -2px rgba(0, 0, 0, 0.45);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+button { font: inherit; color: inherit; }
+button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--lila); outline-offset: 2px; }
+a { color: var(--lila); }
+h1, h2, h3, p { margin: 0; }
+
+#app { height: 100%; display: grid; grid-template-rows: auto minmax(0, 1fr); }
+.top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding-block: 9px; padding-left: var(--gl); padding-right: var(--gr); background: var(--panel); border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 11px; min-width: 0; flex: 1 1 260px; }
+.logo { flex: none; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; background: var(--orange); color: #fff; font-family: var(--font-display); font-weight: 800; font-size: 14px; box-shadow: inset 0 0 0 4px rgba(255,255,255,.28); }
+.brand h1 { font-family: var(--font-display); font-weight: 700; font-size: 15px; letter-spacing: -0.01em; text-wrap: balance; }
+.brand p { color: var(--ink-2); font-size: 12.5px; }
+.sync { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink-2); padding: 5px 10px; border-radius: 99px; background: var(--chip); }
+.sync i { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); }
+.sync[data-s="shared"] i { background: var(--ok); }
+.sync[data-s="local"] i, .sync[data-s="readonly"] i { background: var(--warn); }
+
+.work { display: grid; grid-template-columns: minmax(0, 1fr) 420px; min-height: 0; }
+.stage { position: relative; min-height: 0; overflow: hidden; background: radial-gradient(120% 90% at 50% 20%, var(--stage-a), var(--stage-b)); touch-action: none; }
+#gl { position: absolute; inset: 0; width: 100%; height: 100%; display: block; outline: none; }
+#labels { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.chip3d { position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px 3px 3px; border-radius: 99px; border: 0; background: var(--card); color: var(--ink); box-shadow: var(--shadow); font-size: 12px; font-weight: 600; white-space: nowrap; pointer-events: auto; cursor: pointer; margin: -14px 0 0 -14px; }
+.chip3d b { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-family: var(--font-mono); font-size: 12px; font-weight: 500; }
+.chip3d.sel { outline: 2px solid var(--ink); }
+.tag3d { position: absolute; left: 0; top: 0; transform-origin: 0 0; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .02em; color: var(--ink-2); background: color-mix(in srgb, var(--card) 82%, transparent); padding: 1px 6px; border-radius: 4px; white-space: nowrap; margin: -9px 0 0 0; translate: -50% 0; }
+.stage.compact .chip3d span { display: none; }
+.stage.compact .chip3d { padding-right: 3px; }
+.stage.compact .tag3d { display: none; }
+
+.bar { position: absolute; display: flex; flex-wrap: wrap; gap: 6px; z-index: 5; }
+.bar.tl { top: 10px; left: var(--gl); right: var(--gr); }
+.bar.bl { bottom: 10px; left: var(--gl); right: var(--gr); align-items: flex-end; }
+.seg { display: inline-flex; background: var(--card); border-radius: 10px; box-shadow: var(--shadow); padding: 3px; gap: 2px; }
+.seg button, .tool { border: 0; background: transparent; border-radius: 7px; padding: 6px 10px; font-size: 12.5px; font-weight: 600; cursor: pointer; color: var(--ink-2); }
+.seg button:hover, .tool:hover { color: var(--ink); background: var(--chip); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
+.tool { background: var(--card); box-shadow: var(--shadow); border-radius: 10px; padding: 9px 12px; }
+.tool[aria-pressed="true"] { background: var(--orange); color: #fff; }
+.spacer { flex: 1 1 auto; }
+.float { position: absolute; z-index: 6; background: var(--card); box-shadow: var(--shadow); border-radius: 12px; padding: 10px 12px; font-size: 12.5px; }
+#inspect { top: 56px; right: var(--gr); width: min(250px, calc(100% - 32px)); }
+#inspect h3 { font-size: 13px; margin-bottom: 2px; }
+#inspect .mono { font-family: var(--font-mono); font-size: 11.5px; color: var(--ink-2); }
+#inspect .row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.mini { border: 1px solid var(--line); background: transparent; border-radius: 7px; padding: 4px 9px; font-size: 12px; font-weight: 600; cursor: pointer; }
+.mini:hover { background: var(--chip); }
+#tourbar { bottom: 62px; left: 50%; translate: -50% 0; display: flex; align-items: center; gap: 8px; white-space: nowrap; max-width: calc(100% - 32px); }
+#tourbar b { font-family: var(--font-mono); font-weight: 500; }
+#hint { bottom: 62px; left: var(--gl); max-width: min(360px, calc(100% - 32px)); color: var(--ink-2); }
+#nogl { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; padding: 24px; z-index: 50; background: var(--stage-b); }
+
+.panel { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; min-width: 0; background: var(--panel); border-left: 1px solid var(--line); }
+.tabs { display: flex; gap: 2px; padding: 8px 12px 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+.tabs button { border: 0; background: transparent; padding: 8px 10px 10px; font-weight: 600; font-size: 13px; color: var(--ink-2); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
+.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--orange); }
+.tabs .cnt { font-family: var(--font-mono); font-size: 11px; font-weight: 500; background: var(--open-bg); color: var(--open); padding: 1px 6px; border-radius: 99px; margin-left: 4px; }
+.tabbody { overflow: auto; padding: 16px 16px 32px; min-width: 0; }
+.tabbody > section { display: flex; flex-direction: column; gap: 18px; }
+.tabbody h2 { font-family: var(--font-display); font-weight: 700; font-size: 13px; letter-spacing: .01em; }
+.eyebrow { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.lead { font-size: 15px; line-height: 1.5; max-width: 62ch; }
+.blk { display: flex; flex-direction: column; gap: 8px; }
+.blk p, .blk li { max-width: 64ch; }
+ul.plain { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 5px; }
+.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.tile { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px; }
+.tile b { display: block; font-family: var(--font-display); font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.tile span { font-size: 11.5px; color: var(--ink-2); line-height: 1.25; display: block; }
+.tile.o b { color: var(--open); } .tile.w b { color: var(--warn); }
+table.kv { width: 100%; border-collapse: collapse; font-size: 13px; }
+table.kv td { padding: 5px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.kv td:last-child { text-align: right; font-family: var(--font-mono); font-size: 12px; font-variant-numeric: tabular-nums; }
+.note { font-size: 12.5px; color: var(--ink-2); background: var(--chip); border-radius: 8px; padding: 8px 10px; max-width: 64ch; }
+.dates { display: flex; flex-direction: column; gap: 6px; }
+.dates div { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.dates time, .dates .when { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); }
+
+.st { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.st.sel { border-color: var(--ink); }
+.st summary { list-style: none; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 12px; cursor: pointer; }
+.st summary::-webkit-details-marker { display: none; }
+.st .num { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 13px; }
+.st .nm { font-weight: 700; font-size: 14px; }
+.st .sub { font-size: 12px; color: var(--ink-2); }
+.st .body { padding: 2px 12px 12px; display: flex; flex-direction: column; gap: 10px; border-top: 1px solid var(--line); padding-top: 10px; }
+.st .body p { max-width: 62ch; }
+.pill { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 99px; white-space: nowrap; background: var(--chip); color: var(--ink-2); }
+.pill.open { background: var(--open-bg); color: var(--open); }
+.pill.warn { background: var(--warn-bg); color: var(--warn); }
+.pill.ok { background: color-mix(in srgb, var(--ok) 16%, transparent); color: var(--ok); }
+.btn { align-self: flex-start; border: 0; background: var(--ink); color: var(--panel); border-radius: 8px; padding: 7px 12px; font-weight: 600; font-size: 12.5px; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+
+.filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.filters button { border: 1px solid var(--line); background: transparent; border-radius: 99px; padding: 4px 10px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--ink-2); }
+.filters button[aria-pressed="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+.grp { display: flex; flex-direction: column; gap: 6px; }
+.grp > h3 { font-size: 12px; font-weight: 700; color: var(--ink-2); display: flex; align-items: center; gap: 7px; margin-top: 4px; }
+.grp > h3 i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.todo { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 9px; align-items: start; padding: 8px 10px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+.todo input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--orange); }
+.todo label { cursor: pointer; }
+.todo .meta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.todo.done label { text-decoration: line-through; color: var(--ink-3); }
+.empty { color: var(--ink-2); padding: 14px; text-align: center; border: 1px dashed var(--line); border-radius: 10px; }
+
+.calc { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+.calc .ctl { display: grid; grid-template-columns: minmax(0, 1fr) 76px; gap: 4px 10px; align-items: center; }
+.calc .ctl label { font-size: 12.5px; color: var(--ink-2); grid-column: 1 / -1; }
+.calc input[type=range] { width: 100%; accent-color: var(--orange); }
+.calc output { font-family: var(--font-mono); font-size: 12.5px; text-align: right; font-variant-numeric: tabular-nums; }
+.result { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.result div { background: var(--orange-bg); border-radius: 9px; padding: 8px 9px; }
+.result b { display: block; font-family: var(--font-display); font-size: 18px; color: var(--orange); font-variant-numeric: tabular-nums; }
+.result span { font-size: 11.5px; color: var(--ink-2); display: block; line-height: 1.25; }
+.tw { overflow-x: auto; }
+table.mat { width: 100%; border-collapse: collapse; font-size: 12.5px; table-layout: fixed; }
+table.mat th:nth-child(1) { width: 31%; } table.mat th:nth-child(2) { width: 27%; }
+table.mat td { overflow-wrap: anywhere; }
+table.mat th { text-align: left; font-size: 11px; color: var(--ink-3); font-weight: 600; padding: 4px 6px 4px 0; border-bottom: 1px solid var(--line); }
+table.mat td { padding: 6px 6px 6px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.mat td:nth-child(2) { font-family: var(--font-mono); font-size: 11.5px; }
+
+@media (max-width: 900px) {
+  html, body { height: auto; }
+  #app { height: auto; display: block; }
+  .work { display: block; }
+  .stage { height: 60svh; min-height: 330px; }
+  .panel { display: block; border-left: 0; border-top: 1px solid var(--line); }
+  .tabs { padding-left: calc(var(--gl) - 6px); padding-right: var(--gr); position: sticky; top: env(safe-area-inset-top, 0px); background: var(--panel); z-index: 8; }
+  .tabbody { overflow: visible; padding-left: var(--gl); padding-right: var(--gr); }
+  .tool { padding: 8px 10px; }
+  #inspect { top: 96px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div id="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">50</div>
+      <div>
+        <h1>Pop-up³ Ausstellungsplaner</h1>
+        <p>50 Jahre Dreieich · Offenbacher Straße 1 · Stand Protokoll 2 vom 17.11.2026</p>
+      </div>
+    </div>
+    <div class="sync" id="sync" data-s="wait" title="Wo abgehakte To-dos und verschobene Inseln gespeichert werden"><i></i><span>Verbinde …</span></div>
+  </header>
+
+  <main class="work">
+    <section class="stage" id="stage" aria-label="3D-Modell des Pop-up-Stores">
+      <canvas id="gl" tabindex="0" aria-label="3D-Ansicht: ziehen zum Drehen, scrollen zum Zoomen"></canvas>
+      <div id="labels"></div>
+
+      <div class="bar tl">
+        <div class="seg" role="group" aria-label="Ansicht" id="views">
+          <button type="button" data-view="iso" aria-pressed="true">3D</button>
+          <button type="button" data-view="plan" aria-pressed="false">Grundriss</button>
+          <button type="button" data-view="eingang" aria-pressed="false">Eingang</button>
+          <button type="button" data-view="fenster" aria-pressed="false">Schaufenster</button>
+        </div>
+        <span class="spacer"></span>
+        <div class="seg" role="group" aria-label="Einblenden">
+          <button type="button" id="t-expo" aria-pressed="true" title="Themeninseln ein- oder ausblenden">Inseln</button>
+          <button type="button" id="t-dims" aria-pressed="false" title="Maße aus dem Bestandsplan">Maße</button>
+          <button type="button" id="t-people" aria-pressed="true" title="Figuren als Größenvergleich">Figuren</button>
+        </div>
+      </div>
+
+      <div class="float" id="inspect" hidden></div>
+      <div class="float" id="hint" hidden></div>
+      <div class="float" id="tourbar" hidden>
+        <button type="button" class="mini" id="tour-prev" aria-label="Vorherige Insel">←</button>
+        <span><b id="tour-n">1/8</b> <span id="tour-name"></span></span>
+        <button type="button" class="mini" id="tour-next" aria-label="Nächste Insel">→</button>
+        <button type="button" class="mini" id="tour-stop">Beenden</button>
+      </div>
+
+      <div class="bar bl">
+        <button type="button" class="tool" id="b-tour" aria-pressed="false">Rundgang</button>
+        <button type="button" class="tool" id="b-walk" aria-pressed="false">Begehen</button>
+        <button type="button" class="tool" id="b-move" aria-pressed="false">Inseln verschieben</button>
+      </div>
+      <div id="nogl" hidden><div><h2>3D nicht verfügbar</h2><p>Dieser Browser stellt kein WebGL bereit. Die Planungsakte rechts funktioniert trotzdem.</p></div></div>
+    </section>
+
+    <aside class="panel" aria-label="Planungsakte">
+      <div class="tabs" role="tablist" id="tabs">
+        <button type="button" role="tab" data-tab="ueber" aria-selected="true">Überblick</button>
+        <button type="button" role="tab" data-tab="inseln" aria-selected="false">Themeninseln</button>
+        <button type="button" role="tab" data-tab="todos" aria-selected="false">To-dos<span class="cnt" id="cnt-open"></span></button>
+        <button type="button" role="tab" data-tab="rechner" aria-selected="false">Rechner</button>
+      </div>
+      <div class="tabbody" id="tabbody">
+        <section id="tab-ueber"></section>
+        <section id="tab-inseln" hidden></section>
+        <section id="tab-todos" hidden></section>
+        <section id="tab-rechner" hidden></section>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+// ---- 01-core.js ----
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+/* =====================================================================
+   CORE: Hilfen, Renderer, Texturen, Geometrie-Bausteine
+   Koordinaten (Meter): x = Breite, 0 = linke Außenwand (Naturstein), W = Brandmauer rechts
+                        z = Tiefe,  0 = Rückwand, zG = Glas der langen Fensterfront
+                        y = Höhe
+   ===================================================================== */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const V3 = THREE.Vector3, PI = Math.PI;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const de = (n, d = 2) => Number(n).toFixed(d).replace('.', ',');
+function rng(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* ---------- Renderer ---------- */
+const stageEl = $('#stage'), canvas = $('#gl');
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+} catch (e) {
+  $('#nogl').hidden = false;
+  window.__noGL = true;
+}
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 300);
+let controls = null;
+let dirty = 3;
+const invalidate = (n = 2) => { dirty = Math.max(dirty, n); };
+if (renderer) {
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.08;
+  scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
+  controls = new OrbitControls(camera, canvas);
+  controls.enableDamping = true; controls.dampingFactor = 0.09;
+  controls.maxPolarAngle = PI / 2 - 0.03; controls.minDistance = 1.5; controls.maxDistance = 140;
+  controls.addEventListener('change', () => invalidate());
+}
+scene.add(new THREE.HemisphereLight(0xffffff, 0xc9c2b8, 0.75));
+const sun = new THREE.DirectionalLight(0xfff1dc, 2.1);
+sun.position.set(2, 16, 19); sun.target.position.set(9.5, 0, 5);
+sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.03;
+Object.assign(sun.shadow.camera, { left: -15, right: 15, top: 12, bottom: -12, near: 1, far: 50 });
+scene.add(sun, sun.target);
+
+/* ---------- Schrift für Canvas-Texturen abwarten ---------- */
+const FD = "'Unbounded', 'Arial Black', sans-serif", FB = "'Figtree', system-ui, sans-serif";
+try {
+  await Promise.race([
+    Promise.all([document.fonts.load("700 40px Unbounded"), document.fonts.load("600 30px Figtree")]),
+    new Promise(r => setTimeout(r, 1800)),
+  ]);
+} catch (e) { /* Ersatzschrift genügt */ }
+
+/* ---------- Materialien & Texturen ---------- */
+const M = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.85, metalness: 0, ...o });
+function ctex(w, h, draw, rep) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  draw(c.getContext('2d'), w, h);
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep[0], rep[1]); }
+  return t;
+}
+/* Text mit Umbruch, vertikal um cy zentriert; gibt die Blockhöhe zurück */
+function wrapText(g, text, cx, cy, maxW, size, font, weight = 700, lh = 1.15) {
+  g.font = `${weight} ${size}px ${font}`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  const lines = [];
+  for (const para of String(text).split('\n')) {
+    let line = '';
+    for (const w of para.split(' ')) {
+      const t = line ? line + ' ' + w : w;
+      if (g.measureText(t).width > maxW && line) { lines.push(line); line = w; } else line = t;
+    }
+    lines.push(line);
+  }
+  const H = lines.length * size * lh;
+  lines.forEach((l, i) => g.fillText(l, cx, cy - H / 2 + (i + 0.5) * size * lh));
+  return H;
+}
+const C = { orange: '#f2690d', lila: '#7b3fa0', pink: '#d9457e', gelb: '#f5b70a', braun: '#6b4226', creme: '#f3ead7', teak: '#a06b3c', oliv: '#7d8a2e', tuerkis: '#1d9aa6', weiss: '#f5f3ef', dunkel: '#2b2533' };
+
+const TEX = {
+  holz: ctex(1024, 1024, (g, w, h) => {
+    const r = rng(7); g.fillStyle = '#c8a678'; g.fillRect(0, 0, w, h);
+    const ph = h / 8;
+    for (let i = 0; i < 8; i++) {
+      let x = -r() * 400;
+      while (x < w) {
+        const len = 380 + r() * 300, l = 62 + r() * 12;
+        g.fillStyle = `hsl(${30 + r() * 6}, ${34 + r() * 10}%, ${l}%)`; g.fillRect(x, i * ph, len, ph);
+        g.strokeStyle = 'rgba(70,45,20,.10)'; g.lineWidth = 1;
+        for (let k = 0; k < 7; k++) { const y = i * ph + r() * ph; g.beginPath(); g.moveTo(x, y); g.bezierCurveTo(x + len * .3, y + r() * 8 - 4, x + len * .6, y + r() * 8 - 4, x + len, y); g.stroke(); }
+        g.fillStyle = 'rgba(60,40,20,.28)'; g.fillRect(x + len - 2, i * ph, 2, ph);
+        x += len;
+      }
+      g.fillStyle = 'rgba(60,40,20,.25)'; g.fillRect(0, i * ph, w, 2);
+    }
+  }, [1 / 2.4, 1 / 2.4]),
+  stein: ctex(512, 512, (g, w, h) => {
+    const r = rng(3); g.fillStyle = '#6f6253'; g.fillRect(0, 0, w, h);
+    const rows = 16, rh = h / rows;
+    for (let i = 0; i < rows; i++) {
+      let x = -r() * 80;
+      while (x < w) { const len = 50 + r() * 90; g.fillStyle = `hsl(${28 + r() * 14}, ${16 + r() * 16}%, ${48 + r() * 24}%)`; g.fillRect(x + 2, i * rh + 2, len - 3, rh - 3); x += len; }
+    }
+  }, [2, 1.6]),
+  lamellen: ctex(64, 256, (g, w, h) => {
+    g.fillStyle = '#f2f0ec'; g.fillRect(0, 0, w, h); g.fillStyle = 'rgba(40,35,45,.28)';
+    for (let i = 1; i < 6; i++) g.fillRect(0, i * h / 6 - 3, w, 5);
+  }),
+  tapeteA: ctex(256, 256, (g, w) => {   // Wohnzimmer: braun-orange, abgerundete Quadrate
+    g.fillStyle = '#c4601a'; g.fillRect(0, 0, w, w);
+    const rr = (s, col) => { g.fillStyle = col; const o = (w - s) / 2; g.beginPath(); g.roundRect(o, o, s, s, s * 0.32); g.fill(); };
+    rr(220, '#5c3317'); rr(170, '#e9a21d'); rr(118, '#f1e2c2'); rr(66, '#c4601a');
+  }),
+  tapeteB: ctex(256, 256, (g, w) => {   // Selfie-Koje: lila-pink, Kreise
+    g.fillStyle = '#5f2b84'; g.fillRect(0, 0, w, w);
+    const ci = (x, y, r, col) => { g.fillStyle = col; g.beginPath(); g.arc(x, y, r, 0, 7); g.fill(); };
+    for (const [x, y] of [[64, 64], [192, 192]]) { ci(x, y, 58, '#e0447c'); ci(x, y, 40, '#f5b70a'); ci(x, y, 20, '#5f2b84'); }
+    for (const [x, y] of [[192, 64], [64, 192]]) { ci(x, y, 58, '#f2690d'); ci(x, y, 40, '#f3ead7'); ci(x, y, 20, '#e0447c'); }
+  }),
+  teppich: ctex(512, 512, (g, w) => {
+    g.fillStyle = '#7a3f17'; g.fillRect(0, 0, w, w);
+    ['#b8531a', '#e9861f', '#f2c14e', '#b8531a', '#7a3f17'].forEach((col, i) => { g.fillStyle = col; g.beginPath(); g.ellipse(w / 2, w / 2, 230 - i * 44, 230 - i * 44, 0, 0, 7); g.fill(); });
+  }),
+  glasbaustein: ctex(128, 128, (g, w) => {
+    g.fillStyle = '#a9cfe6'; g.fillRect(0, 0, w, w); g.fillStyle = 'rgba(255,255,255,.55)';
+    for (let i = 0; i < 8; i++) g.fillRect(i * 16 + 3, 0, 5, w);
+  }),
+};
+
+/* ---------- Geometrie-Bausteine (y = Unterkante) ---------- */
+function shade(o, cast = true) { o.castShadow = cast; o.receiveShadow = true; return o; }
+function box(w, h, d, m, x = 0, y = 0, z = 0, cast = true) { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y + h / 2, z); return shade(o, cast); }
+function cyl(r, h, m, x = 0, y = 0, z = 0, seg = 28, rTop = r) { const o = new THREE.Mesh(new THREE.CylinderGeometry(rTop, r, h, seg), m); o.position.set(x, y + h / 2, z); return shade(o); }
+function ball(r, m, x = 0, y = 0, z = 0) { const o = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), m); o.position.set(x, y, z); return shade(o); }
+/* Fläche von (x0,z0) nach (x1,z1); sichtbare Seite liegt in Laufrichtung links */
+function wall(x0, z0, x1, z1, m, { h = 2.5, y0 = 0, rep = null } = {}) {
+  const L = Math.hypot(x1 - x0, z1 - z0);
+  const o = new THREE.Mesh(new THREE.PlaneGeometry(L, h), m);
+  o.position.set((x0 + x1) / 2, y0 + h / 2, (z0 + z1) / 2);
+  o.rotation.y = -Math.atan2(z1 - z0, x1 - x0);
+  o.receiveShadow = true;
+  return o;
+}
+/* Flaches Schild mit Text, liegt auf dem Boden (für Maße und Raumnamen) */
+function flatText(text, { size = 0.34, color = '#3a3145', weight = 600, font = FB } = {}) {
+  const px = 64; const c = document.createElement('canvas'); let g = c.getContext('2d');
+  g.font = `${weight} ${px}px ${font}`; const tw = Math.ceil(g.measureText(text).width) + 24;
+  c.width = tw; c.height = px + 24; g = c.getContext('2d');
+  g.font = `${weight} ${px}px ${font}`; g.fillStyle = color; g.textBaseline = 'middle'; g.fillText(text, 12, c.height / 2 + 3);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
+  const geo = new THREE.PlaneGeometry(size * c.width / c.height, size); geo.rotateX(-PI / 2);
+  const o = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false }));
+  o.renderOrder = 3;
+  return o;
+}
+/* Beschriftete Tafel: Canvas-Textur auf einer Fläche */
+function sign(w, h, draw, { res = 256, emissive = false } = {}) {
+  const t = ctex(Math.round(w * res), Math.round(h * res), draw);
+  const m = emissive ? new THREE.MeshBasicMaterial({ map: t }) : new THREE.MeshStandardMaterial({ map: t, roughness: 0.8 });
+  const o = new THREE.Mesh(new THREE.PlaneGeometry(w, h), m); o.receiveShadow = !emissive;
+  return o;
+}
+
+// ---- 02-room.js ----
+/* =====================================================================
+   RAUM: Pop-up³, Offenbacher Straße 1, Erdgeschoss
+   Quelle: Exposé der Stadt Dreieich, Bestandsplan M 1:100 (Planstand 15.04.2025).
+   Aus dem Scan abgegriffen und an den Planmaßen 8,05⁵ m (rechter Raumteil) und
+   9,83⁵ m (Tiefe) geeicht. Genauigkeit etwa ±15 cm – vor dem Bau nachmessen.
+   ===================================================================== */
+const R = {
+  W: 19.45, H: 2.5, SILL: 0.42, BENCH: 0.5,
+  zG: 10.7,            // Glas der langen Fensterfront
+  xG: -0.5,            // Glas der kurzen Fensterfront (links)
+  zWW: 3.65,           // bis hier ist die linke Wand massiv (Naturstein), danach Fenster
+  lager: { x0: 5.55, x1: 8.15, z1: 3.1 },
+  core: { x0: 8.15, x1: 11.4, z1: 5.2 },      // Treppenhaus
+  door: { x0: 16.6, x1: 18.85, z: 9.35 },      // Eingang, zurückgesetzt
+  xRet: 16.55,
+  sq: [[2.74, 4.93], [5.52, 4.93]],            // Vierkantstützen
+  rd: [[13.92, 5.07], [16.73, 5.03]],          // Rundstützen
+  frontX: [3.9, 7.93, 11.58, 15.22], westZ: [6.97],
+  fenster: { west: ['3,25', '3,61'], sued: ['4,33', '3,91', '3,57', '3,63'], eingang: '2,35' },
+};
+R.colZ = R.zG - 0.42; R.colX = R.xG + 0.42;
+
+function roomShape() {
+  const P = [[0, 0], [R.lager.x0, 0], [R.lager.x0, R.lager.z1], [R.core.x0, R.lager.z1], [R.core.x0, R.core.z1], [R.core.x1, R.core.z1], [R.core.x1, 0],
+    [R.W, 0], [R.W, R.door.z], [R.xRet, R.door.z], [R.xRet, R.zG], [R.xG, R.zG], [R.xG, R.zWW], [0, R.zWW]];
+  const s = new THREE.Shape();
+  P.forEach(([x, z], i) => (i ? s.lineTo(x, -z) : s.moveTo(x, -z)));
+  s.closePath();
+  return s;
+}
+
+function buildRoom() {
+  const g = new THREE.Group(), dims = new THREE.Group(), tags = [];
+  const mWall = M('#f3f1ed', { roughness: 0.95 }), mWhite = M('#f6f5f2', { roughness: 0.6 }), mCut = M('#3b3344', { roughness: 1 });
+  const mFrame = M('#2f2a35', { roughness: 0.5 }), mDoor = M('#e4e1db', { roughness: 0.7 });
+  const mGlass = new THREE.MeshStandardMaterial({ color: '#bfdcea', transparent: true, opacity: 0.16, roughness: 0.05, side: THREE.DoubleSide, depthWrite: false });
+
+  /* Gehweg / Umgebung */
+  g.add(box(26, 0.06, 28.5, M('#d3cfda', { roughness: 1 }), 9.2, -0.08, 0.1, false));
+
+  /* Boden + Decke (Decke nur von innen sichtbar) */
+  const fGeo = new THREE.ShapeGeometry(roomShape()); fGeo.rotateX(-PI / 2);
+  const floor = new THREE.Mesh(fGeo, M('#ffffff', { map: TEX.holz, roughness: 0.7 })); floor.receiveShadow = true; floor.name = 'floor';
+  g.add(floor);
+  const ceil = new THREE.Mesh(fGeo, M('#f7f6f3', { side: THREE.BackSide, roughness: 1 })); ceil.position.y = R.H; g.add(ceil);
+
+  /* Wände: Innenflächen einseitig, damit man von außen hineinsieht */
+  const { W, H, zG, xG, zWW, lager: L, core: K, door: D, xRet } = R;
+  g.add(wall(0, 0, L.x0, 0, mWall), wall(K.x1, 0, W, 0, mWall), wall(W, 0, W, D.z, mWall));
+  g.add(wall(0, zWW, 0, 0, M('#ffffff', { map: TEX.stein, roughness: 1 })));
+  g.add(wall(xG, zWW, 0, zWW, mWall));
+  /* Mauerstreifen am Boden (Grundriss-Lesbarkeit) */
+  const strip = (x0, z0, x1, z1) => g.add(box(x1 - x0, 0.02, z1 - z0, mCut, (x0 + x1) / 2, 0, (z0 + z1) / 2, false));
+  strip(-0.3, -0.3, W + 0.3, 0); strip(W, 0, W + 0.3, D.z); strip(-0.3, 0, 0, zWW);
+  /* Lager, Treppenhaus, Pfeiler am Eingang: massive Körper mit dunkler Schnittfläche oben */
+  const solid = (x0, z0, x1, z1) => { const b = box(x1 - x0, H, z1 - z0, [mWall, mWall, mCut, mWall, mWall, mWall], (x0 + x1) / 2, 0, (z0 + z1) / 2); g.add(b); return b; };
+  solid(L.x0, -0.3, L.x1, L.z1); solid(K.x0, -0.3, K.x1, K.z1); solid(D.x1, D.z, W + 0.3, zG);
+
+  /* Fensterfronten: Glas, Bank mit Lamellenfront, Stützen */
+  const glass = (x0, z0, x1, z1, y0 = R.SILL) => g.add(wall(x0, z0, x1, z1, mGlass, { h: H - y0, y0 }));
+  glass(xRet, zG, xG, zG); glass(xG, zG, xG, zWW); glass(xRet, D.z, xRet, zG, 0);
+  const mBench = M('#ffffff', { map: TEX.lamellen, roughness: 0.6 }), mTop = M('#d8d0c2', { roughness: 0.5 });
+  const bench = (x0, z0, x1, z1) => {
+    g.add(box(x1 - x0, R.SILL - 0.03, z1 - z0, mBench, (x0 + x1) / 2, 0, (z0 + z1) / 2));
+    g.add(box(x1 - x0 + 0.04, 0.03, z1 - z0 + 0.04, mTop, (x0 + x1) / 2, R.SILL - 0.03, (z0 + z1) / 2));
+  };
+  bench(xG, zG - R.BENCH, xRet, zG); bench(xG, zWW, xG + R.BENCH, zG - R.BENCH);
+  g.add(box(xRet - xG, 0.05, 0.05, mFrame, (xRet + xG) / 2, H - 0.05, zG, false), box(0.05, 0.05, zG - zWW, mFrame, xG, H - 0.05, (zG + zWW) / 2, false));
+  for (const x of [R.colX, ...R.frontX]) g.add(cyl(0.11, H, mWhite, x, 0, R.colZ));
+  for (const z of R.westZ) g.add(cyl(0.11, H, mWhite, R.colX, 0, z));
+  g.add(box(0.07, H, 0.07, mFrame, xRet, 0, zG, false));
+  for (const [x, z] of R.sq) g.add(box(0.3, H, 0.3, mWhite, x, 0, z));
+  for (const [x, z] of R.rd) g.add(cyl(0.125, H, mWhite, x, 0, z));
+
+  /* Eingang: Doppeltür aus Glas, Fußmatte, Pfeil */
+  const dw = D.x1 - D.x0, dx = (D.x0 + D.x1) / 2;
+  g.add(wall(D.x1, D.z, D.x0, D.z, mGlass, { h: 2.1 }));
+  g.add(box(dw, H - 2.1, 0.08, mFrame, dx, 2.1, D.z, false), box(0.06, 2.1, 0.06, mFrame, dx, 0, D.z, false), box(0.06, 2.1, 0.06, mFrame, D.x0, 0, D.z, false), box(0.06, 2.1, 0.06, mFrame, D.x1, 0, D.z, false));
+  g.add(box(1.9, 0.012, 1.1, M('#4a4553', { roughness: 1 }), dx, 0, D.z - 0.75, false));
+  const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.5, 3), M(C.orange)); arrow.rotation.x = -PI / 2; arrow.position.set(dx, 0.03, D.z + 0.85); arrow.scale.y = 1; g.add(arrow);
+
+  /* Rückwand: Glasbaustein-Fenster mit Heizkörper, Türen, Klimagerät */
+  const mGB = new THREE.MeshStandardMaterial({ map: TEX.glasbaustein, emissive: '#6aa6c9', emissiveIntensity: 0.25, roughness: 0.3 });
+  const win = (x0, x1) => { const p = wall(x0, 0.012, x1, 0.012, mGB, { h: 1.2, y0: 1.0 }); g.add(p, box(x1 - x0 - 0.1, 0.55, 0.1, mWhite, (x0 + x1) / 2, 0.22, 0.08)); };
+  win(1.5, 2.7); win(11.9, 13.05);
+  const doorLeaf = (x0, x1) => g.add(box(x1 - x0, 2.05, 0.05, mDoor, (x0 + x1) / 2, 0, 0.03, false), box(0.03, 0.12, 0.05, mFrame, x1 - 0.12, 1.02, 0.07, false));
+  doorLeaf(4.5, 5.5); doorLeaf(17.1, 17.95);
+  g.add(box(0.05, 2.05, 0.9, mDoor, L.x0 - 0.03, 0, 1.05, false));                         // Tür zum Lager
+  g.add(box(0.85, 0.28, 0.2, mWhite, 3.6, 2.05, 0.1), box(0.1, 0.6, 0.8, mWhite, W - 0.06, 0.15, 8.75));   // Klimagerät, Heizkörper an der Brandmauer
+  /* Pendelleuchten an der Fensterfront */
+  const mLamp = M('#eeeae2', { roughness: 0.4 });
+  for (const x of [2.1, 9.9, 13.3]) {
+    const d = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 12, 0, PI * 2, 0, PI / 2), mLamp); d.position.set(x, 1.98, 8.85); g.add(d);
+    g.add(box(0.01, 0.3, 0.01, mFrame, x, 2.2, 8.85, false));
+  }
+
+  /* Nebenräume hinter dem Laden: nur als Umriss */
+  const nb = [[13.72, -0.4], [13.72, -12.11], [17.91, -12.98], [19.51, -5.74], [19.51, -0.4]];
+  const ns = new THREE.Shape(); nb.forEach(([x, z], i) => (i ? ns.lineTo(x, -z) : ns.moveTo(x, -z))); ns.closePath();
+  const ng = new THREE.ShapeGeometry(ns); ng.rotateX(-PI / 2);
+  const nm = new THREE.Mesh(ng, new THREE.MeshBasicMaterial({ color: '#8f879c', transparent: true, opacity: 0.22 })); nm.position.y = -0.015; g.add(nm);
+  g.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(nb.map(([x, z]) => new V3(x, 0, z))), new THREE.LineBasicMaterial({ color: '#5d5569' })));
+
+  /* Raumnamen (HTML-Marken) */
+  tags.push({ p: [dx, 0.1, D.z + 1.5], t: 'Eingang' }, { p: [(L.x0 + L.x1) / 2, H, 1.4], t: 'Lager 6,3 m²' }, { p: [(K.x0 + K.x1) / 2, H, 2.4], t: 'Treppenhaus' },
+    { p: [16.6, 0, -5.5], t: 'Nebenräume 42,5 m² · WC 6,5 m²' }, { p: [0.05, 1.6, 1.8], t: 'Naturstein' });
+
+  /* Maße aus dem Bestandsplan */
+  const mLine = new THREE.LineBasicMaterial({ color: '#3a3145' });
+  const dim = (x0, z0, x1, z1, text) => {
+    const pts = [new V3(x0, 0.02, z0), new V3(x1, 0.02, z1)], horiz = Math.abs(x1 - x0) > Math.abs(z1 - z0);
+    const tk = 0.14, t = horiz ? [0, tk] : [tk, 0];
+    for (const [x, z] of [[x0, z0], [x1, z1]]) pts.push(new V3(x - t[0], 0.02, z - t[1]), new V3(x + t[0], 0.02, z + t[1]));
+    dims.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), mLine));
+    const lab = flatText(text, { size: 0.3 });
+    lab.position.set((x0 + x1) / 2 + (horiz ? 0 : (x0 < 5 ? -0.28 : 0.28)), 0.03, (z0 + z1) / 2 + (horiz ? 0.28 : 0));
+    if (!horiz) lab.rotation.y = x0 < 5 ? PI / 2 : -PI / 2;
+    dims.add(lab);
+  };
+  const fx = [R.colX, ...R.frontX, xRet];
+  R.fenster.sued.forEach((t, i) => dim(fx[i] + 0.11, zG + 0.45, fx[i + 1] - 0.11, zG + 0.45, t));
+  dim(xRet, zG + 0.45, D.x1, zG + 0.45, R.fenster.eingang + ' (Eingang)');
+  const fz = [zWW, ...R.westZ, zG];
+  R.fenster.west.forEach((t, i) => dim(xG - 0.45, fz[i] + 0.08, xG - 0.45, fz[i + 1] - 0.08, t));
+  dim(xG, zG + 1.25, W, zG + 1.25, 'Laden innen ≈ 19,9 m · Fensterfront gesamt 24,65 m');
+  dim(W + 0.75, 0, W + 0.75, 9.84, '9,83⁵ (2,90 + 6,93⁵)');
+  dim(K.x1, 5.75, W, 5.75, '8,05⁵');
+  dim(0, 4.3, K.x0, 4.3, '≈ 8,15');
+  const info = flatText('Raumhöhe ca. 2,50 m · Fensterhöhe rund 2,08 m · Brüstung ≈ 0,42 m', { size: 0.3 }); info.position.set(7.2, 0.03, zG + 2.0); dims.add(info);
+  dims.visible = false;
+  g.add(dims);
+  return { g, dims, tags, floor };
+}
+
+// ---- 03-exhibits.js ----
+/* =====================================================================
+   THEMENINSELN: Bausteine. Jede Insel entsteht um ihren Mittelpunkt,
+   Rückseite bei −z, Besucherseite bei +z. Alles Vorschlag, nichts ist fest.
+   ===================================================================== */
+const repTex = (t, rx, ry) => { const c = t.clone(); c.wrapS = c.wrapT = THREE.RepeatWrapping; c.repeat.set(rx, ry); c.needsUpdate = true; return c; };
+const mChrome = new THREE.MeshStandardMaterial({ color: '#d5d9de', metalness: 0.9, roughness: 0.25 });
+const mDark = M('#26222c', { roughness: 0.6 });
+const mVitrine = new THREE.MeshStandardMaterial({ color: '#cfe6f2', transparent: true, opacity: 0.22, roughness: 0.05, depthWrite: false });
+const textPanel = (bg, fg, head) => (g, w, h) => {
+  g.fillStyle = bg; g.fillRect(0, 0, w, h); g.fillStyle = fg;
+  wrapText(g, head, w / 2, h * 0.2, w * 0.84, h * 0.085, FD, 700);
+  g.globalAlpha = 0.45; for (let i = 0; i < 9; i++) g.fillRect(w * 0.1, h * (0.36 + i * 0.062), w * (i % 3 === 2 ? 0.5 : 0.8), h * 0.022); g.globalAlpha = 1;
+};
+
+/* ---- 1 · Wohnzimmer (3,2 × 3,0 m) ---- */
+function buildWohnzimmer() {
+  const g = new THREE.Group();
+  const cord = M('#8a5a33', { roughness: 1 }), cord2 = M('#9b6a3f', { roughness: 1 }), teak = M(C.teak, { roughness: 0.55 }), white = M('#f4f1ea', { roughness: 0.4 });
+  g.add(box(3.2, 2.4, 0.05, M('#ffffff', { map: repTex(TEX.tapeteA, 6, 4.5) }), 0, 0, -1.46));
+  g.add(box(2.5, 0.02, 1.8, M('#ffffff', { map: TEX.teppich, roughness: 1 }), 0, 0, -0.1, false));
+  /* Sofa, Rücken zur Fensterfront */
+  g.add(box(2.0, 0.2, 0.85, cord, 0, 0.12, 0.85), box(2.0, 0.5, 0.22, cord, 0, 0.32, 1.17), box(0.2, 0.5, 0.85, cord, -1.1, 0.12, 0.85), box(0.2, 0.5, 0.85, cord, 1.1, 0.12, 0.85));
+  g.add(box(0.96, 0.14, 0.62, cord2, -0.5, 0.32, 0.74), box(0.96, 0.14, 0.62, cord2, 0.5, 0.32, 0.74));
+  const p1 = box(0.36, 0.36, 0.12, M(C.orange, { roughness: 1 }), -0.62, 0.46, 1.0); p1.rotation.x = 0.25; const p2 = box(0.36, 0.36, 0.12, M(C.lila, { roughness: 1 }), 0.6, 0.46, 1.0); p2.rotation.x = 0.25; g.add(p1, p2);
+  /* Sideboard mit Fernseher: Monitor in bedruckter Forex-Einhausung */
+  g.add(box(1.5, 0.4, 0.42, teak, -0.3, 0.14, -1.18));
+  for (const x of [-0.95, 0.35]) for (const z of [-1.33, -1.03]) g.add(cyl(0.02, 0.14, mDark, x, 0, z, 8));
+  g.add(box(0.74, 0.52, 0.4, M('#6e4a2c', { roughness: 0.5 }), -0.3, 0.54, -1.18));
+  const scr = sign(0.44, 0.34, (c, w, h) => {
+    ['#e8e8e8', '#e6d21c', '#22c7c7', '#2bbf3a', '#c531c5', '#d22a2a', '#2a3fd2'].forEach((col, i) => { c.fillStyle = col; c.fillRect(i * w / 7, 0, w / 7 + 1, h * 0.72); });
+    c.fillStyle = '#111'; c.fillRect(0, h * 0.72, w, h * 0.28); c.fillStyle = '#eee'; wrapText(c, 'SENDEPAUSE', w / 2, h * 0.86, w, h * 0.13, FB, 700);
+  }, { emissive: true });
+  scr.position.set(-0.41, 0.8, -0.975); g.add(scr);
+  g.add(box(0.17, 0.36, 0.01, M('#cfc8ba', { roughness: 0.4 }), -0.04, 0.62, -0.978, false));
+  for (const y of [0.9, 0.78]) { const k = cyl(0.028, 0.03, mDark, -0.04, 0, 0, 16); k.rotation.x = PI / 2; k.position.set(-0.04, y, -0.965); g.add(k); }
+  for (const s of [-1, 1]) { const a = cyl(0.006, 0.5, mChrome, 0, 0, 0, 6); a.position.set(-0.3 + s * 0.12, 1.28, -1.2); a.rotation.z = -s * 0.5; g.add(a); }
+  /* Stehlampe, Beistelltisch, Gummibaum */
+  g.add(cyl(0.16, 0.03, mDark, 1.32, 0, -0.95), cyl(0.014, 1.5, mChrome, 1.32, 0.03, -0.95, 8));
+  const sh = new THREE.Mesh(new THREE.SphereGeometry(0.22, 24, 12, 0, PI * 2, 0, PI / 2), M(C.orange, { side: THREE.DoubleSide, roughness: 0.4 })); sh.position.set(1.32, 1.45, -0.95); sh.castShadow = true; g.add(sh);
+  g.add(cyl(0.2, 0.025, white, 1.4, 0.45, 0.45), cyl(0.03, 0.45, white, 1.4, 0, 0.45, 12), cyl(0.14, 0.02, white, 1.4, 0, 0.45));
+  g.add(cyl(0.15, 0.3, M(C.orange, { roughness: 0.5 }), -1.33, 0, -1.02, 20, 0.18), cyl(0.012, 0.9, M('#5b4a2a'), -1.33, 0.3, -1.02, 6));
+  const leaf = M('#2f6b3a', { roughness: 0.6 }), rr = rng(5);
+  for (let i = 0; i < 9; i++) { const l = ball(0.13, leaf, -1.33 + (rr() - 0.5) * 0.4, 0.55 + i * 0.085, -1.02 + (rr() - 0.5) * 0.4); l.scale.set(1, 0.35, 0.6); l.rotation.set(rr(), rr() * 6, rr()); g.add(l); }
+  return g;
+}
+
+/* ---- 2 · Mero-System (3 × 2 m, 2 m hoch) ---- */
+function buildMero() {
+  const g = new THREE.Group(), nx = 3, nz = 2, m = 1.0, ys = [0.06, 1.03, 2.0], ox = -nx * m / 2, oz = -nz * m / 2;
+  const P = (i, j, k) => new V3(ox + i * m, ys[j], oz + k * m);
+  const struts = [], nodes = [];
+  for (let i = 0; i <= nx; i++) for (let j = 0; j < 3; j++) for (let k = 0; k <= nz; k++) {
+    nodes.push(P(i, j, k));
+    if (i < nx) struts.push([P(i, j, k), P(i + 1, j, k)]);
+    if (k < nz) struts.push([P(i, j, k), P(i, j, k + 1)]);
+    if (j < 2) struts.push([P(i, j, k), P(i, j + 1, k)]);
+  }
+  const d = new THREE.Object3D(), up = new V3(0, 1, 0);
+  const sm = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.014, 0.014, 1, 8), mChrome, struts.length);
+  struts.forEach(([a, b], n) => { d.position.copy(a).add(b).multiplyScalar(0.5); d.quaternion.setFromUnitVectors(up, b.clone().sub(a).normalize()); d.scale.set(1, a.distanceTo(b), 1); d.updateMatrix(); sm.setMatrixAt(n, d.matrix); });
+  const nm = new THREE.InstancedMesh(new THREE.SphereGeometry(0.045, 14, 10), mChrome, nodes.length);
+  d.quaternion.identity(); d.scale.set(1, 1, 1);
+  nodes.forEach((p, n) => { d.position.copy(p); d.updateMatrix(); nm.setMatrixAt(n, d.matrix); });
+  sm.castShadow = nm.castShadow = true; g.add(sm, nm);
+  const txt = (head, bg = '#f6f3ee', fg = '#2b2533') => new THREE.MeshStandardMaterial({ map: ctex(256, 256, textPanel(bg, fg, head)), roughness: 0.8 });
+  const panelZ = (i, j, k, mat) => g.add(box(0.93, 0.9, 0.02, mat, ox + i * m + 0.5, ys[j] + 0.035, oz + k * m));
+  const panelX = (i, j, k, mat) => g.add(box(0.02, 0.9, 0.93, mat, ox + i * m, ys[j] + 0.035, oz + k * m + 0.5));
+  panelZ(0, 0, 0, M(C.orange)); panelZ(1, 0, 0, txt('Exponate')); panelZ(2, 0, 0, M(C.lila));
+  panelZ(0, 1, 0, txt('Dreieich um 1977')); panelZ(1, 1, 0, M(C.gelb)); panelZ(2, 1, 0, txt('Stadt im Wandel'));
+  panelX(0, 1, 0, M(C.lila)); panelX(0, 0, 1, txt('Texte', C.orange, '#fff')); panelX(3, 0, 0, M(C.orange)); panelX(3, 1, 1, txt('Objekte'));
+  const white = M('#f4f1ea', { roughness: 0.5 });
+  [[0.5, 1.45, C.gelb], [1.5, 1.45, C.pink], [2.5, 0.5, C.tuerkis]].forEach(([x, z, col], i) => {
+    g.add(box(0.5, 0.9, 0.5, white, ox + x, 0, oz + z), box(0.5, 0.42, 0.5, mVitrine, ox + x, 0.9, oz + z, false));
+    g.add(i === 1 ? ball(0.1, M(col, { roughness: 0.3 }), ox + x, 1.02, oz + z) : box(0.16, 0.2, 0.12, M(col, { roughness: 0.4 }), ox + x, 0.9, oz + z));
+  });
+  return g;
+}
+
+/* ---- 3 · Selfie-Station als Koje (2,5 × 2,1 m), zwei tapezierte Wände ---- */
+function buildSelfie() {
+  const g = new THREE.Group();
+  g.add(box(2.5, 2.4, 0.04, M('#ffffff', { map: repTex(TEX.tapeteB, 5, 4.8) }), 0, 0, -1.03));
+  g.add(box(0.04, 2.4, 2.1, M('#ffffff', { map: repTex(TEX.tapeteB, 4.2, 4.8) }), 1.23, 0, 0));
+  g.add(cyl(0.78, 0.015, M(C.pink, { roughness: 1 }), 0.05, 0, 0.1, 48));
+  /* Kleiderständer mit Kostümen */
+  g.add(cyl(0.015, 1.55, mChrome, -0.9, 0, -0.65, 8), cyl(0.015, 1.55, mChrome, -0.9, 0, 0.55, 8), box(0.025, 0.025, 1.24, mChrome, -0.9, 1.53, -0.05));
+  [C.orange, C.gelb, C.tuerkis, C.pink, C.oliv, C.lila, '#f3ead7'].forEach((col, i) => g.add(box(0.42, 0.78 + (i % 3) * 0.08, 0.035, M(col, { roughness: 1 }), -0.9, 0.62 - (i % 3) * 0.08, -0.56 + i * 0.165)));
+  /* Perücken auf Köpfen */
+  g.add(box(0.75, 0.78, 0.3, M('#f4f1ea', { roughness: 0.5 }), 0.62, 0, -0.84));
+  [C.orange, C.dunkel, C.gelb].forEach((col, i) => {
+    const x = 0.38 + i * 0.24;
+    g.add(cyl(0.025, 0.08, mDark, x, 0.78, -0.84, 8), ball(0.085, M('#e9d3bd'), x, 0.94, -0.84));
+    const w = ball(0.115, M(col, { roughness: 1 }), x, 0.975, -0.85); w.scale.set(1, 0.9, 1.05); g.add(w);
+  });
+  /* Discokugel, Ringlicht auf Stativ, Schild */
+  const disco = new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 2), new THREE.MeshStandardMaterial({ color: '#e8ecf2', metalness: 1, roughness: 0.12, flatShading: true }));
+  disco.position.set(0.1, 2.08, 0.05); disco.castShadow = true; g.add(disco, box(0.006, 0.26, 0.006, mDark, 0.1, 2.24, 0.05, false));
+  g.add(cyl(0.012, 1.35, mDark, 0.35, 0, 0.92, 8));
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.02, 10, 32), new THREE.MeshBasicMaterial({ color: '#fff6e0' })); ring.position.set(0.35, 1.5, 0.92); g.add(ring);
+  const s = sign(1.3, 0.3, (c, w, h) => { c.fillStyle = C.gelb; c.fillRect(0, 0, w, h); c.fillStyle = '#3b1d57'; wrapText(c, 'SELFIE 1977', w / 2, h / 2, w, h * 0.5, FD, 800); });
+  s.position.set(-0.1, 2.12, -1.005); g.add(s);
+  return g;
+}
+function buildStellwand() {
+  const g = new THREE.Group(), m = M('#e9e6ef', { roughness: 0.9 });
+  g.add(box(2.2, 1.95, 0.05, m, 0, 0.08, 0), box(2.2, 0.12, 0.054, M(C.orange), 0, 1.75, 0, false));
+  for (const x of [-0.95, 0.95]) g.add(box(0.06, 0.08, 0.5, mDark, x, 0, 0));
+  return g;
+}
+
+/* ---- 4 · Statistik: Drehwürfel „1970 / heute“ (2,3 × 0,5 m) ---- */
+function buildStatistik() {
+  const g = new THREE.Group(), r = rng(21);
+  const face = (bg, fg, t, size) => new THREE.MeshStandardMaterial({ roughness: 0.6, map: ctex(256, 256, (c, w) => { c.fillStyle = bg; c.fillRect(0, 0, w, w); c.fillStyle = fg; wrapText(c, t, w / 2, w / 2, w * 0.9, size, FD, 800); }) });
+  const mats = [face(C.lila, '#fff', '1970', 70), face(C.orange, '#fff', 'heute', 60), face(C.gelb, '#3b1d57', '?', 150)];
+  [-0.9, -0.3, 0.3, 0.9].forEach((x, i) => {
+    const outer = i === 0 || i === 3;
+    g.add(cyl(0.17, 0.03, mDark, x, 0, 0), cyl(0.018, outer ? 1.9 : 1.6, mChrome, x, 0.03, 0, 8));
+    for (let j = 0; j < 3; j++) { const c = box(0.3, 0.3, 0.3, mats[(i + j) % 3], x, 0.5 + j * 0.34, 0); c.rotation.y = Math.round(r() * 4) * PI / 8 - PI / 4; g.add(c); }
+  });
+  const draw = (c, w, h) => { c.fillStyle = '#2b2533'; c.fillRect(0, 0, w, h); c.fillStyle = '#fff'; wrapText(c, 'Wie gut kennst du Dreieich?', w / 2, h / 2, w * 0.95, h * 0.36, FD, 700); };
+  const a = sign(2.1, 0.26, draw), b = sign(2.1, 0.26, draw);
+  a.position.set(0, 1.78, 0.012); b.position.set(0, 1.78, -0.012); b.rotation.y = PI; g.add(a, b);
+  return g;
+}
+
+/* ---- 5 · Litfaßsäule: Größe kommt aus dem Rechner ---- */
+function buildLitfass({ d, h, n, rows, gap }) {
+  const g = new THREE.Group(), r = d / 2, U = PI * d, rr = rng(9);
+  const pal = [C.orange, C.lila, C.gelb, C.pink, C.tuerkis, C.oliv, '#f3ead7', '#d22a2a'];
+  const tex = ctex(2048, 1024, (c, w, hh) => {
+    c.fillStyle = '#b9b2a4'; c.fillRect(0, 0, w, hh);
+    const pw = 0.42 / U * w, ph = 0.594 / h * hh, cw = w / Math.max(n, 1), top = (hh - rows * (ph + gap / h * hh)) / 2;
+    for (let i = 0; i < n; i++) for (let j = 0; j < rows; j++) {
+      const x = i * cw + (cw - pw) / 2, y = top + j * (ph + gap / h * hh) + gap / h * hh / 2, bg = pal[Math.floor(rr() * pal.length)], fg = pal[Math.floor(rr() * pal.length)];
+      c.fillStyle = bg; c.fillRect(x, y, pw, ph);
+      c.fillStyle = fg === bg ? '#2b2533' : fg; c.beginPath(); c.arc(x + pw / 2, y + ph * 0.38, pw * 0.28, 0, 7); c.fill();
+      c.fillStyle = bg === '#f3ead7' || bg === C.gelb ? '#2b2533' : '#fff';
+      c.fillRect(x + pw * 0.12, y + ph * 0.68, pw * 0.76, ph * 0.06); c.fillRect(x + pw * 0.12, y + ph * 0.79, pw * 0.5, ph * 0.035); c.fillRect(x + pw * 0.12, y + ph * 0.86, pw * 0.62, ph * 0.035);
+    }
+  });
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(r, r, h, 56), [new THREE.MeshStandardMaterial({ map: tex, roughness: 0.85 }), mDark, mDark]);
+  body.position.y = 0.22 + h / 2; shade(body); g.add(body);
+  g.add(cyl(r + 0.035, 0.22, mDark, 0, 0, 0, 48), cyl(r + 0.06, 0.07, mDark, 0, 0.22 + h, 0, 48), cyl(r + 0.03, 0.13, M('#3d6b4f', { roughness: 0.5 }), 0, 0.29 + h, 0, 48, 0.06), ball(0.05, mDark, 0, 0.45 + h, 0));
+  return g;
+}
+
+/* ---- 6 · Gebietsreform: orange Wand an der Brandmauer, runde Forexplatten Ø 50/60 ---- */
+const KREIS_TITEL = ['Gebietsreform', '1. Januar 1977', 'Sprendlingen', 'Dreieichenhain', 'Götzenhain', 'Offenthal', 'Buchschlag', 'Der Name Dreieich', 'Vorher', 'Nachher', 'Stimmen'];
+function kreisLayout(n) {
+  const r = rng(11), out = [];
+  for (let i = 0; i < n; i++) {
+    const rad = i % 3 === 0 ? 0.3 : 0.25;
+    for (let t = 0; t < 600; t++) {
+      const z = 0.55 + r() * 7.55, y = 0.72 + r() * 1.38;
+      if (out.every(o => Math.hypot(o.z - z, o.y - y) > o.rad + rad + 0.1)) { out.push({ z, y, rad }); break; }
+    }
+  }
+  return out;
+}
+function buildGebietsreform(n) {
+  const g = new THREE.Group(), x = R.W - 0.012;
+  g.add(wall(x, 0.02, x, R.door.z - 0.02, M('#f2690d', { roughness: 0.95 })));
+  const styles = [['#ffffff', '#3b1d57'], ['#f5b70a', '#3b1d57'], ['#5f2b84', '#ffffff'], ['#f3ead7', '#b8430a']];
+  kreisLayout(n).forEach((k, i) => {
+    const [bg, fg] = styles[i % styles.length], title = KREIS_TITEL[i] || `Text ${i + 1}`;
+    const t = ctex(256, 256, (c, w) => {
+      c.fillStyle = bg; c.beginPath(); c.arc(w / 2, w / 2, w / 2, 0, 7); c.fill(); c.fillStyle = fg;
+      wrapText(c, title, w / 2, w * 0.36, w * 0.74, 27, FD, 700);
+      c.globalAlpha = 0.4; for (let j = 0; j < 4; j++) c.fillRect(w * 0.26, w * (0.56 + j * 0.065), w * (j === 3 ? 0.3 : 0.48), w * 0.022);
+    });
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(k.rad, k.rad, 0.012, 48), [M(bg), new THREE.MeshStandardMaterial({ map: t, roughness: 0.75 }), M(bg)]);
+    m.rotation.z = PI / 2; m.position.set(R.W - 0.03, k.y, k.z); g.add(m);   // Deckfläche zeigt in den Raum
+  });
+  return g;
+}
+
+/* ---- 7 · Slide-Show auf Medienstelen (2,8 × 0,7 m) ---- */
+function buildStelen() {
+  const g = new THREE.Group();
+  const shot = (label, sky, land, tint) => (c, w, h) => {
+    const gr = c.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, sky[0]); gr.addColorStop(1, sky[1]); c.fillStyle = gr; c.fillRect(0, 0, w, h);
+    c.fillStyle = land; const rr = rng(label.length * 13);
+    for (let i = 0; i < 9; i++) { const x = i * w / 8 - 20, bw = w / 7, bh = h * (0.12 + rr() * 0.16); c.fillRect(x, h * 0.72 - bh, bw, bh + h * 0.3); c.beginPath(); c.moveTo(x - 4, h * 0.72 - bh); c.lineTo(x + bw / 2, h * 0.72 - bh - bw * 0.42); c.lineTo(x + bw + 4, h * 0.72 - bh); c.fill(); }
+    c.fillStyle = tint; c.fillRect(0, 0, w, h); c.fillStyle = '#fff'; wrapText(c, label, w / 2, h * 0.88, w, h * 0.075, FD, 700);
+  };
+  const scr = [shot('1977', ['#d9c9a3', '#f1e6c9'], '#7a644a', 'rgba(120,80,30,.18)'), shot('2000', ['#9fc3e0', '#e7eef2'], '#5c6b78', 'rgba(0,0,0,0)'), shot('heute', ['#5aa7e6', '#dff1ff'], '#3f7a58', 'rgba(0,0,0,0)')];
+  [-0.95, 0, 0.95].forEach((x, i) => {
+    g.add(box(0.56, 0.03, 0.44, mDark, x, 0, 0), box(0.64, 1.85, 0.08, mDark, x, 0.03, 0));
+    const s = sign(0.56, 1.0, scr[i], { emissive: true }); s.position.set(x, 1.3, 0.042); g.add(s);
+  });
+  g.add(cyl(0.2, 0.42, M(C.orange, { roughness: 0.7 }), -0.5, 0, 1.25), cyl(0.2, 0.42, M(C.lila, { roughness: 0.7 }), 0.5, 0, 1.25));
+  return g;
+}
+
+/* ---- 8 · Zukunft / Lieblingsplatz: Pinnwand mit Stadtplan + Kartentisch (2,6 × 1,4 m) ---- */
+function buildZukunft() {
+  const g = new THREE.Group(), white = M('#f4f1ea', { roughness: 0.5 });
+  g.add(box(2.5, 1.5, 0.04, white, 0, 0.55, -0.4), box(0.05, 0.55, 0.4, mDark, -1.1, 0, -0.4), box(0.05, 0.55, 0.4, mDark, 1.1, 0, -0.4));
+  const map = sign(2.42, 1.42, (c, w, h) => {
+    c.fillStyle = '#f3ead7'; c.fillRect(0, 0, w, h);
+    c.fillStyle = '#3b1d57'; c.textAlign = 'left'; c.font = `700 ${h * 0.085}px ${FD}`; c.textBaseline = 'top'; c.fillText('Mein Lieblingsplatz', w * 0.03, h * 0.05);
+    const blob = (x, y, rx, ry, col, name) => { c.fillStyle = col; c.beginPath(); c.ellipse(w * x, h * y, w * rx, h * ry, 0.3, 0, 7); c.fill(); c.fillStyle = '#2b2533'; c.font = `600 ${h * 0.043}px ${FB}`; c.textAlign = 'center'; c.fillText(name, w * x, h * y - h * 0.025); };
+    blob(0.1, 0.56, 0.075, 0.12, '#cfe3b4', 'Buchschlag'); blob(0.3, 0.36, 0.11, 0.15, '#f6c9a0', 'Sprendlingen'); blob(0.3, 0.76, 0.1, 0.13, '#d9c4ec', 'Dreieichenhain');
+    blob(0.52, 0.52, 0.085, 0.14, '#f7e0a0', 'Götzenhain'); blob(0.54, 0.87, 0.07, 0.085, '#bfe1e4', 'Offenthal');
+    c.fillStyle = '#5f2b84'; c.fillRect(w * 0.66, 0, w * 0.34, h); c.fillStyle = '#fff'; wrapText(c, 'Dreieich 2077', w * 0.83, h * 0.14, w * 0.3, h * 0.075, FD, 700); wrapText(c, 'Was wünschst du dir?', w * 0.83, h * 0.3, w * 0.3, h * 0.055, FB, 600);
+    const rr = rng(4); [C.gelb, '#fff', C.orange, '#fff', C.gelb, C.pink].forEach((col, i) => { c.fillStyle = col; c.save(); c.translate(w * (0.71 + (i % 2) * 0.15), h * (0.44 + Math.floor(i / 2) * 0.18)); c.rotate((rr() - 0.5) * 0.3); c.fillRect(0, 0, w * 0.11, h * 0.13); c.restore(); });
+  });
+  map.position.set(0, 1.3, -0.378); g.add(map);
+  const rr = rng(8), pins = [C.orange, C.pink, C.lila, C.tuerkis];
+  for (let i = 0; i < 18; i++) g.add(ball(0.022, M(pins[i % 4], { roughness: 0.3 }), -1.1 + rr() * 1.45, 0.85 + rr() * 0.95, -0.37));
+  g.add(cyl(0.38, 0.03, white, 0, 1.05, 0.45), cyl(0.035, 1.05, mChrome, 0, 0, 0.45, 12), cyl(0.26, 0.02, mDark, 0, 0, 0.45));
+  g.add(box(0.16, 0.035, 0.11, M(C.gelb), -0.14, 1.08, 0.4), box(0.16, 0.025, 0.11, M('#fff'), 0.02, 1.08, 0.58), box(0.22, 0.22, 0.22, M(C.lila, { roughness: 0.5 }), 0.17, 1.08, 0.36), box(0.14, 0.004, 0.02, mDark, 0.17, 1.3, 0.36, false));
+  return g;
+}
+
+/* ---- Bestand & Ausstattung ---- */
+function buildTheke(orange) {
+  const g = new THREE.Group(), front = M(orange ? C.orange : '#2f3b4f', { roughness: 0.45 }), top = M('#f4f2ee', { roughness: 0.35 });
+  g.add(box(3.2, 0.86, 0.65, front, 0, 0, 0), box(3.28, 0.04, 0.73, top, 0, 0.86, 0));
+  g.add(box(0.65, 0.86, 1.9, front, -1.275, 0, -1.275), box(0.73, 0.04, 1.94, top, -1.275, 0.86, -1.255));
+  if (orange) { const s = sign(1.7, 0.36, (c, w, h) => { c.fillStyle = '#fff'; wrapText(c, '50 Jahre Dreieich', w / 2, h / 2, w, h * 0.42, FD, 700); c.globalCompositeOperation = 'destination-over'; c.fillStyle = C.orange; c.fillRect(0, 0, w, h); }); s.position.set(0.3, 0.46, 0.327); g.add(s); }
+  return g;
+}
+function buildFahne() {
+  const g = new THREE.Group();
+  const t = ctex(480, 760, (c, w, h) => {
+    c.fillStyle = C.orange; c.fillRect(0, 0, w, h); c.fillStyle = '#5f2b84'; c.beginPath(); c.arc(w / 2, h * 0.5, w * 0.36, 0, 7); c.fill();
+    c.fillStyle = '#fff'; wrapText(c, 'Willkommen', w / 2, h * 0.14, w * 0.94, w * 0.105, FD, 700);
+    c.fillStyle = C.gelb; wrapText(c, '50', w / 2, h * 0.5, w, w * 0.34, FD, 800);
+    c.fillStyle = '#fff'; wrapText(c, 'Jahre Dreieich', w / 2, h * 0.86, w * 0.9, w * 0.095, FB, 700);
+  });
+  const fm = new THREE.MeshStandardMaterial({ map: t, roughness: 0.9 });
+  const f = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.9), fm), f2 = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 1.9), fm);
+  f.position.set(0, 1.4, 0.004); f2.position.set(0, 1.4, -0.004); f2.rotation.y = PI; f.castShadow = true; g.add(f, f2);
+  g.add(box(1.26, 0.025, 0.025, mDark, 0, 2.35, 0, false), box(0.005, 0.13, 0.005, mDark, -0.55, 2.37, 0, false), box(0.005, 0.13, 0.005, mDark, 0.55, 2.37, 0, false));
+  return g;
+}
+function buildKissen() {
+  const g = new THREE.Group(), mo = M(C.orange, { roughness: 1 }), ml = M(C.lila, { roughness: 1 }), r = rng(2); let n = 0;
+  const put = (x, z, ry) => { const k = box(0.48, 0.09, 0.34, n % 2 ? ml : mo, x, R.SILL, z); k.rotation.y = ry + (r() - 0.5) * 0.2; g.add(k); n++; };
+  for (let x = 0.75; x < R.xRet - 0.4; x += 1.2) if ([R.colX, ...R.frontX].every(c => Math.abs(c - x) > 0.42)) put(x, R.zG - 0.2, 0);
+  for (let z = R.zWW + 0.6; z < R.zG - 0.8; z += 1.2) if (R.westZ.every(c => Math.abs(c - z) > 0.42)) put(R.xG + 0.2, z, PI / 2);
+  g.userData.count = n;
+  return g;
+}
+function buildFigur(col = '#8f879c', h = 1.72) {
+  const g = new THREE.Group(), m = M(col, { roughness: 0.9 });
+  g.add(cyl(0.13, 0.84, m, 0, 0, 0, 14, 0.16), cyl(0.2, h - 0.84 - 0.3, m, 0, 0.84, 0, 14, 0.15), ball(0.115, m, 0, h - 0.115, 0));
+  return g;
+}
+
+// ---- 04-data.js ----
+/* =====================================================================
+   DATEN aus Protokoll 1 (10.11.2026) und Protokoll 2 (17.11.2026)
+   ===================================================================== */
+const WHO = { CM: 'Corinna Molitor', KL: 'Kim Lehnert', CS: 'Claudia Scheibel', SB: 'Sascha Becker', AP: 'Ana Perkovic', ALLE: 'Alle' };
+
+/* pos = [x, z] Mittelpunkt, rot in Grad, size = [Breite, Tiefe, Höhe], eye/look = Blickpunkt der Führung (lokal) */
+const ST = [
+  { id: 's1', n: 1, name: 'Wohnzimmer', color: '#d9540a', make: buildWohnzimmer, pos: [9.78, 6.75], rot: 0, size: [3.2, 3.0, 2.4], eye: [-2.9, 1.6, 2.9], look: [0.2, 0.8, -0.4],
+    kurz: 'Ein 70er-Wohnzimmer zum Reinsetzen: Sofa, Teppich und ein Fernseher, auf dem Tagesschau oder eine Kindersendung in Dauerschleife läuft.',
+    ort: 'Vor der Stirnwand des Treppenhauses. Das Sofa steht mit dem Rücken zur Fensterfront, der Fernseher an der Wand: Das Bild wird weniger überstrahlt, und von der Straße schaut man ins Wohnzimmer.',
+    punkte: ['Fernseher: ein Monitor, eingehaust mit bedruckten Forexplatten, damit er wie ein Gerät aus den 1970ern aussieht (Protokoll 2).', 'Sofa und Teppich als Neukauf über XXL Lutz, Sponsoring wird angefragt.', 'Die übrige Einrichtung kommt über Anjali Göbel. Wo sie bis März steht, ist offen.'] },
+  { id: 's2', n: 2, name: 'Mero-System', color: '#74399a', make: buildMero, pos: [3.4, 7.55], rot: 0, size: [3.2, 2.2, 2.05], eye: [3.4, 1.7, 3.0], look: [0, 0.95, 0],
+    kurz: 'Das Ausstellungssystem aus Knoten und Stäben trägt Texte und Exponate. Seine Farbwelt gibt die Linie für alle Grafiken vor.',
+    ort: 'Frei im linken Raumteil, von beiden Fensterfronten aus zu sehen und von allen Seiten begehbar.',
+    punkte: ['Im Modell 3 × 2 m Grundfläche und 2 m hoch – eine Annahme, bis die echten Maße vorliegen.', 'Farben und Schriftart schickt Corinna Molitor ans Team. Bis dahin steht im Modell Orange und Lila aus dem Protokoll.'] },
+  { id: 's3', n: 3, name: 'Selfie-Station', color: '#c2255c', make: buildSelfie, pos: [6.85, 4.15], rot: 0, size: [2.5, 2.1, 2.4], eye: [-1.5, 1.6, 3.5], look: [0.2, 1.1, -0.4],
+    kurz: 'Eine Koje mit typischer 70er-Jahre-Tapete, Perücken, Kleidern und Accessoires für das Foto im Look von 1977.',
+    ort: 'In der Nische zwischen Lager und Treppenhaus. Dort stehen schon zwei Wände, die gestrichen oder tapeziert werden können. Eine Stellwand trennt die Koje vom Wohnzimmer.',
+    punkte: ['Idee aus Protokoll 2: Eine Dreieicher Firma streicht oder tapeziert die Koje als Sponsoring. Wer anfragt, ist offen.', 'Perücken, Kleider, Accessoires über Faschingsbedarf.', 'Tapezierte Fläche im Modell: rund 11 m².'] },
+  { id: 's4', n: 4, name: 'Statistik', color: '#1c6fc4', make: buildStatistik, pos: [4.13, 4.93], rot: 0, size: [2.3, 0.5, 1.95], eye: [2.4, 1.65, 3.2], look: [0, 1.1, 0],
+    kurz: 'Mitmachstation „Wie gut kennen wir Dreieich?“ mit Zahlen von 1970 und heute zum Raten und Umdrehen.',
+    ort: 'Als Reihe zwischen den beiden Vierkantstützen. Die Stützenlinie trennt so den Thekenbereich vom vorderen Raum.',
+    punkte: ['Im Modell als Drehwürfel auf Stelen gedacht (Frage, 1970, heute) – ein Gestaltungsvorschlag, nicht beschlossen.', 'Erst klären, ob und wie man an die Statistiken kommt.'] },
+  { id: 's5', n: 5, name: 'Litfaß-Säule', color: '#2b8a3e', make: () => buildLitfass(litfassParams()), pos: [13.5, 7.7], rot: 0, size: [1.2, 1.2, 2.4], eye: [2.7, 1.6, 1.7], look: [0, 1.2, 0],
+    kurz: 'Eine Litfaß-Säule mit Plakaten aus den 1970ern und Texten des Frauen- und Gleichstellungsreferats.',
+    ort: 'Frei im rechten Raumteil, vom Eingang und von der Straße aus sofort zu sehen.',
+    punkte: ['Wie viele DIN-A2-Plakate hochkant passen, hängt von Umfang und Höhe ab – dafür gibt es den Rechner.', 'Texte gehen bis Ende 2026 an Sascha Becker zur Gestaltung.'] },
+  { id: 's6', n: 6, name: 'Gebietsreform', color: '#e67700', make: () => buildGebietsreform(state.calc.kreise), pos: [R.W, 4.5], rot: 0, size: [0.4, 9.2, 2.5], fixed: true, eye: [16.3, 1.6, 8.7], look: [19.45, 1.3, 3.4], anchor: [R.W - 0.25, 2.25, 4.5],
+    kurz: 'Die lange Wand am Eingang wird orange. Darauf sitzen runde Forexplatten (Ø 50 und 60 cm) mit kurzen Texten, die jede für sich funktionieren.',
+    ort: 'An der Brandmauer rechts vom Eingang, gut 9 m lang. Das ist die „lange Wand am Eingang“ aus Protokoll 2 und der erste Blickfang beim Hereinkommen.',
+    punkte: ['Die Lesereihenfolge ist nicht vorgegeben, die Platten werden lebendig verteilt. So wirkt das trockene Thema lockerer.', 'Texte: Corinna Molitor. Grafik: Sascha Becker. Produktion: Vorschlag MSK. Die Wand streicht eine Dreieicher Malerfirma.', 'Die Titel auf den Platten im Modell sind Platzhalter.'] },
+  { id: 's7', n: 7, name: 'Slide-Show', color: '#0b7285', make: buildStelen, pos: [11.85, 2.6], rot: 90, size: [2.8, 0.7, 1.9], eye: [0.9, 1.6, 4.4], look: [0, 1.15, 0],
+    kurz: 'Bilder von 1970 bis heute von Stephan Heinsius. Ein Beamer scheidet aus, der Raum ist zu hell – deshalb Medienstelen.',
+    ort: 'An der Seitenwand des Treppenhauses, quer zur Fensterfront und damit so weit wie möglich aus dem Gegenlicht. Nah an Insel 6.',
+    punkte: ['Offen: ob und wann die Stadt Medienstelen bestellt.', 'Fällt die Slide-Show aus, kann hier das Thema Hessentag stehen (Protokoll 2).'] },
+  { id: 's8', n: 8, name: 'Zukunft & Lieblingsplatz', color: '#9c36b5', make: buildZukunft, pos: [15.0, 0.78], rot: 0, size: [2.6, 1.5, 2.1], eye: [-1.6, 1.6, 4.4], look: [0, 1.2, -0.3],
+    kurz: 'Mitmachstation: Wo ist dein Lieblingsplatz in Dreieich, und was wünschst du der Stadt für die Zukunft?',
+    ort: 'An der Rückwand im rechten Raumteil, neben der Gebietsreform. Fenster und Tür zu den Nebenräumen bleiben frei.',
+    punkte: ['Möglich, dass die Stadtbibliothek diese Idee schon selbst zeigt. Claudia Scheibel hakt nach.', 'Im Modell: Pinnwand mit Stadtteilen und Kartentisch – ein Vorschlag.', 'Ausweichthema für diesen Platz: Hessentag.'] },
+];
+const EXTRA = [
+  { id: 'theke', name: 'Theke (Lage geschätzt)', color: '#5a5266', make: () => buildTheke(state.expo), pos: [2.9, 3.2], rot: 0, size: [3.3, 2.6, 0.9], off: [0, -0.95], bestand: true },
+  { id: 'wand', name: 'Stellwand', color: '#5a5266', make: buildStellwand, pos: [8.12, 6.3], rot: 90, size: [2.2, 0.5, 2.05] },
+  { id: 'fahne', name: 'Willkommens-Fahne', color: '#5a5266', make: buildFahne, pos: [15.3, 5.9], rot: 35, size: [1.3, 0.4, 2.4] },
+];
+const FIGUREN = [[18.55, 2.3, 0.9, '#8f879c'], [13.0, 3.9, -1.2, '#a59bb3'], [6.9, 4.6, 0.3, '#8f879c'], [2.3, 9.2, 2.2, '#a59bb3']];
+
+const GRUPPEN = [...ST.map(s => ({ id: s.id, name: `${s.n} · ${s.name}`, color: s.color })), { id: 'raum', name: 'Raum & Ausstattung', color: '#5a5266' }, { id: 'prog', name: 'Programm & Titel', color: '#5a5266' }];
+
+/* kind: todo | check (erst klären) · who leer = Zuständigkeit offen · src = Protokoll */
+const TODOS = [
+  { id: 't01', st: 's1', who: ['CM'], src: 'P1', text: 'Einrichtung über Anjali Göbel beziehen' },
+  { id: 't02', st: 's1', who: ['CM'], src: 'P1', kind: 'check', text: 'Unterstellen der Einrichtung bis März klären: Nachfrage im Bürgerhaus, Kontakt Benjamin Halberstadt' },
+  { id: 't03', st: 's1', who: ['CS', 'KL'], src: 'P1', text: 'Sofa und Teppich: Neukauf über XXL Lutz, Sponsoring anfragen' },
+  { id: 't04', st: 's1', who: ['KL'], src: 'P1', kind: 'check', text: 'Rechte für Tagesschau und Kindersendung in Dauerschleife prüfen, Anfrage bei ZDF/ARD' },
+  { id: 't05', st: 's1', who: ['SB'], src: 'P2', text: 'Monitor mit bedruckten Forexplatten einhausen, damit er wie ein Fernseher der 1970er aussieht' },
+  { id: 't06', st: 's2', who: ['CM'], src: 'P1', text: 'Texte, Exponate und Ausstellungssystem zusammenstellen' },
+  { id: 't07', st: 's2', who: ['CM'], src: 'P1', text: 'Farbwelt und Schriftart des Mero-Systems ans Team senden – alle Grafiken richten sich danach' },
+  { id: 't08', st: 's3', who: ['CM'], src: 'P1', text: 'Stellwand zur Abtrennung von Insel 1 und 3 über die Bürgerhäuser organisieren' },
+  { id: 't09', st: 's3', who: ['CM', 'CS'], src: 'P1 · P2', kind: 'check', text: 'Perücken, Kleider, Accessoires über Faschingsbedarf: Empfehlung von Corinna Molitor, Bestellung über Claudia Scheibel noch mit Fragezeichen' },
+  { id: 't10', st: 's3', who: [], src: 'P2', text: 'Malergeschäft aus Dreieich anfragen: Koje streichen oder mit 70er-Tapete tapezieren, als Sponsoring. Wer fragt an?' },
+  { id: 't11', st: 's4', who: ['KL'], src: 'P1', kind: 'check', text: 'Recherchieren, wie und ob man an die Statistiken 1970/heute kommt' },
+  { id: 't12', st: 's4', who: ['CM'], src: 'P1', text: 'Themeninsel ausgestalten' },
+  { id: 't13', st: 's5', who: ['CM'], src: 'P1', text: 'Litfaß-Säule stellen' },
+  { id: 't14', st: 's5', who: ['CM'], src: 'P1', text: 'Größe und Umfang der Säule an die Gruppe und das Gleichstellungsreferat melden: Wie viele DIN-A2-Plakate hochkant passen?' },
+  { id: 't15', st: 's5', who: ['CM'], src: 'P1', text: 'Plakate aus den 1970ern im Bürgerhaus sichten' },
+  { id: 't16', st: 's5', who: ['AP'], src: 'P1', due: 'bis Ende 2026', text: 'Texte vom Frauen- und Gleichstellungsreferat an Sascha Becker zur Gestaltung geben' },
+  { id: 't17', st: 's6', who: ['CM'], src: 'P1 · P2', text: 'Kurze, in sich abgeschlossene Texte zur Gebietsreform schreiben und an Claudia Scheibel schicken' },
+  { id: 't18', st: 's6', who: ['CM'], src: 'P1', text: 'Ideenvorschlag zur Ausgestaltung (Stand Protokoll 2: orange Wand mit runden Forexplatten)' },
+  { id: 't19', st: 's6', who: ['SB'], src: 'P1 · P2', text: 'Grafik für die runden Forexplatten, Ø 50 und 60 cm' },
+  { id: 't20', st: 's6', who: ['SB'], src: 'P1 · P2', kind: 'check', text: 'Produktion klären – Vorschlag: MSK Offenthal' },
+  { id: 't21', st: 's6', who: [], src: 'P2', text: 'Dreieicher Malerfirma für die orange Wand anfragen (Sponsoring)' },
+  { id: 't22', st: 's7', who: ['CM'], src: 'P1', text: 'Anfrage bei Stephan Heinsius wegen der Bilder 1970 bis heute' },
+  { id: 't23', st: 's7', who: ['KL'], src: 'P1', kind: 'check', text: 'Prüfen, ob und wann die Stadt Medienstelen bestellt' },
+  { id: 't24', st: 's8', who: ['CS'], src: 'P1', kind: 'check', text: 'Bei der Stadtbibliothek nachhaken, ob sie die Idee Zukunft/Lieblingsplatz schon selbst übernimmt und ausstellt' },
+  { id: 't25', st: 's8', who: [], src: 'P2', kind: 'check', text: 'Entscheiden: Wenn Insel 7 oder 8 nicht klappt, kommt dort das Thema Hessentag hin (nahe Insel 6)' },
+  { id: 't26', st: 'raum', who: ['CS', 'KL'], src: 'P1', kind: 'check', text: 'Dürfen an den Decken Haken für Fahnen befestigt werden?', wirkt: 'Willkommens-Fahne' },
+  { id: 't27', st: 'raum', who: ['CS', 'KL'], src: 'P1', kind: 'check', text: 'Dürfen die Wände gestrichen oder mit Tapete beklebt werden?', wirkt: 'orange Wand (6), Tapete in der Koje (3)' },
+  { id: 't28', st: 'raum', who: ['KL'], src: 'P1', kind: 'check', text: 'Darf das Motiv Prilblume verwendet werden? Bei Henkel nachhaken' },
+  { id: 't29', st: 'raum', who: [], src: 'P2', kind: 'check', text: 'Theke: Lässt sie sich mit orangener Folie bekleben? Kann die Rückseite geschlossen werden?' },
+  { id: 't30', st: 'raum', who: [], src: 'P2', text: 'Orangene und lila Sitzkissen für die Fensterfront anschaffen' },
+  { id: 't31', st: 'raum', who: [], src: 'P2', text: 'Willkommens-Fahne im Eingangsbereich aufhängen, damit der Raum gegliedert wird' },
+  { id: 't32', st: 'prog', who: ['KL', 'CM'], src: 'P1', text: 'Begleitprogramm ausarbeiten' },
+  { id: 't33', st: 'prog', who: ['KL', 'CM'], src: 'P1', text: 'Pubquiz erstellen, erste Veranstaltung beim GHV' },
+  { id: 't34', st: 'prog', who: ['ALLE'], src: 'P1', kind: 'check', text: 'Titel der Ausstellung festlegen' },
+];
+
+// ---- 05-app.js ----
+/* =====================================================================
+   APP: Zustand, Szene, Kamera, Verschieben, Begehen, Rundgang, Akte
+   ===================================================================== */
+const LS = 'popup3-plan-v1';
+const DEF_CALC = { litfass: { d: 100, h: 190, gap: 0 }, kreise: 11 };
+const state = { tab: 'ueber', view: 'iso', expo: true, dims: false, people: true, move: false, walk: false, tour: -1, sel: null, filter: 'alle', done: {}, pos: {}, calc: JSON.parse(JSON.stringify(DEF_CALC)), open: new Set() };
+const mergeCalc = c => { state.calc = { kreise: clamp(Number(c.kreise) || DEF_CALC.kreise, 6, 16), litfass: { ...DEF_CALC.litfass, ...(c.litfass || {}) } }; };
+try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s) { state.done = s.done || {}; state.pos = s.pos || {}; if (s.calc) mergeCalc(s.calc); } } catch (e) { /* ohne Speicher weiter */ }
+const saveLocal = () => { try { localStorage.setItem(LS, JSON.stringify({ done: state.done, pos: state.pos, calc: state.calc })); } catch (e) { /* egal */ } };
+
+function litfassParams() {
+  const { d, h, gap } = state.calc.litfass, U = PI * d;
+  const n = Math.floor(U / (42 + gap)), rows = Math.floor(h / (59.4 + gap));
+  return { d: d / 100, h: h / 100, gap: gap / 100, U, n, rows, total: n * rows, hoehe: (22 + h + 28) / 100 };
+}
+
+/* ---------- Szene ---------- */
+const room = buildRoom(); scene.add(room.g);
+const expo = new THREE.Group(); scene.add(expo);
+const kissen = buildKissen(); expo.add(kissen);
+const figuren = new THREE.Group(); scene.add(figuren);
+FIGUREN.forEach(([x, z, r, col]) => { const f = buildFigur(col); f.position.set(x, 0, z); f.rotation.y = r; figuren.add(f); });
+
+const items = {}, proxies = [];
+const defOf = id => items[id].def;
+const defPose = d => ({ x: d.pos[0], z: d.pos[1], r: d.rot });
+function mount(def) {
+  const group = new THREE.Group(); let inner = def.make(); group.add(inner);
+  const [sx, sz, sy] = def.size, off = def.off || [0, 0];
+  const proxy = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz)); proxy.visible = false; proxy.userData.id = def.id;
+  const rect = [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([a, b]) => new V3(a * (sx / 2 + 0.08) + off[0], 0.025, b * (sz / 2 + 0.08) + off[1]));
+  const outline = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(rect), new THREE.LineBasicMaterial({ color: def.color })); outline.visible = false;
+  if (def.fixed) { proxy.position.set(def.pos[0] - sx / 2, sy / 2, def.pos[1]); outline.position.set(def.pos[0] - sx / 2, 0, def.pos[1]); }
+  else proxy.position.set(off[0], sy / 2, off[1]);
+  group.add(proxy, outline); proxies.push(proxy);
+  (def.bestand ? scene : expo).add(group);
+  items[def.id] = { def, group, proxy, outline, remake() { group.remove(inner); inner = def.make(); group.add(inner); invalidate(); } };
+  place(def.id);
+}
+function place(id) {
+  const { def, group } = items[id]; if (def.fixed) return;
+  const p = state.pos[id] || defPose(def);
+  group.position.set(p.x, 0, p.z); group.rotation.y = (p.r || 0) * PI / 180;
+}
+[...ST, ...EXTRA].forEach(mount);
+const applyLayout = () => { Object.keys(items).forEach(place); invalidate(); updateInspect(); };
+
+/* ---------- Marken über dem Modell ---------- */
+const labelsEl = $('#labels'), labels = [], tmp = new V3();
+ST.forEach(def => {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'chip3d'; b.dataset.id = def.id;
+  b.innerHTML = `<b style="background:${def.color}">${def.n}</b><span>${esc(def.name)}</span>`;
+  b.addEventListener('click', () => select(def.id, { fly: !state.move, tab: true }));
+  labelsEl.append(b);
+  labels.push({ el: b, expo: true, at: v => (def.anchor ? v.set(...def.anchor) : v.copy(items[def.id].group.position).setY(def.size[2] + 0.3)) });
+});
+const addTag = (text, at, isExpo, high) => { const s = document.createElement('span'); s.className = 'tag3d'; s.textContent = text; labelsEl.append(s); labels.push({ el: s, expo: isExpo, at, high }); };
+EXTRA.forEach(def => addTag(def.name, v => items[def.id].group.localToWorld(v.set((def.off || [0, 0])[0], def.size[2] + 0.18, (def.off || [0, 0])[1])), !def.bestand));
+room.tags.forEach(t => addTag(t.t, v => v.set(...t.p), false, true));
+function updateLabels() {
+  const w = stageEl.clientWidth, h = stageEl.clientHeight;
+  for (const l of labels) {
+    l.at(tmp).project(camera);
+    const vis = tmp.z < 1 && tmp.z > -1 && Math.abs(tmp.x) < 1.02 && Math.abs(tmp.y) < 1.02 && (!l.expo || state.expo) && (!l.high || camera.position.y > 4);
+    l.el.hidden = !vis;
+    if (vis) l.el.style.transform = `translate(${((tmp.x * 0.5 + 0.5) * w).toFixed(1)}px,${((-tmp.y * 0.5 + 0.5) * h).toFixed(1)}px)`;
+  }
+}
+
+/* ---------- Kamera ---------- */
+function fitPos(tgt, dir, ew, eh, fov = 40) {
+  const vf = fov * PI / 360, hf = Math.atan(Math.tan(vf) * camera.aspect);
+  return tgt.clone().addScaledVector(dir.normalize(), Math.max(ew / 2 / Math.tan(hf), eh / 2 / Math.tan(vf)));
+}
+const POSES = {
+  iso: () => { const t = new V3(9.5, 0.4, 5.5); return [fitPos(t, new V3(-0.3, 0.8, 0.72), 24, 13.5), t]; },
+  plan: () => { const t = new V3(9.6, 0, 5.4); return [fitPos(t, new V3(0, 1, 0.002), 25.5, 15, 16), t, 16]; },
+  eingang: () => [new V3(17.75, 1.62, 8.95), new V3(11.0, 1.15, 5.2), 56],
+  fenster: () => [new V3(-5.4, 1.75, 15.4), new V3(6.5, 1.1, 6.2)],
+};
+let tween = null;
+function flyTo(pos, tgt, ms = 950, fov = 40) {
+  if (!controls) return;
+  if (REDUCED || ms === 0) { camera.position.copy(pos); controls.target.copy(tgt); camera.fov = fov; camera.updateProjectionMatrix(); controls.update(); invalidate(3); return; }
+  tween = { p0: camera.position.clone(), t0: controls.target.clone(), p1: pos, t1: tgt, f0: camera.fov, f1: fov, s: performance.now(), ms };
+  invalidate();
+}
+function setView(name, ms) {
+  state.view = name; $$('#views button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === name)));
+  const [p, t, fov] = POSES[name](); flyTo(p, t, ms, fov);
+}
+function stationPose(id) {
+  const { def, group } = items[id]; group.updateMatrixWorld();
+  return [group.localToWorld(new V3(...def.eye)), group.localToWorld(new V3(...def.look))];
+}
+
+/* ---------- Auswahl ---------- */
+function select(id, { fly = false, tab = false } = {}) {
+  state.sel = id;
+  $$('.chip3d').forEach(c => c.classList.toggle('sel', c.dataset.id === id));
+  Object.values(items).forEach(it => { it.outline.visible = state.move || it.def.id === id; });
+  if (id && defOf(id).n) {
+    state.open.add(id);
+    if (tab) { setTab('inseln'); const card = $(`#card-${id}`); if (card) { card.open = true; if (stageEl.clientWidth > 0 && matchMedia('(min-width: 901px)').matches) card.scrollIntoView({ block: 'nearest', behavior: REDUCED ? 'auto' : 'smooth' }); } }
+    $$('.st').forEach(c => c.classList.toggle('sel', c.id === `card-${id}`));
+    if (fly && !state.walk) { const [p, t] = stationPose(id); state.view = ''; $$('#views button').forEach(b => b.setAttribute('aria-pressed', 'false')); flyTo(p, t, 950, 52); }
+  }
+  updateInspect(); invalidate();
+}
+
+/* ---------- Verschieben ---------- */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), ground = new THREE.Plane(new V3(0, 1, 0), 0);
+function setRay(e) { const r = canvas.getBoundingClientRect(); ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); ray.setFromCamera(ndc, camera); }
+const floorPoint = e => { setRay(e); return ray.ray.intersectPlane(ground, new V3()); };
+function pick(e) {
+  setRay(e); scene.updateMatrixWorld();
+  const hit = ray.intersectObjects(proxies.filter(p => state.expo || items[p.userData.id].def.bestand), false)[0];
+  return hit ? hit.object.userData.id : null;
+}
+function setMove(on) {
+  state.move = on; $('#b-move').setAttribute('aria-pressed', String(on));
+  if (on) { setWalk(false); stopTour(); setView('plan'); }
+  if (controls) { controls.enableRotate = !on; controls.mouseButtons.LEFT = on ? THREE.MOUSE.PAN : THREE.MOUSE.ROTATE; controls.touches.ONE = on ? THREE.TOUCH.PAN : THREE.TOUCH.ROTATE; }
+  Object.values(items).forEach(it => { it.outline.visible = on || it.def.id === state.sel; });
+  hint(on ? 'Insel anfassen und ziehen. Unter „Themeninseln“ steht, warum sie im Vorschlag dort steht. Insel 6 hängt an der Wand und bleibt fest.' : null);
+  updateInspect(); invalidate();
+}
+const curPose = id => { const g = items[id].group; return { x: +g.position.x.toFixed(2), z: +g.position.z.toFixed(2), r: Math.round(g.rotation.y * 180 / PI) }; };
+function commitPose(id) { state.pos[id] = curPose(id); write('plan', { pos: { [id]: state.pos[id] } }, () => ({ pos: state.pos, calc: state.calc })); updateInspect(); }
+function rotateSel(deg) { const id = state.sel; if (!id || defOf(id).fixed) return; const g = items[id].group; g.rotation.y = ((Math.round(g.rotation.y * 180 / PI) + deg + 360) % 360) * PI / 180; commitPose(id); invalidate(); }
+function resetPose(id) { state.pos[id] = defPose(defOf(id)); place(id); write('plan', { pos: { [id]: state.pos[id] } }, () => ({ pos: state.pos, calc: state.calc })); updateInspect(); invalidate(); }
+function resetAll() { for (const id of Object.keys(items)) if (!defOf(id).fixed) state.pos[id] = defPose(defOf(id)); applyLayout(); write('plan', { pos: state.pos }, () => ({ pos: state.pos, calc: state.calc })); }
+function updateInspect() {
+  const el = $('#inspect'), id = state.sel;
+  if (!state.move) { el.hidden = true; return; }
+  el.hidden = false;
+  if (!id) { el.innerHTML = `<h3>Verschieben</h3><p class="mono">Noch keine Insel gewählt.</p><div class="row"><button type="button" class="mini" data-act="all">Alles auf Vorschlag zurück</button></div>`; return; }
+  const d = defOf(id), p = curPose(id);
+  el.innerHTML = `<h3>${d.n ? d.n + ' · ' : ''}${esc(d.name)}</h3>` + (d.fixed ? `<p class="mono">Fest an der Brandmauer.</p>` :
+    `<p class="mono">x ${de(p.x)} m · Tiefe ${de(p.z)} m · ${p.r}°</p><div class="row"><button type="button" class="mini" data-act="l">↺ 15°</button><button type="button" class="mini" data-act="r">↻ 15°</button><button type="button" class="mini" data-act="one">Zurück</button></div>`) +
+    `<div class="row"><button type="button" class="mini" data-act="all">Alles auf Vorschlag zurück</button></div>`;
+}
+$('#inspect').addEventListener('click', e => {
+  const a = e.target.closest('[data-act]')?.dataset.act; if (!a) return;
+  if (a === 'l') rotateSel(15); else if (a === 'r') rotateSel(-15); else if (a === 'one') resetPose(state.sel); else if (a === 'all') resetAll();
+});
+
+/* ---------- Begehen ---------- */
+const walk = { x: 17.7, z: 8.6, yaw: 1.04, pitch: -0.04, to: null, keys: new Set() };
+function setWalk(on) {
+  if (state.walk === on) return;
+  state.walk = on; $('#b-walk').setAttribute('aria-pressed', String(on));
+  if (on) { setMove(false); stopTour(); tween = null; camera.fov = 62; camera.updateProjectionMatrix(); if (controls) controls.enabled = false; Object.assign(walk, { x: 17.7, z: 8.6, yaw: 1.04, pitch: -0.04, to: null }); hint('Ziehen: umsehen · Klick auf den Boden: hingehen · Pfeiltasten oder WASD: laufen'); canvas.focus({ preventScroll: true }); applyWalk(); }
+  else { if (controls) controls.enabled = true; hint(null); walk.keys.clear(); setView('iso'); }
+}
+function applyWalk() { camera.rotation.order = 'YXZ'; camera.position.set(walk.x, 1.62, walk.z); camera.rotation.set(walk.pitch, walk.yaw, 0); invalidate(); }
+function stepWalk(dt) {
+  let mv = false; const k = walk.keys, f = (k.has('w') || k.has('arrowup') ? 1 : 0) - (k.has('s') || k.has('arrowdown') ? 1 : 0), s = (k.has('d') ? 1 : 0) - (k.has('a') ? 1 : 0), t = (k.has('arrowleft') ? 1 : 0) - (k.has('arrowright') ? 1 : 0);
+  if (t) { walk.yaw += t * dt * 1.6; mv = true; }
+  if (f || s) { walk.to = null; const sp = 2.4 * dt; walk.x += (-Math.sin(walk.yaw) * f + Math.cos(walk.yaw) * s) * sp; walk.z += (-Math.cos(walk.yaw) * f - Math.sin(walk.yaw) * s) * sp; mv = true; }
+  if (walk.to) { const dx = walk.to.x - walk.x, dz = walk.to.z - walk.z, d = Math.hypot(dx, dz), sp = 3 * dt; if (d <= sp) { walk.x = walk.to.x; walk.z = walk.to.z; walk.to = null; } else { walk.x += dx / d * sp; walk.z += dz / d * sp; } mv = true; }
+  if (mv) { walk.x = clamp(walk.x, 0.45, R.W - 0.4); walk.z = clamp(walk.z, 0.4, R.zG - 0.95); applyWalk(); }
+}
+
+/* ---------- Rundgang ---------- */
+let tourTimer = 0;
+function tourGo(i) {
+  state.tour = (i + ST.length) % ST.length; const d = ST[state.tour];
+  $('#tourbar').hidden = false; $('#tour-n').textContent = `${d.n}/8`; $('#tour-name').textContent = d.name;
+  select(d.id, { fly: true, tab: true });
+  clearTimeout(tourTimer); if (!REDUCED) tourTimer = setTimeout(() => tourGo(state.tour + 1), 7000);
+}
+function stopTour() { if (state.tour < 0) return; state.tour = -1; clearTimeout(tourTimer); $('#tourbar').hidden = true; $('#b-tour').setAttribute('aria-pressed', 'false'); }
+function startTour() { setWalk(false); setMove(false); if (!state.expo) toggleExpo(true); $('#b-tour').setAttribute('aria-pressed', 'true'); tourGo(0); }
+function hint(t) { const el = $('#hint'); el.hidden = !t; el.textContent = t || ''; }
+function toggleExpo(on) {
+  state.expo = on; expo.visible = on; $('#t-expo').setAttribute('aria-pressed', String(on));
+  items.theke.remake(); if (!on) { stopTour(); select(null); } invalidate();
+}
+
+/* ---------- Zeiger & Tasten ---------- */
+let pd = null, drag = null;
+canvas.addEventListener('pointerdown', e => {
+  pd = { x: e.clientX, y: e.clientY, lx: e.clientX, ly: e.clientY };
+  if (state.tour >= 0) clearTimeout(tourTimer);
+  if (state.walk) { canvas.setPointerCapture(e.pointerId); return; }
+  if (state.move) {
+    const id = pick(e), p = id && floorPoint(e);
+    if (id) select(id);
+    if (id && p && !defOf(id).fixed) { const g = items[id].group; drag = { id, ox: g.position.x - p.x, oz: g.position.z - p.z }; controls.enabled = false; canvas.setPointerCapture(e.pointerId); }
+  }
+});
+canvas.addEventListener('pointermove', e => {
+  if (!pd) return;
+  if (state.walk) { walk.yaw += (e.clientX - pd.lx) * 0.0042; walk.pitch = clamp(walk.pitch + (e.clientY - pd.ly) * 0.0042, -0.7, 0.6); pd.lx = e.clientX; pd.ly = e.clientY; applyWalk(); return; }
+  if (drag) {
+    const p = floorPoint(e); if (!p) return;
+    const g = items[drag.id].group;
+    g.position.x = clamp(Math.round((p.x + drag.ox) * 20) / 20, R.xG + 0.3, R.W - 0.2); g.position.z = clamp(Math.round((p.z + drag.oz) * 20) / 20, 0.15, R.zG - 0.3);
+    updateInspect(); invalidate();
+  }
+});
+const pointerEnd = e => {
+  if (!pd) return;
+  const still = Math.hypot(e.clientX - pd.x, e.clientY - pd.y) < 6; pd = null;
+  if (drag) { commitPose(drag.id); drag = null; controls.enabled = true; return; }
+  if (!still || e.type === 'pointercancel') return;
+  if (state.walk) { const p = floorPoint(e); if (p && p.distanceTo(camera.position) < 40) walk.to = { x: clamp(p.x, 0.45, R.W - 0.4), z: clamp(p.z, 0.4, R.zG - 0.95) }; invalidate(); return; }
+  if (!state.move) { const id = pick(e); if (id && defOf(id).n) select(id, { tab: true }); }
+};
+canvas.addEventListener('pointerup', pointerEnd); canvas.addEventListener('pointercancel', pointerEnd);
+canvas.addEventListener('keydown', e => {
+  const k = e.key.toLowerCase();
+  if (state.walk && ['w', 'a', 's', 'd', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(k)) { walk.keys.add(k); e.preventDefault(); invalidate(); }
+  if (state.move && k === 'r') rotateSel(e.shiftKey ? 15 : -15);
+  if (k === 'escape') { setWalk(false); setMove(false); stopTour(); }
+});
+canvas.addEventListener('keyup', e => walk.keys.delete(e.key.toLowerCase()));
+canvas.addEventListener('blur', () => walk.keys.clear());
+
+$('#views').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; setWalk(false); stopTour(); if (state.move && b.dataset.view !== 'plan') setMove(false); setView(b.dataset.view); });
+$('#t-expo').addEventListener('click', () => toggleExpo(!state.expo));
+$('#t-dims').addEventListener('click', e => { state.dims = !state.dims; room.dims.visible = state.dims; e.currentTarget.setAttribute('aria-pressed', String(state.dims)); if (state.dims && !state.walk) setView('plan'); invalidate(); });
+$('#t-people').addEventListener('click', e => { state.people = !state.people; figuren.visible = state.people; e.currentTarget.setAttribute('aria-pressed', String(state.people)); invalidate(); });
+$('#b-tour').addEventListener('click', () => (state.tour >= 0 ? stopTour() : startTour()));
+$('#b-walk').addEventListener('click', () => setWalk(!state.walk));
+$('#b-move').addEventListener('click', () => setMove(!state.move));
+$('#tour-prev').addEventListener('click', () => tourGo(state.tour - 1));
+$('#tour-next').addEventListener('click', () => tourGo(state.tour + 1));
+$('#tour-stop').addEventListener('click', stopTour);
+
+/* ---------- Gemeinsamer Speicher ---------- */
+const store = { docs: {}, exists: {}, q: {}, ro: false };
+function setSync(s) {
+  const el = $('#sync'); el.dataset.s = s;
+  el.querySelector('span').textContent = { wait: 'Verbinde …', shared: 'Für alle gespeichert', local: 'Nur in diesem Browser gespeichert', readonly: 'Nur Lesen – Änderungen bleiben in diesem Browser' }[s];
+}
+async function initStore() {
+  let db = null;
+  try { db = window.claude && window.claude.use ? await window.claude.use('db') : null; } catch (e) { db = null; }
+  if (!db) return setSync('local');
+  let got = false; const timer = setTimeout(() => { if (!got) setSync('local'); }, 10000);
+  const sub = (name, apply) => {
+    const ref = db.doc('state/' + name); store.docs[name] = ref; store.q[name] = Promise.resolve();
+    ref.onSnapshot(s => {
+      got = true; clearTimeout(timer); store.exists[name] = s.exists; setSync(store.ro ? 'readonly' : 'shared');
+      if (s.exists && !s.metadata.hasPendingWrites) apply(JSON.parse(JSON.stringify(s.data() || {})));
+    }, () => { delete store.docs[name]; setSync('local'); });
+  };
+  sub('todos', d => { state.done = d.done || {}; saveLocal(); renderTodoViews(); });
+  sub('plan', d => { if (drag) return; state.pos = d.pos || {}; if (d.calc) mergeCalc(d.calc); saveLocal(); applyLayout(); syncCalc(true); });
+}
+function write(name, patch, full) {
+  saveLocal(); const ref = store.docs[name]; if (!ref || store.ro) return;
+  store.q[name] = store.q[name].then(async () => {
+    try { if (store.exists[name]) await ref.update(patch); else { await ref.set(full()); store.exists[name] = true; } }
+    catch (e) { if (e && e.code === 'invalid_argument') { store.ro = true; setSync('readonly'); } }
+  });
+}
+
+/* ---------- Akte: Reiter ---------- */
+function setTab(t) {
+  state.tab = t;
+  $$('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+  for (const k of ['ueber', 'inseln', 'todos', 'rechner']) $(`#tab-${k}`).hidden = k !== t;
+}
+$('#tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { setTab(b.dataset.tab); if (matchMedia('(min-width: 901px)').matches) $('#tabbody').scrollTop = 0; } });
+
+const isDone = t => !!state.done[t.id];
+const stats = () => ({ all: TODOS.length, open: TODOS.filter(t => !isDone(t)).length, check: TODOS.filter(t => !isDone(t) && t.kind === 'check').length, nobody: TODOS.filter(t => !isDone(t) && !t.who.length).length });
+function todoRow(t, pre) {
+  const pills = [
+    ...t.who.map(w => `<span class="pill">${esc(WHO[w])}</span>`),
+    t.who.length ? '' : '<span class="pill open">Zuständigkeit offen</span>',
+    t.kind === 'check' ? '<span class="pill warn">erst klären</span>' : '',
+    t.due ? `<span class="pill warn">${esc(t.due)}</span>` : '',
+    t.wirkt ? `<span class="pill">hängt daran: ${esc(t.wirkt)}</span>` : '',
+    `<span class="pill" title="Quelle: Protokoll">${esc(t.src)}</span>`,
+  ].join('');
+  return `<div class="todo${isDone(t) ? ' done' : ''}"><input type="checkbox" id="${pre}-${t.id}" data-todo="${t.id}"${isDone(t) ? ' checked' : ''}><div><label for="${pre}-${t.id}">${esc(t.text)}</label><div class="meta">${pills}</div></div></div>`;
+}
+function renderUeber() {
+  const s = stats(), lp = litfassParams();
+  $('#tab-ueber').innerHTML = `
+  <div class="blk"><span class="eyebrow">Zusammenfassung · Protokoll 1 + 2</span>
+    <p class="lead">Im Pop-up-Store entsteht die Ausstellung „50 Jahre Dreieich“ mit <b>acht Themeninseln</b>. Leitlinie: informativ, fröhlich, bunt, niederschwellig, mit Mitmachstationen. Ein Titel steht noch nicht fest.</p></div>
+  <div class="tiles">
+    <div class="tile o"><b>${s.open}</b><span>von ${s.all} Aufgaben offen</span></div>
+    <div class="tile w"><b>${s.check}</b><span>davon erst zu klären</span></div>
+    <div class="tile o"><b>${s.nobody}</b><span>ohne Zuständigkeit</span></div>
+  </div>
+  <div class="blk"><h2>Stand nach Besprechung 1 (10.11.)</h2><ul class="plain">
+    <li>Die acht Inseln stehen fest: Wohnzimmer, Mero-System, Selfie-Station, Statistik, Litfaß-Säule, Gebietsreform, Slide-Show, Zukunft/Lieblingsplatz.</li>
+    <li>Die meisten Inhalte liegen bei Corinna Molitor (Einrichtung, Mero-System, Litfaß-Säule, Texte Gebietsreform, Anfrage Heinsius).</li>
+    <li>Kim Lehnert klärt Rechte (Fernsehbilder, Prilblume), Statistiken und Medienstelen. Claudia Scheibel und Kim Lehnert klären, was im Raum erlaubt ist: Deckenhaken, Streichen, Tapezieren.</li>
+    <li>Ein Beamer scheidet aus, der Raum ist zu hell. Alle Grafiken richten sich nach der Farbwelt des Mero-Systems.</li>
+    <li>Dazu kommen Begleitprogramm und ein Pubquiz, erste Veranstaltung beim GHV.</li></ul></div>
+  <div class="blk"><h2>Neu in Besprechung 2 (17.11.)</h2><ul class="plain">
+    <li><b>Fernseher:</b> Sascha Becker haust einen Monitor mit bedruckten Forexplatten ein, damit er wie ein Gerät der 1970er aussieht.</li>
+    <li><b>Selfie-Koje:</b> soll von einer Dreieicher Firma gestrichen oder mit 70er-Tapete tapeziert werden, als Sponsoring.</li>
+    <li><b>Gebietsreform:</b> Die lange Wand am Eingang wird orange, darauf runde Forexplatten (Ø 50/60 cm) mit kurzen, in sich abgeschlossenen Texten. Texte Corinna Molitor, Grafik Sascha Becker, Produktion Vorschlag MSK.</li>
+    <li><b>Hessentag</b> als Ausweichthema, falls Insel 7 oder 8 nicht zustande kommt.</li>
+    <li><b>Raum:</b> Theke orange folieren, orangene und lila Sitzkissen an der Fensterfront, Willkommens-Fahne im Eingang.</li></ul>
+    <p class="note">Für die fünf neuen Punkte aus Besprechung 2 – Malerfirma anfragen (zweimal), Theke, Sitzkissen, Fahne – ist noch niemand eingetragen. Das wäre ein Punkt für den 24.11.</p></div>
+  <div class="blk"><h2>Termine</h2><div class="dates">
+    <div><time>10.11.2026</time><span>Besprechung 1 – Scheibel, Lehnert, Perkovic, Molitor</span></div>
+    <div><time>17.11.2026</time><span>Besprechung 2 – Becker, Molitor</span></div>
+    <div><time>24.11., 10 Uhr</time><span><b>Nächstes Treffen</b></span></div>
+    <div><span class="when">bis Ende 2026</span><span>Texte für die Litfaß-Säule an Sascha Becker</span></div>
+    <div><span class="when">bis März</span><span>Einrichtung fürs Wohnzimmer muss untergestellt werden</span></div></div></div>
+  <div class="blk"><h2>Der Raum</h2>
+    <table class="kv"><tbody>
+      <tr><td>Adresse</td><td>Offenbacher Straße 1</td></tr>
+      <tr><td>Ladenfläche</td><td>173,3 m²</td></tr>
+      <tr><td>Lager · Nebenräume · WC</td><td>6,3 · 42,5 · 6,5 m²</td></tr>
+      <tr><td>Gesamt Erdgeschoss</td><td>228,6 m²</td></tr>
+      <tr><td>Raumhöhe</td><td>ca. 2,50 m</td></tr>
+      <tr><td>Fensterfront</td><td>24,65 m · rund 2,08 m hoch</td></tr>
+      <tr><td>Fensterbreiten</td><td>3,25 · 3,61 · 4,33 · 3,91 · 3,57 · 3,63 · 2,35 m</td></tr>
+      <tr><td>Brandmauer am Eingang</td><td>≈ 9,3 m frei</td></tr>
+    </tbody></table>
+    <p class="note">Quelle: <a href="https://www.dreieich.de/zukunft-leben/wirtschaft/citymanagement/pop-up-dreieich/" target="_blank" rel="noopener">Exposé der Stadt Dreieich</a> mit Bestandsplan M 1:100 (Planstand 15.04.2025). Das Modell ist aus dem gescannten Plan abgegriffen, Genauigkeit etwa ±15 cm. Vor dem Bestellen nachmessen.</p></div>
+  <div class="blk"><h2>Was im Modell Annahme ist</h2><ul class="plain">
+    <li>Die Stellung der Inseln ist ein Vorschlag. Aus den Protokollen stammen nur: Insel 6 an der langen Wand am Eingang, die Stellwand zwischen 1 und 3, Insel 7/8 in der Nähe von 6, Fahne im Eingang, Kissen an der Fensterfront.</li>
+    <li>Die Lage der Theke ist nach einem Foto aus dem Exposé geschätzt.</li>
+    <li>Größen von Mero-System, Medienstelen und Litfaß-Säule (im Modell Ø ${de(lp.d, 2)} m) sind angenommen.</li>
+    <li>Orange und Lila stammen aus dem Protokoll. Die Farbwelt des Mero-Systems fehlt noch.</li>
+    <li>Im Modell gibt es keine Prilblume, solange die Freigabe von Henkel offen ist.</li></ul>
+    <button type="button" class="btn" data-go="move">Inseln selbst verschieben</button></div>`;
+}
+function renderInseln() {
+  $('#tab-inseln').innerHTML = `<p class="note">Eine Insel antippen, um sie im Raum zu zeigen. Stellung und Maße sind ein Vorschlag und lassen sich über „Inseln verschieben“ ändern.</p>` + ST.map(d => {
+    const mine = TODOS.filter(t => t.st === d.id), open = mine.filter(t => !isDone(t)), nob = open.filter(t => !t.who.length).length;
+    return `<details class="st${state.sel === d.id ? ' sel' : ''}" id="card-${d.id}"${state.open.has(d.id) ? ' open' : ''}>
+      <summary><span class="num" style="background:${d.color}">${d.n}</span><span><span class="nm">${esc(d.name)}</span><br><span class="sub">${open.length ? `${open.length} von ${mine.length} offen` : 'alles erledigt'}</span></span>
+        <span>${nob ? `<span class="pill open">${nob} ohne Zuständigkeit</span>` : open.length ? '' : '<span class="pill ok">fertig</span>'}</span></summary>
+      <div class="body"><p>${esc(d.kurz)}</p>
+        <div class="blk"><span class="eyebrow">Platz im Raum (Vorschlag)</span><p>${esc(d.ort)}</p><button type="button" class="btn ghost" data-show="${d.id}">Im Raum zeigen</button></div>
+        <ul class="plain">${d.punkte.map(p => `<li>${esc(p)}</li>`).join('')}</ul>
+        <div class="grp">${mine.map(t => todoRow(t, 'i')).join('')}</div></div></details>`;
+  }).join('');
+}
+function renderTodos() {
+  const f = state.filter, people = Object.keys(WHO).filter(k => k !== 'ALLE');
+  const match = t => f === 'alle' || (f === 'offen' ? !t.who.length : f === 'check' ? t.kind === 'check' : t.who.includes(f) || t.who.includes('ALLE'));
+  const chip = (k, label) => `<button type="button" data-filter="${k}" aria-pressed="${f === k}">${esc(label)}</button>`;
+  const list = TODOS.filter(match), open = list.filter(t => !isDone(t)).length;
+  $('#tab-todos').innerHTML = `<div class="filters" role="group" aria-label="Filter">${chip('alle', 'Alle')}${people.map(p => chip(p, WHO[p])).join('')}${chip('offen', 'Ohne Zuständigkeit')}${chip('check', 'Erst klären')}</div>
+    <p class="note">${open} von ${list.length} offen. Ein Haken gilt für alle, die diese Seite öffnen.</p>` +
+    (list.length ? GRUPPEN.map(g => { const rows = list.filter(t => t.st === g.id); return rows.length ? `<div class="grp"><h3><i style="background:${g.color}"></i>${esc(g.name)}</h3>${rows.map(t => todoRow(t, 't')).join('')}</div>` : ''; }).join('') : '<p class="empty">Keine Aufgaben in dieser Auswahl.</p>');
+}
+function renderCounts() { const s = stats(); $('#cnt-open').textContent = s.open; }
+function renderTodoViews() { renderUeber(); renderInseln(); renderTodos(); renderCounts(); }
+$('#tabbody').addEventListener('change', e => {
+  const id = e.target.dataset.todo; if (!id) return;
+  const v = e.target.checked; if (v) state.done[id] = true; else delete state.done[id];
+  write('todos', { done: { [id]: v } }, () => ({ done: state.done }));
+  const keep = e.target.id; renderTodoViews(); $('#' + keep)?.focus({ preventScroll: true });
+});
+$('#tabbody').addEventListener('click', e => {
+  const f = e.target.closest('[data-filter]'); if (f) { state.filter = f.dataset.filter; renderTodos(); return; }
+  const s = e.target.closest('[data-show]'); if (s) { if (!state.expo) toggleExpo(true); select(s.dataset.show, { fly: true }); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
+  const g = e.target.closest('[data-go]'); if (g) { setMove(true); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); }
+});
+$('#tabbody').addEventListener('toggle', e => { const d = e.target; if (d.classList?.contains('st')) { const id = d.id.slice(5); if (d.open) state.open.add(id); else state.open.delete(id); } }, true);
+
+/* ---------- Rechner & Material ---------- */
+function renderRechner() {
+  $('#tab-rechner').innerHTML = `
+  <div class="blk"><h2>Litfaß-Säule: Wie viele DIN-A2-Plakate passen?</h2>
+    <p>Die Frage aus Protokoll 1. DIN A2 hochkant ist 42 × 59,4 cm. Sobald Corinna Molitor Durchmesser und Höhe kennt, hier einstellen – die Säule im Modell ändert sich mit.</p>
+    <div class="calc">
+      <div class="ctl"><label for="lf-d">Durchmesser der Säule</label><input type="range" id="lf-d" min="60" max="140" step="5"><output id="lf-d-o"></output></div>
+      <div class="ctl"><label for="lf-h">Nutzbare Höhe für Plakate</label><input type="range" id="lf-h" min="120" max="200" step="5"><output id="lf-h-o"></output></div>
+      <div class="ctl"><label for="lf-g">Abstand zwischen den Plakaten</label><input type="range" id="lf-g" min="0" max="6" step="1"><output id="lf-g-o"></output></div>
+      <div class="result"><div><b id="lf-n"></b><span>Plakate pro Ring</span></div><div><b id="lf-r"></b><span>Ringe übereinander</span></div><div><b id="lf-t"></b><span>Plakate gesamt</span></div></div>
+      <p class="note" id="lf-note"></p>
+    </div></div>
+  <div class="blk"><h2>Gebietsreform: runde Forexplatten</h2>
+    <p>Die Wand ist rund 9,3 m lang und 2,50 m hoch. Jede dritte Platte hat im Modell Ø 60 cm, die übrigen Ø 50 cm.</p>
+    <div class="calc">
+      <div class="ctl"><label for="kr-n">Anzahl der Platten</label><input type="range" id="kr-n" min="6" max="16" step="1"><output id="kr-n-o"></output></div>
+      <p class="note" id="kr-note"></p>
+    </div></div>
+  <div class="blk"><h2>Material und Sponsoring</h2>
+    <p>Alles, was in den beiden Protokollen an Anschaffungen und Leihgaben genannt ist. Mengen mit „im Modell“ sind aus dem Vorschlag abgelesen.</p>
+    <div class="tw"><table class="mat"><thead><tr><th>Was</th><th>Menge / Maß</th><th>Woher · Stand</th></tr></thead><tbody id="mat-body"></tbody></table></div></div>`;
+  for (const [id, key] of [['lf-d', 'd'], ['lf-h', 'h'], ['lf-g', 'gap']]) $('#' + id).addEventListener('input', e => { state.calc.litfass[key] = Number(e.target.value); calcChanged('s5'); });
+  $('#kr-n').addEventListener('input', e => { state.calc.kreise = Number(e.target.value); calcChanged('s6'); });
+  syncCalc(true);
+}
+let calcT = 0, saveT = 0;
+function calcChanged(id) {
+  syncCalc(false);
+  clearTimeout(calcT); calcT = setTimeout(() => items[id].remake(), 90);
+  clearTimeout(saveT); saveT = setTimeout(() => write('plan', { calc: state.calc }, () => ({ pos: state.pos, calc: state.calc })), 500);
+}
+function syncCalc(remake) {
+  if (!$('#lf-d')) return;
+  const c = state.calc, p = litfassParams();
+  $('#lf-d').value = c.litfass.d; $('#lf-h').value = c.litfass.h; $('#lf-g').value = c.litfass.gap; $('#kr-n').value = c.kreise;
+  $('#lf-d-o').textContent = `${c.litfass.d} cm`; $('#lf-h-o').textContent = `${c.litfass.h} cm`; $('#lf-g-o').textContent = `${c.litfass.gap} cm`; $('#kr-n-o').textContent = `${c.kreise} Stück`;
+  $('#lf-n').textContent = p.n; $('#lf-r').textContent = p.rows; $('#lf-t').textContent = p.total;
+  $('#lf-note').textContent = `Umfang ${de(p.U / 100)} m. Mit Sockel und Haube wird die Säule im Modell rund ${de(p.hoehe)} m hoch` + (p.hoehe > 2.45 ? ' – das passt nicht unter die Decke von ca. 2,50 m.' : ', die Decke liegt bei ca. 2,50 m.');
+  const ks = kreisLayout(c.kreise), n60 = ks.filter(k => k.rad === 0.3).length, area = ks.reduce((a, k) => a + PI * k.rad * k.rad, 0);
+  $('#kr-note').textContent = `${ks.length} Platten: ${n60} × Ø 60 cm, ${ks.length - n60} × Ø 50 cm. Zusammen ${de(area, 1)} m² Forex, das sind ${Math.round(area / (9.3 * 2.5) * 100)} % der Wand.` + (ks.length < c.kreise ? ' Mehr passen mit Abstand nicht an die Wand.' : '');
+  const rows = [
+    ['Sofa und Teppich', '1 + 1', 'Neukauf XXL Lutz, Sponsoring anfragen (Scheibel, Lehnert)'],
+    ['Einrichtung Wohnzimmer', '–', 'über Anjali Göbel (Molitor); Lagerplatz bis März offen'],
+    ['Monitor mit Forex-Einhausung', '1', 'Sascha Becker'],
+    ['Stellwand', '1 · im Modell 2,2 m breit', 'Bürgerhäuser (Molitor)'],
+    ['70er-Tapete und Malerarbeit Koje', '≈ 11 m² im Modell', 'Malergeschäft aus Dreieich, Sponsoring – Anfrage offen'],
+    ['Perücken, Kleider, Accessoires', '–', 'Faschingsbedarf; Bestellweg offen'],
+    ['Mero-System mit Exponaten', 'im Modell 3 × 2 m', 'Corinna Molitor'],
+    ['Litfaß-Säule', `im Modell Ø ${c.litfass.d} cm`, 'stellt Corinna Molitor'],
+    ['Plakate DIN A2 hochkant', `${p.total} lt. Rechner`, 'Texte Gleichstellungsreferat → Gestaltung Sascha Becker'],
+    ['Wandfarbe Orange', '≈ 23 m² (9,3 × 2,5 m)', 'Dreieicher Malerfirma, Sponsoring – Anfrage offen'],
+    ['Runde Forexplatten', `${ks.length} · Ø 50/60 cm`, 'Grafik Sascha Becker, Produktion Vorschlag MSK'],
+    ['Medienstelen', '3 im Modell', 'Stadt – Bestellung prüft Kim Lehnert'],
+    ['Sitzkissen orange und lila', `${kissen.userData.count} im Modell`, 'Zuständigkeit offen'],
+    ['Orange Folie für die Theke', 'Theke vor Ort messen', 'erst klären, ob Folieren möglich ist'],
+    ['Willkommens-Fahne', '1 · im Modell 1,2 × 1,9 m', 'Zuständigkeit offen; Deckenhaken erst klären'],
+  ];
+  $('#mat-body').innerHTML = rows.map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td><td>${esc(r[2])}</td></tr>`).join('');
+  if (remake) { items.s5.remake(); items.s6.remake(); }
+}
+
+/* ---------- Start ---------- */
+function resize() {
+  const w = stageEl.clientWidth, h = stageEl.clientHeight; if (!w || !h) return;
+  if (renderer) renderer.setSize(w, h, false);
+  camera.aspect = w / h; camera.updateProjectionMatrix();
+  stageEl.classList.toggle('compact', w < 640);
+  invalidate(3);
+}
+new ResizeObserver(resize).observe(stageEl);
+resize();
+renderTodoViews(); renderRechner(); setTab('ueber');
+if (controls) { const [p, t] = POSES.iso(); camera.position.copy(p); controls.target.copy(t); controls.update(); }
+let last = performance.now();
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  if (tween) {
+    const k = clamp((now - tween.s) / tween.ms, 0, 1), e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    camera.position.lerpVectors(tween.p0, tween.p1, e); controls.target.lerpVectors(tween.t0, tween.t1, e);
+    if (tween.f0 !== tween.f1) { camera.fov = tween.f0 + (tween.f1 - tween.f0) * e; camera.updateProjectionMatrix(); }
+    if (k >= 1) tween = null; invalidate();
+  }
+  if (state.walk) stepWalk(dt); else if (controls) controls.update();
+  if (dirty > 0 && renderer) { dirty--; renderer.render(scene, camera); updateLabels(); }
+}
+requestAnimationFrame(frame);
+initStore();
+void { state, items, setView, select, setMove, setWalk, startTour, setTab, camera, invalidate };
+
+</script>
