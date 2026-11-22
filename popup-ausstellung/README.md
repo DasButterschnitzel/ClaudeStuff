@@ -23,6 +23,8 @@ Die Lage der Theke ist nach einem Foto aus dem Exposé geschätzt.
 - Ansichten: 3D, Grundriss, Blick vom Eingang, Blick durchs Schaufenster
 - **Rundgang** durch alle acht Inseln, **Begehen** in Augenhöhe (ziehen, Klick auf den Boden, WASD)
 - **Inseln verschieben** und drehen im Grundriss; Insel 6 hängt an der Brandmauer und bleibt fest
+- Mero-System als Raumfachwerk im 75-cm-Raster: Kugelknoten mit 18 Anschlussflächen, Stäbe mit konischen Enden, Farbtafeln, Texte, Fotos, Vitrinen mit Exponaten
+- Weiche Kontaktschatten (Umgebungsverdeckung) auf Geräten mit Maus; Schatten werden nur neu gerechnet, wenn sich etwas bewegt
 - Akte mit Zusammenfassung, Themeninseln, 34 To-dos mit Filter nach Person, Rechner für die Litfaß-Säule (DIN A2 hochkant) und die runden Forexplatten, Materialliste
 - Haken, Stellungen und Rechnerwerte werden als Artifact über die `db`-Capability für alle gespeichert (`state/todos`, `state/plan`), sonst im Browser
 

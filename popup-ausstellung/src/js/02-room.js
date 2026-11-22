@@ -33,14 +33,15 @@ function buildRoom() {
   const g = new THREE.Group(), dims = new THREE.Group(), tags = [];
   const mWall = M('#f3f1ed', { roughness: 0.95 }), mWhite = M('#f6f5f2', { roughness: 0.6 }), mCut = M('#3b3344', { roughness: 1 });
   const mFrame = M('#2f2a35', { roughness: 0.5 }), mDoor = M('#e4e1db', { roughness: 0.7 });
-  const mGlass = new THREE.MeshStandardMaterial({ color: '#bfdcea', transparent: true, opacity: 0.16, roughness: 0.05, side: THREE.DoubleSide, depthWrite: false });
+  const mGlass = new THREE.MeshStandardMaterial({ color: '#cfe4ee', transparent: true, opacity: 0.09, roughness: 0.05, side: THREE.DoubleSide, depthWrite: false });
 
   /* Gehweg / Umgebung */
-  g.add(box(26, 0.06, 28.5, M('#d3cfda', { roughness: 1 }), 9.2, -0.08, 0.1, false));
+  const pflaster = ctex(256, 256, (c, w) => { const r = rng(17); c.fillStyle = '#bdb8c4'; c.fillRect(0, 0, w, w); for (let y = 0; y < 8; y++) for (let x = -1; x < 4; x++) { c.fillStyle = `hsl(265, 6%, ${72 + r() * 9}%)`; c.fillRect((x + (y % 2) * 0.5) * 64 + 1.5, y * 32 + 1.5, 61, 29); } }, [26 / 1.6, 28.5 / 1.6]);
+  g.add(box(26, 0.06, 28.5, M('#ffffff', { map: pflaster, roughness: 1 }), 9.2, -0.08, 0.1, false));
 
   /* Boden + Decke (Decke nur von innen sichtbar) */
   const fGeo = new THREE.ShapeGeometry(roomShape()); fGeo.rotateX(-PI / 2);
-  const floor = new THREE.Mesh(fGeo, M('#ffffff', { map: TEX.holz, roughness: 0.7 })); floor.receiveShadow = true; floor.name = 'floor';
+  const floor = new THREE.Mesh(fGeo, M('#efe9de', { map: TEX.holz, roughness: 0.62 })); floor.receiveShadow = true; floor.name = 'floor';
   g.add(floor);
   const ceil = new THREE.Mesh(fGeo, M('#f7f6f3', { side: THREE.BackSide, roughness: 1 })); ceil.position.y = R.H; g.add(ceil);
 
@@ -57,7 +58,7 @@ function buildRoom() {
   solid(L.x0, -0.3, L.x1, L.z1); solid(K.x0, -0.3, K.x1, K.z1); solid(D.x1, D.z, W + 0.3, zG);
 
   /* Fensterfronten: Glas, Bank mit Lamellenfront, Stützen */
-  const glass = (x0, z0, x1, z1, y0 = R.SILL) => g.add(wall(x0, z0, x1, z1, mGlass, { h: H - y0, y0 }));
+  const glass = (x0, z0, x1, z1, y0 = R.SILL, h = H - y0) => { const o = wall(x0, z0, x1, z1, mGlass, { h, y0 }); o.userData.noAO = true; o.receiveShadow = false; g.add(o); };
   glass(xRet, zG, xG, zG); glass(xG, zG, xG, zWW); glass(xRet, D.z, xRet, zG, 0);
   const mBench = M('#ffffff', { map: TEX.lamellen, roughness: 0.6 }), mTop = M('#d8d0c2', { roughness: 0.5 });
   const bench = (x0, z0, x1, z1) => {
@@ -66,15 +67,22 @@ function buildRoom() {
   };
   bench(xG, zG - R.BENCH, xRet, zG); bench(xG, zWW, xG + R.BENCH, zG - R.BENCH);
   g.add(box(xRet - xG, 0.05, 0.05, mFrame, (xRet + xG) / 2, H - 0.05, zG, false), box(0.05, 0.05, zG - zWW, mFrame, xG, H - 0.05, (zG + zWW) / 2, false));
-  for (const x of [R.colX, ...R.frontX]) g.add(cyl(0.11, H, mWhite, x, 0, R.colZ));
-  for (const z of R.westZ) g.add(cyl(0.11, H, mWhite, R.colX, 0, z));
+  for (const x of [R.colX, ...R.frontX]) g.add(cyl(0.11, H, mWhite, x, 0, R.colZ), box(0.05, H - R.SILL, 0.06, mFrame, x, R.SILL, zG, false));
+  for (const z of R.westZ) g.add(cyl(0.11, H, mWhite, R.colX, 0, z), box(0.06, H - R.SILL, 0.05, mFrame, xG, R.SILL, z, false));
+  g.add(box(0.07, H, 0.07, mFrame, xG, 0, zG, false), box(xRet - xG, 0.04, 0.05, mFrame, (xRet + xG) / 2, R.SILL, zG, false), box(0.05, 0.04, zG - zWW, mFrame, xG, R.SILL, (zG + zWW) / 2, false));
+  /* Einbaustrahler in der Decke */
+  const spots = []; for (let x = 1.2; x < W; x += 2.25) for (let z = 1.1; z < zG - 0.6; z += 2.25) if (!(x > L.x0 - 0.2 && x < K.x1 + 0.2 && z < (x < L.x1 ? L.z1 : K.z1) + 0.2) && !(x > xRet && z > D.z)) spots.push([x, z]);
+  const sg = new THREE.CircleGeometry(0.07, 18); sg.rotateX(PI / 2);
+  const sim = new THREE.InstancedMesh(sg, new THREE.MeshBasicMaterial({ color: '#fff6e2' }), spots.length), so = new THREE.Object3D();
+  spots.forEach(([x, z], i) => { so.position.set(x, H - 0.004, z); so.updateMatrix(); sim.setMatrixAt(i, so.matrix); }); g.add(sim);
   g.add(box(0.07, H, 0.07, mFrame, xRet, 0, zG, false));
   for (const [x, z] of R.sq) g.add(box(0.3, H, 0.3, mWhite, x, 0, z));
   for (const [x, z] of R.rd) g.add(cyl(0.125, H, mWhite, x, 0, z));
 
   /* Eingang: Doppeltür aus Glas, Fußmatte, Pfeil */
   const dw = D.x1 - D.x0, dx = (D.x0 + D.x1) / 2;
-  g.add(wall(D.x1, D.z, D.x0, D.z, mGlass, { h: 2.1 }));
+  glass(D.x1, D.z, D.x0, D.z, 0, 2.1);
+  for (const s of [-1, 1]) g.add(cyl(0.014, 0.9, M('#d5d9de', { metalness: 1, roughness: 0.2 }), dx + s * 0.09, 0.75, D.z - 0.05, 10));
   g.add(box(dw, H - 2.1, 0.08, mFrame, dx, 2.1, D.z, false), box(0.06, 2.1, 0.06, mFrame, dx, 0, D.z, false), box(0.06, 2.1, 0.06, mFrame, D.x0, 0, D.z, false), box(0.06, 2.1, 0.06, mFrame, D.x1, 0, D.z, false));
   g.add(box(1.9, 0.012, 1.1, M('#4a4553', { roughness: 1 }), dx, 0, D.z - 0.75, false));
   const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.5, 3), M(C.orange)); arrow.rotation.x = -PI / 2; arrow.position.set(dx, 0.03, D.z + 0.85); arrow.scale.y = 1; g.add(arrow);
@@ -98,7 +106,7 @@ function buildRoom() {
   const nb = [[13.72, -0.4], [13.72, -12.11], [17.91, -12.98], [19.51, -5.74], [19.51, -0.4]];
   const ns = new THREE.Shape(); nb.forEach(([x, z], i) => (i ? ns.lineTo(x, -z) : ns.moveTo(x, -z))); ns.closePath();
   const ng = new THREE.ShapeGeometry(ns); ng.rotateX(-PI / 2);
-  const nm = new THREE.Mesh(ng, new THREE.MeshBasicMaterial({ color: '#8f879c', transparent: true, opacity: 0.22 })); nm.position.y = -0.015; g.add(nm);
+  const nm = new THREE.Mesh(ng, new THREE.MeshBasicMaterial({ color: '#8f879c', transparent: true, opacity: 0.22 })); nm.position.y = -0.015; nm.userData.noAO = true; g.add(nm);
   g.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(nb.map(([x, z]) => new V3(x, 0, z))), new THREE.LineBasicMaterial({ color: '#5d5569' })));
 
   /* Raumnamen (HTML-Marken) */

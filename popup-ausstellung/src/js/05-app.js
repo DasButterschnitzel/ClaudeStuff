@@ -34,7 +34,7 @@ function mount(def) {
   else proxy.position.set(off[0], sy / 2, off[1]);
   group.add(proxy, outline); proxies.push(proxy);
   (def.bestand ? scene : expo).add(group);
-  items[def.id] = { def, group, proxy, outline, remake() { group.remove(inner); inner = def.make(); group.add(inner); invalidate(); } };
+  items[def.id] = { def, group, proxy, outline, remake() { group.remove(inner); inner = def.make(); group.add(inner); touch(); } };
   place(def.id);
 }
 function place(id) {
@@ -43,7 +43,7 @@ function place(id) {
   group.position.set(p.x, 0, p.z); group.rotation.y = (p.r || 0) * PI / 180;
 }
 [...ST, ...EXTRA].forEach(mount);
-const applyLayout = () => { Object.keys(items).forEach(place); invalidate(); updateInspect(); };
+const applyLayout = () => { Object.keys(items).forEach(place); touch(); updateInspect(); };
 
 /* ---------- Marken über dem Modell ---------- */
 const labelsEl = $('#labels'), labels = [], tmp = new V3();
@@ -127,8 +127,8 @@ function setMove(on) {
 }
 const curPose = id => { const g = items[id].group; return { x: +g.position.x.toFixed(2), z: +g.position.z.toFixed(2), r: Math.round(g.rotation.y * 180 / PI) }; };
 function commitPose(id) { state.pos[id] = curPose(id); write('plan', { pos: { [id]: state.pos[id] } }, () => ({ pos: state.pos, calc: state.calc })); updateInspect(); }
-function rotateSel(deg) { const id = state.sel; if (!id || defOf(id).fixed) return; const g = items[id].group; g.rotation.y = ((Math.round(g.rotation.y * 180 / PI) + deg + 360) % 360) * PI / 180; commitPose(id); invalidate(); }
-function resetPose(id) { state.pos[id] = defPose(defOf(id)); place(id); write('plan', { pos: { [id]: state.pos[id] } }, () => ({ pos: state.pos, calc: state.calc })); updateInspect(); invalidate(); }
+function rotateSel(deg) { const id = state.sel; if (!id || defOf(id).fixed) return; const g = items[id].group; g.rotation.y = ((Math.round(g.rotation.y * 180 / PI) + deg + 360) % 360) * PI / 180; commitPose(id); touch(); }
+function resetPose(id) { state.pos[id] = defPose(defOf(id)); place(id); write('plan', { pos: { [id]: state.pos[id] } }, () => ({ pos: state.pos, calc: state.calc })); updateInspect(); touch(); }
 function resetAll() { for (const id of Object.keys(items)) if (!defOf(id).fixed) state.pos[id] = defPose(defOf(id)); applyLayout(); write('plan', { pos: state.pos }, () => ({ pos: state.pos, calc: state.calc })); }
 function updateInspect() {
   const el = $('#inspect'), id = state.sel;
@@ -175,7 +175,7 @@ function startTour() { setWalk(false); setMove(false); if (!state.expo) toggleEx
 function hint(t) { const el = $('#hint'); el.hidden = !t; el.textContent = t || ''; }
 function toggleExpo(on) {
   state.expo = on; expo.visible = on; $('#t-expo').setAttribute('aria-pressed', String(on));
-  items.theke.remake(); if (!on) { stopTour(); select(null); } invalidate();
+  items.theke.remake(); if (!on) { stopTour(); select(null); } touch();
 }
 
 /* ---------- Zeiger & Tasten ---------- */
@@ -197,7 +197,7 @@ canvas.addEventListener('pointermove', e => {
     const p = floorPoint(e); if (!p) return;
     const g = items[drag.id].group;
     g.position.x = clamp(Math.round((p.x + drag.ox) * 20) / 20, R.xG + 0.3, R.W - 0.2); g.position.z = clamp(Math.round((p.z + drag.oz) * 20) / 20, 0.15, R.zG - 0.3);
-    updateInspect(); invalidate();
+    updateInspect(); touch();
   }
 });
 const pointerEnd = e => {
@@ -221,7 +221,7 @@ canvas.addEventListener('blur', () => walk.keys.clear());
 $('#views').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; setWalk(false); stopTour(); if (state.move && b.dataset.view !== 'plan') setMove(false); setView(b.dataset.view); });
 $('#t-expo').addEventListener('click', () => toggleExpo(!state.expo));
 $('#t-dims').addEventListener('click', e => { state.dims = !state.dims; room.dims.visible = state.dims; e.currentTarget.setAttribute('aria-pressed', String(state.dims)); if (state.dims && !state.walk) setView('plan'); invalidate(); });
-$('#t-people').addEventListener('click', e => { state.people = !state.people; figuren.visible = state.people; e.currentTarget.setAttribute('aria-pressed', String(state.people)); invalidate(); });
+$('#t-people').addEventListener('click', e => { state.people = !state.people; figuren.visible = state.people; e.currentTarget.setAttribute('aria-pressed', String(state.people)); touch(); });
 $('#b-tour').addEventListener('click', () => (state.tour >= 0 ? stopTour() : startTour()));
 $('#b-walk').addEventListener('click', () => setWalk(!state.walk));
 $('#b-move').addEventListener('click', () => setMove(!state.move));
@@ -411,7 +411,7 @@ function syncCalc(remake) {
     ['Stellwand', '1 · im Modell 2,2 m breit', 'Bürgerhäuser (Molitor)'],
     ['70er-Tapete und Malerarbeit Koje', '≈ 11 m² im Modell', 'Malergeschäft aus Dreieich, Sponsoring – Anfrage offen'],
     ['Perücken, Kleider, Accessoires', '–', 'Faschingsbedarf; Bestellweg offen'],
-    ['Mero-System mit Exponaten', 'im Modell 3 × 2 m', 'Corinna Molitor'],
+    ['Mero-System mit Exponaten', 'im Modell 3,0 × 2,25 m', 'Corinna Molitor'],
     ['Litfaß-Säule', `im Modell Ø ${c.litfass.d} cm`, 'stellt Corinna Molitor'],
     ['Plakate DIN A2 hochkant', `${p.total} lt. Rechner`, 'Texte Gleichstellungsreferat → Gestaltung Sascha Becker'],
     ['Wandfarbe Orange', '≈ 23 m² (9,3 × 2,5 m)', 'Dreieicher Malerfirma, Sponsoring – Anfrage offen'],
@@ -429,6 +429,7 @@ function syncCalc(remake) {
 function resize() {
   const w = stageEl.clientWidth, h = stageEl.clientHeight; if (!w || !h) return;
   if (renderer) renderer.setSize(w, h, false);
+  if (composer) { composer.setPixelRatio(renderer.getPixelRatio()); composer.setSize(w, h); }
   camera.aspect = w / h; camera.updateProjectionMatrix();
   stageEl.classList.toggle('compact', w < 640);
   invalidate(3);
@@ -448,8 +449,12 @@ function frame(now) {
     if (k >= 1) tween = null; invalidate();
   }
   if (state.walk) stepWalk(dt); else if (controls) controls.update();
-  if (dirty > 0 && renderer) { dirty--; renderer.render(scene, camera); updateLabels(); }
+  if (dirty > 0 && renderer) {
+    dirty--; if (shadowDirty) { renderer.shadowMap.needsUpdate = true; shadowDirty = false; }
+    if (composer) composer.render(); else renderer.render(scene, camera);
+    updateLabels();
+  }
 }
 requestAnimationFrame(frame);
 initStore();
-window.__popup = { state, items, setView, select, setMove, setWalk, startTour, setTab, camera, invalidate };
+window.__popup = { state, items, setView, select, setMove, setWalk, startTour, setTab, camera, controls, invalidate };

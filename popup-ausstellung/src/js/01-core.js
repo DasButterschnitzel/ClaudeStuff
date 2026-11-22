@@ -1,6 +1,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { ConvexGeometry } from 'three/addons/geometries/ConvexGeometry.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 
 /* =====================================================================
    CORE: Hilfen, Renderer, Texturen, Geometrie-Bausteine
@@ -37,12 +43,16 @@ try {
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(40, 1, 0.1, 300);
 let controls = null;
-let dirty = 3;
+let dirty = 3, shadowDirty = true;
 const invalidate = (n = 2) => { dirty = Math.max(dirty, n); };
+const touch = () => { shadowDirty = true; invalidate(3); };            // etwas hat sich bewegt: Schatten neu rechnen
+const COARSE = matchMedia('(pointer: coarse)').matches;
+let composer = null;
 if (renderer) {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.autoUpdate = false;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.08;
   scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
@@ -50,11 +60,34 @@ if (renderer) {
   controls.enableDamping = true; controls.dampingFactor = 0.09;
   controls.maxPolarAngle = PI / 2 - 0.03; controls.minDistance = 1.5; controls.maxDistance = 140;
   controls.addEventListener('change', () => invalidate());
+  /* Umgebungsverdeckung (weiche Kontaktschatten) – nur auf Geräten mit Maus, sonst zu teuer */
+  if (!COARSE) try {
+    composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(4, 4, { type: THREE.HalfFloatType, samples: 4 }));
+    composer.addPass(new RenderPass(scene, camera));
+    const ao = new GTAOPass(scene, camera, 4, 4);
+    ao.updateGtaoMaterial({ radius: 0.5, distanceExponent: 1.6, thickness: 1.3, scale: 1.25, samples: 16 });
+    ao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 5, rings: 2, samples: 16 });
+    ao.blendIntensity = 0.85;
+    const hide = ao.overrideVisibility.bind(ao);
+    ao.overrideVisibility = () => { hide(); scene.traverse(o => { if (o.userData.noAO) o.visible = false; }); };   // Glas wirft keine Verdeckung
+    composer.addPass(ao); composer.addPass(new OutputPass());
+  } catch (e) { composer = null; }
 }
-scene.add(new THREE.HemisphereLight(0xffffff, 0xc9c2b8, 0.75));
-const sun = new THREE.DirectionalLight(0xfff1dc, 2.1);
-sun.position.set(2, 16, 19); sun.target.position.set(9.5, 0, 5);
-sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.03;
+/* Hintergrund als Verlauf in den Farben der Seite; folgt dem hellen und dunklen Design */
+function updateBg() {
+  const cs = getComputedStyle(document.documentElement), a = cs.getPropertyValue('--stage-a').trim() || '#f7f6fa', b = cs.getPropertyValue('--stage-b').trim() || '#dcd8e4';
+  if (scene.background) scene.background.dispose();
+  const c = document.createElement('canvas'); c.width = 4; c.height = 256; const g = c.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 256);
+  gr.addColorStop(0, a); gr.addColorStop(1, b); g.fillStyle = gr; g.fillRect(0, 0, 4, 256);
+  scene.background = new THREE.CanvasTexture(c); scene.background.colorSpace = THREE.SRGBColorSpace; invalidate(3);
+}
+updateBg();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateBg);
+new MutationObserver(updateBg).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+scene.add(new THREE.HemisphereLight(0xffffff, 0xcfc6ba, 0.62));
+const sun = new THREE.DirectionalLight(0xfff0d8, 2.5);
+sun.position.set(-3, 15, 17); sun.target.position.set(9.5, 0, 5);
+sun.castShadow = true; sun.shadow.mapSize.set(COARSE ? 2048 : 4096, COARSE ? 2048 : 4096); sun.shadow.radius = 3; sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.03;
 Object.assign(sun.shadow.camera, { left: -15, right: 15, top: 12, bottom: -12, near: 1, far: 50 });
 scene.add(sun, sun.target);
 
@@ -148,6 +181,9 @@ const TEX = {
 /* ---------- Geometrie-Bausteine (y = Unterkante) ---------- */
 function shade(o, cast = true) { o.castShadow = cast; o.receiveShadow = true; return o; }
 function box(w, h, d, m, x = 0, y = 0, z = 0, cast = true) { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y + h / 2, z); return shade(o, cast); }
+function rbox(w, h, d, m, x = 0, y = 0, z = 0, r = 0.03, cast = true) {
+  const o = new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 3, Math.min(r, w / 2 - 0.001, h / 2 - 0.001, d / 2 - 0.001)), m); o.position.set(x, y + h / 2, z); return shade(o, cast);
+}
 function cyl(r, h, m, x = 0, y = 0, z = 0, seg = 28, rTop = r) { const o = new THREE.Mesh(new THREE.CylinderGeometry(rTop, r, h, seg), m); o.position.set(x, y + h / 2, z); return shade(o); }
 function ball(r, m, x = 0, y = 0, z = 0) { const o = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), m); o.position.set(x, y, z); return shade(o); }
 /* Fläche von (x0,z0) nach (x1,z1); sichtbare Seite liegt in Laufrichtung links */
@@ -168,7 +204,7 @@ function flatText(text, { size = 0.34, color = '#3a3145', weight = 600, font = F
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8;
   const geo = new THREE.PlaneGeometry(size * c.width / c.height, size); geo.rotateX(-PI / 2);
   const o = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false }));
-  o.renderOrder = 3;
+  o.renderOrder = 3; o.userData.noAO = true;
   return o;
 }
 /* Beschriftete Tafel: Canvas-Textur auf einer Fläche */
