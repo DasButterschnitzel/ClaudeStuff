@@ -47,7 +47,15 @@ function place(id) {
   group.position.set(p.x, 0, p.z); group.rotation.y = (p.r || 0) * PI / 180;
 }
 [...ST, ...EXTRA].forEach(mount);
-const applyLayout = () => { Object.keys(items).forEach(place); touch(); updateInspect(); };
+placeFiguren();
+/* Figuren ausblenden, die im gewählten Layout in einer Insel stünden */
+function placeFiguren() {
+  const l = curLayout();
+  figuren.children.forEach(f => {
+    f.visible = !Object.keys(RECTS).some(id => { const p = poseIn(l, id); if (!p) return false; const r = RECTS[id], c = Math.cos(p.r * PI / 180), sn = Math.sin(p.r * PI / 180), dx = f.position.x - p.x, dz = f.position.z - p.z, lx = dx * c - dz * sn, lz = dx * sn + dz * c; return lx > r[0] - 0.35 && lx < r[2] + 0.35 && lz > r[1] - 0.35 && lz < r[3] + 0.35; });
+  });
+}
+const applyLayout = () => { Object.keys(items).forEach(place); placeFiguren(); touch(); updateInspect(); };
 
 /* ---------- Marken über dem Modell ---------- */
 const labelsEl = $('#labels'), labels = [], tmp = new V3();
@@ -343,7 +351,7 @@ function renderUeber() {
     <li>Die Schaufensterfolierung stammt aus deiner Vorlage. Wie sie auf die einzelnen Scheiben verteilt ist, habe ich angenommen: je ein Motiv auf den vier Scheiben der langen und den zwei Scheiben der kurzen Front.</li>
     <li>Orange und Lila stammen aus dem Protokoll. Die Farbwelt des Mero-Systems fehlt noch.</li>
     <li>Im Modell gibt es keine Prilblume, solange die Freigabe von Henkel offen ist.</li></ul>
-    <button type="button" class="btn" data-go="move">Inseln selbst verschieben</button></div>`;
+    <div class="row"><button type="button" class="btn" data-jump="layouts">Fünf Layouts vergleichen</button><button type="button" class="btn ghost" data-go="move">Inseln selbst verschieben</button></div></div>`;
 }
 function renderInseln() {
   $('#tab-inseln').innerHTML = `<p class="note">Eine Insel antippen, um sie im Raum zu zeigen. Stellung und Maße sind ein Vorschlag und lassen sich über „Inseln verschieben“ ändern.</p>` + ST.map(d => {
@@ -388,12 +396,15 @@ function renderLayouts() {
     return `<article class="lay${act ? ' act' : ''}" id="lay-${l.key}">
       <header><span class="lk">${String.fromCharCode(65 + i)}</span><div><h3>${esc(l.name)}</h3><p>${esc(l.leitidee)}</p></div></header>
       <div class="mini">${miniPlan(l)}</div>
-      <p>${esc(l.weg)}</p>
       <div class="route"><span class="eyebrow">Rundgang</span>${l.rundgang.map(id => `<b style="background:${DEFS[id].color}" title="${esc(DEFS[id].name)}">${DEFS[id].n}</b>`).join('<i>›</i>')}</div>
-      <ul class="pm">${l.staerken.map(t => `<li class="plus">${esc(t)}</li>`).join('')}${l.schwaechen.map(t => `<li class="minus">${esc(t)}</li>`).join('')}</ul>
       <p class="sm"><b>Theke:</b> ${esc((l.gruende || {}).theke || '–')}</p>
-      <p class="sm"><b>Frei begehbar:</b> ${de(l.freieFlaeche, 0)} m² bei 90 cm Durchgang${l.pruefung ? ` · <b>Prüfung:</b> ${esc(l.pruefung)}` : ''}</p>
-      ${l.warnungen && l.warnungen.length ? `<p class="sm"><b>Bewusst in Kauf genommen:</b> ${l.warnungen.map(esc).join(' · ')}</p>` : ''}
+      <details class="more"><summary>Weg, Stärken, Schwächen, Prüfung</summary>
+        <p>${esc(l.weg)}</p>
+        <ul class="pm">${l.staerken.map(t => `<li class="plus">${esc(t)}</li>`).join('')}${l.schwaechen.map(t => `<li class="minus">${esc(t)}</li>`).join('')}</ul>
+        <p class="sm"><b>Frei begehbar:</b> ${de(l.freieFlaeche, 0)} m² bei 90 cm Durchgang (nachgemessen mit dem Prüfwerkzeug, 0 Fehler).</p>
+        ${l.pruefung ? `<p class="sm"><b>Was die Prüfung geändert hat:</b> ${esc(l.pruefung)}</p>` : ''}
+        ${l.warnungen && l.warnungen.length ? `<p class="sm"><b>Bewusst in Kauf genommen:</b></p><ul class="plain sm">${l.warnungen.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : ''}
+      </details>
       <div class="row">${act ? '<span class="pill ok">wird gezeigt</span>' : `<button type="button" class="btn" data-layout="${l.key}">Dieses Layout zeigen</button>`}${moved ? '<span class="pill warn">von Hand verändert</span>' : ''}</div>
     </article>`; }).join('');
 }
@@ -407,6 +418,7 @@ $('#tabbody').addEventListener('change', e => {
 $('#tabbody').addEventListener('click', e => {
   const f = e.target.closest('[data-filter]'); if (f) { state.filter = f.dataset.filter; renderTodos(); return; }
   const s = e.target.closest('[data-show]'); if (s) { if (!state.expo) toggleExpo(true); select(s.dataset.show, { fly: true }); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
+  const jp = e.target.closest('[data-jump]'); if (jp) { setTab(jp.dataset.jump); $('#tabbody').scrollTop = 0; return; }
   const lb = e.target.closest('[data-layout]'); if (lb) { setLayout(lb.dataset.layout); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
   const g = e.target.closest('[data-go]'); if (g) { setMove(true); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); }
 });

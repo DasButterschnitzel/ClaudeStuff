@@ -1,1 +1,323 @@
-[]
+[
+ {
+  "key": "zeitreise",
+  "name": "Zeitreise im Kreisel",
+  "leitidee": "Ein Ring ohne Kreuzung: hinten an den festen Wänden liegt das Damals (Gründung, 70er, Wohnzimmer), vorn an den Schaufenstern der Wandel bis heute und morgen. Die Litfaß-Säule steht als Kreisverkehr im Engpass und trennt Hin- und Rückweg, sodass auch Erstbesucher und Schulklassen ohne Plan durchfinden.",
+  "rundgang": [
+   "s6",
+   "s7",
+   "s5",
+   "s3",
+   "s1",
+   "s2",
+   "s4",
+   "s8"
+  ],
+  "weg": "Ab der Tür hängt die Fahne 3 m geradeaus, links ist der Weg am Fenster durch den Block Statistik/Zukunft geschlossen, also geht man rechts an der orangen Brandmauer (Gründung 1977) nach hinten und sieht von dort die Bildschirme an der Treppenhauswand. Um die Treppenhaus-Ecke führt die hintere Gasse an der Litfaß-Säule vorbei zu Selfie-Koje, Theke und Wohnzimmer. Zurück geht es an der kurzen Front zum Mero, am Fenster vorn um die Säule herum frontal auf die Statistik, um deren Südende zur Zukunftswand und direkt daneben zur Tür hinaus.",
+  "pos": {
+   "s2": {
+    "x": 1.95,
+    "z": 9,
+    "r": 180
+   },
+   "s3": {
+    "x": 6.88,
+    "z": 4.15,
+    "r": 0
+   },
+   "s4": {
+    "x": 13.53,
+    "z": 8.85,
+    "r": 270
+   },
+   "s5": {
+    "x": 9.8,
+    "z": 7.7,
+    "r": 0
+   },
+   "s7": {
+    "x": 11.73,
+    "z": 2.2,
+    "r": 90
+   },
+   "s8": {
+    "x": 14.62,
+    "z": 8.85,
+    "r": 90
+   },
+   "fahne": {
+    "x": 16.85,
+    "z": 5.8,
+    "r": 45
+   }
+  },
+  "gruende": {
+   "s2": "Der Mero steht in der Ecke vorn links mit dem Rücken zum Schaufenster: Farbtafeln und 1977/2027 füllen von der Straße das klare Oval bei x 1,9, innen blickt die Vitrinenseite auf den Platz vor Theke und Wohnzimmer und eröffnet den Rückweg mit dem Kapitel Wandel.",
+   "s3": "Die Koje sitzt passgenau in der Nische an zwei echten Wänden (keine rohe Rückseite), direkt an der hinteren Gasse neben Theke und Wohnzimmer, und ist durch das Oval bei x 5,9 von der Straße zu sehen.",
+   "s4": "Die Statistik steht quer mit der Schmalseite an der Fensterbank am Ende der vorderen Gasse, wird vom Rückweg frontal angelaufen und liegt abseits des Hinwegs (2,76 m von der Treppenhaus-Ecke); ihr roher Rücken liegt an der Zukunftswand.",
+   "s5": "Die Säule steht mittig im 5 m breiten Engpass als Kreisverkehr mit je 1,9 m Gasse hinten (Hinweg in die 70er) und vorn am Fenster (Rückweg), genau im Oval bei x 9,8.",
+   "s7": "Die Stelen stehen an der Treppenhaus-Ostwand mit Strom an der Wand, Bildschirme zur Brandmauer statt zum Fenster, als Zeitraffer direkt nach der Gründungswand und nahe Insel 6; 30 cm weiter hinten als im Entwurf, damit zwischen Bank und Rundstütze 1,42 m bleiben.",
+   "s8": "Die Zukunftswand steht Rücken an Rücken mit der Statistik, blickt zur Tür und ist die letzte Station einen Schritt neben dem Ausgang; zugleich verschließt der Block den Weg am Fenster, sodass niemand den Ring versehentlich rückwärts beginnt.",
+   "fahne": "Die Fahne hängt 3,2 m geradeaus vor der Tür schräg (45 Grad) an der rechten Rundstütze, begrüßt fast frontal, trennt Foyer und hintere Halle und lässt rechts 2,0 m zur Brandmauer (Start) und links 1,57 m zum Block (Ankunft des Rückwegs) frei.",
+   "theke": "Die Theke wird Zeitreise-Schalter: Kostümausgabe für Koje und Wohnzimmer-Foto, Blick über die 90 cm hohe Theke ins Wohnzimmer für alle, denen der 1,0-m-Zugang zu eng ist, beim Pubquiz Quiz-Tresen am freien Platz davor."
+  },
+  "staerken": [
+   "Hin- und Rückweg kreuzen sich nirgends, und alle Abschnitte des Rundwegs sind nachgemessen mindestens 1,4 m breit (meist 1,9 m), auch wenn Leute an Statistik, Brandmauer und Fensterbank stehen oder sitzen.",
+   "Die Richtung ist ohne Schilder lesbar: links der Tür ist der Fensterweg zu, die Fahne steht in der Blickachse, die laufenden Bildschirme ziehen nach hinten rechts.",
+   "Keine zusätzlichen Stellwände, alle rohen Rücken gedeckt; zwei freie Flächen fürs Begleitprogramm (vor den Bildschirmen ca. 5 x 5 m, vor der Theke ca. 5 x 4 m), Rückwand und Treppenhaus-Stirnwand bleiben frei für Hessentag oder Zeitstrahl."
+  ],
+  "schwaechen": [
+   "Die Zukunftswand ist das Erste, was man links neben der Tür sieht, und die Slide-Show liegt aus Licht- und Stromgründen schon als Station 2 im Rundgang: die Zeitfolge ist gelenkt, nicht erzwungen.",
+   "Die Säule teilt den Engpass in zwei 1,9-m-Gassen, das Wohnzimmer bleibt eine 1,0 m breite Sackgasse: bei Schulklassen staut es sich dort, und von der Theke aus sieht die Aufsicht die Tür nicht.",
+   "Der Block nimmt 2,5 m Fensterbank und zeigt im Oval bei x 13,4 seine Schmalseite (Abschlussleiste nötig, Pinnwand so hoch wie die 2,3-m-Statistiktafel); das Glasbaustein-Fenster 0,8 m neben der ersten Stele muss abgeklebt werden, der Mero braucht eigene Leuchten."
+  ],
+  "freieFlaeche": 90.6,
+  "warnungen": [
+   "Hoftür: nur über eine Engstelle unter 1,20 m erreichbar – der Gang zwischen Stellwand am Wohnzimmer und Lager ist im Bestand 0,97 m breit; kein bewegliches Teil verursacht das, es ist eine Betriebstür.",
+   "Lagertür: nur über eine Engstelle unter 1,20 m erreichbar – derselbe Bestandsgang, reine Betriebstür.",
+   "Wohnzimmer: nur über eine Engstelle unter 1,20 m erreichbar – der vom Team vorgegebene Zugang zwischen Natursteinwand und Theke ist 1,0 m breit; ändern ließe sich das nur durch Verschieben der Theke, ersatzweise Blick über die Theke."
+  ],
+  "pruefung": "Das Prüfwerkzeug meldete für den Entwurf 0 Fehler, eine eigene Engstellenmessung je Wegabschnitt fand aber drei Stellen unter 1,20 m, die das Werkzeug wegen möglicher Umwege nicht anzeigt: Bank der Slide-Show zur Rundstütze 1,14 m (Hinweg), Ecke der Zukunftswand zum Mauerversatz an der Tür 1,19 m (Rückweg) und rund 1,2 m an der Treppenhaus-Ecke, sobald Leute an der Statistik stehen; außerdem lud der offene Fensterkorridor links der Tür dazu ein, den Ring rückwärts zu laufen, und die Fahne schirmte die Zukunftswand entgegen der Begründung nicht ab. Deshalb steht der Block Statistik/Zukunft jetzt mit der Schmalseite an der Fensterbank (s4 13,53/8,85, s8 14,62/8,85), der Rückweg führt um sein Südende (2,3 m), die Slide-Show rückt auf z 2,2 und die Fahne an die rechte Rundstütze (16,85/5,8), wo sie den Start nicht mehr auf 1,6 m einschnürt. Ergebnis: 0 Fehler, frei begehbar 90,6 statt 88,2 m² (bei 1,20 m 73,0 statt 68,2 m²); Mero, Koje, Säule, Reihenfolge und Leitidee bleiben unverändert."
+ },
+ {
+  "key": "marktplatz",
+  "name": "Marktplatz",
+  "leitidee": "Links vom Eingang liegt ein freier Platz (5,15 × 5,0 m) für Pubquiz, Führungen und Begleitprogramm; seine Stirnseite ist die Slide-Show an der Treppenhaus-Ecke, sein Rand sind Litfaß-Säule, Zukunftswand zwischen den Rundstützen und die Fensterbank als Tribüne. Vom Platz gehen zwei Viertel ab: links der „Hof der 70er“ (Wohnzimmer, Theke, Selfie-Koje, Mero), hinten rechts ein kurzer Rundweg „Stadt werden – heute“ (Gebietsreform, Statistik).",
+  "rundgang": [
+   "s6",
+   "s4",
+   "s7",
+   "s3",
+   "s1",
+   "s2",
+   "s5",
+   "s8"
+  ],
+  "weg": "Ab der Tür hängt die Fahne geradeaus, links daneben steht zwischen den Rundstützen der Stadtplan der Zukunftswand, drei Meter links vorn die Litfaß-Säule; dahinter öffnet sich der Platz mit den laufenden Bildschirmen, an der Fensterbank entlang reicht der Blick bis zum Mero. Man geht rechts an der orangen Wand nach hinten (6), dreht sich zur Statistik (4), verlässt das Viertel links am Treppenhaus vorbei auf den Platz zur Slide-Show (7) und kommt durch die 2,1 m breite Gasse an der Fensterbank in den Hof: Koje (3), Theke, Wohnzimmer (1), Mero (2). Zurück über den Platz liest man die Litfaß-Säule (5) und pinnt zum Schluss an der Zukunftswand (8), rund fünf Meter vor dem Ausgang.",
+  "pos": {
+   "s2": {
+    "x": 1.25,
+    "z": 8.6,
+    "r": 90
+   },
+   "s3": {
+    "x": 6.88,
+    "z": 4.15,
+    "r": 0
+   },
+   "s4": {
+    "x": 15.325,
+    "z": 3.24,
+    "r": 180
+   },
+   "s5": {
+    "x": 15.85,
+    "z": 7,
+    "r": 0
+   },
+   "s7": {
+    "x": 8.5,
+    "z": 6.68,
+    "r": 90
+   },
+   "s8": {
+    "x": 15.325,
+    "z": 4.33,
+    "r": 0
+   },
+   "fahne": {
+    "x": 17.15,
+    "z": 5.4,
+    "r": 0
+   }
+  },
+  "gruende": {
+   "s2": "Das Mero steht als Magnet am Ende des Hofs mit den Vitrinen zum Raum: Von der Tür sieht man durch die Gasse seine vordere Hälfte, die geschlossene Rückwand zeigt 1977/2027 im klaren Oval der kurzen Front zur Straße.",
+   "s3": "Die Koje sitzt in der Nische an zwei echten Wänden (keine rohen Rückseiten), öffnet sich zum Hof und zur Theke, bekommt Tageslicht von vorn auf die Gesichter und ist durch das Oval bei x ≈ 5,9 von der Straße zu sehen.",
+   "s4": "Die Statistik steht Rücken an Rücken mit der Zukunftswand und blickt zur Rückwand: Wer die orange Wand abgelaufen ist, dreht sich hinten zu ihr um (1977 beschlossen, hier in Zahlen 1970/heute) und geht am Treppenhaus vorbei weiter, ohne umzukehren.",
+   "s5": "Die Litfaß-Säule steht als Gelenk zwischen Eingang und Platz, außerhalb des Stuhlfelds und 1,2 m vor dem Stehtisch der Zukunftswand; sie verdeckt von der Tür weder die Bildschirme noch die Fahne noch die Mitte des Stadtplans.",
+   "s7": "Die Stelen stehen rechtwinklig an der Treppenhaus-Stirnwand (Strom, 2,1 m Abstand zur Fensterfront, Bildschirme nach Osten zur fensterlosen Brandmauer) und bilden die Stirnseite des Platzes: tagsüber Slide-Show mit Bank, abends Quiz-Bildschirme mit Moderation in der Wandecke.",
+   "s8": "Die Zukunftswand steht im Feld zwischen den beiden Rundstützen mit Blick auf Platz und Eingang: Sie gibt dem Platz einen dritten bespielten Rand, ist von der Tür frontal zu sehen und ist der Schlusspunkt direkt vor dem Ausgang; ihre rohe Rückseite deckt die Statistik.",
+   "fahne": "Die Fahne hängt 3,6 m geradeaus vor der Tür direkt vor der rechten Rundstütze (notfalls an einem Ausleger an der Stütze), verdeckt die Tür zu den Nebenräumen, setzt die Zukunftswand als Rückwand des Eingangs fort und lässt 1,6 m Durchgang an der orangen Wand.",
+   "theke": "Die Theke wird zur Schänke des Hofs: tagsüber unbesetzte Ablage für Kostüme, Quizbögen und Gästebuch neben der Koje, abends Getränketresen beim Pubquiz; die Aufsicht sitzt nicht hier, sondern am Platz mit Blick auf die Tür."
+  },
+  "staerken": [
+   "Freies Feld von 5,15 × 5,0 m (nachgemessen, nichts ragt hinein) für 30 Stühle in fünf Reihen mit Blick auf die Bildschirme; die Fensterbank dient als Tribüne, im Hof bleibt ein zweites freies Feld für Schulklassen.",
+   "Der Platz hat drei bespielte Ränder (Slide-Show, Litfaß-Säule, Zukunftswand) und der Rundgang läuft ohne Umkehren: orange Wand – Statistik – Platz – Hof – Zukunftswand – Ausgang.",
+   "Keine Zusatzwände, kein Umbau zwischen Tag und Abend; drei Sichtachsen ab der Tür (Bildschirme, Mero, Stadtplan) und zwei Wirkungen nach außen (Mero-Rückwand, Selfie-Koje)."
+  ],
+  "schwaechen": [
+   "Der Hof mit vier Stationen und den Leihgaben im Mero bleibt eine Sackgasse hinter der 2,1 m breiten Gasse und ist vom Platz aus nicht einsehbar (Vitrinen abschließbar bauen); beim Pubquiz führt der Weg zur Theke direkt neben den Bildschirmen vorbei, ein Gang an der Fensterbank muss frei bleiben.",
+   "Statistik und Zukunftswand stehen als Paar frei im Raum und müssen standsicher gebaut werden (Füße oder Ballast, Kopfblende über der niedrigeren Pinnwand); Rückwand und Treppenhaus-Ostwand bleiben dafür leer und sind nur Reserve, etwa für das Thema Hessentag.",
+   "Stelen-Bildschirme sind für 30 Personen klein (letzte Reihe rund 6 m), ihre Rückseiten zum Hof müssen verkleidet werden; die leere Platzmitte braucht am Tag eine Bodengrafik, und das Mero steht in der Glasecke neben zwei klaren Ovalen (Lichtschutz für Leihgaben klären)."
+  ],
+  "freieFlaeche": 90.2,
+  "warnungen": [
+   "Hoftür: nur über eine Engstelle unter 1,20 m erreichbar – Bestand: Der Gang zwischen der festen Stellwand am Wohnzimmer und der Lagerwand ist 0,97 m breit; kein Layout kann das ändern.",
+   "Lagertür: nur über eine Engstelle unter 1,20 m erreichbar – derselbe 0,97-m-Gang, Bestand und reiner Betriebsweg.",
+   "Wohnzimmer: nur über eine Engstelle unter 1,20 m erreichbar – Bestand: Der vorgegebene Zugang zwischen Natursteinwand und Theke ist genau 1,0 m breit; behebbar nur durch Kürzen oder Versetzen der Theke, der Weg dorthin durch den Hof ist frei."
+  ],
+  "pruefung": "Nachgemessen: Der Entwurf des Kollegen hatte 0 Fehler, das freie Feld von 5,15 × 5,0 m und die drei Bestandswarnungen stimmen. Geändert habe ich die Zukunftswand (von der Rückwand ins Feld zwischen den Rundstützen, Blick zum Platz) und die Statistik (von der Treppenhaus-Ostwand Rücken an Rücken dahinter): Der Platz hatte nur zwei bespielte Ränder, und der Rundgang sollte die Zukunftswand überspringen, obwohl sie zwischen Gebietsreform und Statistik lag; jetzt ist das hintere Viertel ein Rundweg und die Zukunftswand der Schluss vor der Tür. Dafür rückt die Litfaß-Säule 30 cm zur Fensterfront (Betrachtungsraum der Zukunftswand frei) und die Fahne 25 cm nach links (Durchgang an der orangen Wand 1,60 statt 1,35 m); Mero, Koje und Stelen bleiben, die Theke ist tagsüber unbesetzt, weil man von dort den Eingang nicht sieht. Endfassung laut Prüfwerkzeug: 0 Fehler, 90,2 m² frei begehbar, Datei /tmp/claude-0/-home-user-ClaudeStuff/1d176c4a-0fe9-5152-832c-40da6e985d22/scratchpad/layouts/marktplatz-final.json."
+ },
+ {
+  "key": "schaufenster",
+  "name": "Lebendes Schaufenster",
+  "leitidee": "Hinter jedem klaren Oval der langen Front steht ein eigenes Bild in gestaffelter Tiefe: an der Straßenecke die Selfie-Koje als lebendes Schaufenster, daneben der Farbrücken des Mero mit 1977/2027, in der Tiefe der wachsende Stadtplan, am Eingang die Litfaß-Säule. Gut für Laufkundschaft, die erst von draußen neugierig werden muss; innen ergibt das einen Rundweg ohne Kreuzung, der an der Fensterpromenade endet.",
+  "rundgang": [
+   "s6",
+   "s4",
+   "s7",
+   "s2",
+   "s1",
+   "s3",
+   "s8",
+   "s5"
+  ],
+  "weg": "Ab der Tür sieht man links die Litfaß-Säule vor dem Fenster, schräg voraus die Fahne, rechts die orange Wand und in der Tiefe die Tafel „1970 / heute“ an der Rückwand. Man geht rechts an der Gebietsreform-Wand entlang nach hinten, über Statistik und Slide-Show durch die Engstelle in die linke Hälfte: Mero-Vitrinen, Theke, Wohnzimmer, dann verkleidet in die Koje am Eckfenster. Zurück geht es über die 1,50 m breite Promenade zwischen Fensterbank und Mero-Rückseite zum Stadtplan an der Treppenhaus-Stirnwand und an der Litfaß-Säule vorbei zur Tür.",
+  "pos": {
+   "s2": {
+    "x": 5.6,
+    "z": 7.52,
+    "r": 180
+   },
+   "s3": {
+    "x": 2.75,
+    "z": 7.65,
+    "r": 0
+   },
+   "s4": {
+    "x": 15.4,
+    "z": 0.5,
+    "r": 0
+   },
+   "s5": {
+    "x": 13.4,
+    "z": 8.3,
+    "r": 0
+   },
+   "s7": {
+    "x": 11.73,
+    "z": 2.9,
+    "r": 90
+   },
+   "s8": {
+    "x": 10,
+    "z": 5.85,
+    "r": 0
+   },
+   "fahne": {
+    "x": 15.9,
+    "z": 6.7,
+    "r": 35
+   }
+  },
+  "gruende": {
+   "s2": "Steht 1,50 m hinter der Fensterbank genau in Oval B (x 4,05–7,15) mit dem Rücken zur Straße: Die Farbtafeln mit 1977/2027 sind das Plakat der Ausstellung, die Vitrinen zeigen vom Tageslicht weg in den Raum und liegen im Blick der Theke.",
+   "s3": "Steht frei an der Gebäudeecke (x 1,60–4,02 / z 6,60–8,70), vorn offen zu Oval A und links offen zum vorderen Oval der kurzen Front: Verkleidete Besucher sind von beiden Straßen aus das Schaufensterbild, die rohe rechte Wand verschwindet hinter der Mero-Flanke.",
+   "s4": "An der Rückwand rechts (x 14,05–16,75) zwischen oranger Wand und Slide-Show: Die Zahlen 1970/heute gehören inhaltlich zur Gebietsreform, die 2,30 m hohe Tafel ist von der Tür aus das Fernziel, und die rohe Rückseite liegt an der Wand.",
+   "s5": "Steht mittig in Oval D neben dem Eingang, 1,30 m vor der Fensterbank, damit man sie auch mit Rollstuhl umrunden kann: Plakate von draußen lesbar, innen Landmarke beim Hereinkommen und letzter Halt vor der Tür.",
+   "s7": "An der Treppenhaus-Ostwand mit Blick zur Brandmauer: kein Fenster hinter oder gegenüber den Bildschirmen, Strom an der Wand, nah an Insel 6, und die Fläche davor taugt für Pubquiz und Begleitprogramm.",
+   "s8": "Mit dem Rücken an der Treppenhaus-Stirnwand (x 8,70–11,30) als Tiefenbild für Oval C: Der 2,5 m breite Stadtplan mit bunten Karten ist von der Straße aus stärker als eine Zahlentafel, und er liegt genau am Ende der Fensterpromenade als Schlusspunkt „Zukunft“.",
+   "fahne": "Hängt frei 2,9 m hinter dem Eintrittspunkt, frontal zur Tür gedreht: Sie teilt den Hinweg rechts zur orangen Wand vom Rückweg links an der Litfaß-Säule, verdeckt nur die Seitenansicht der Medienstelen und das Glasbaustein-Fenster und lässt Tafel und Säule frei.",
+   "theke": "Kostüm- und Quiz-Theke in Selbstbedienung: Perücken, Hüte und Quizbögen liegen auf dem Tresen, gegenüber wird die Rückseite der Koje mit Resttapete, Haken und Spiegel zur Garderobenwand; als besetzter Infotresen taugt sie nicht, weil sie keine Sicht zur Tür hat."
+  },
+  "staerken": [
+   "Alle vier Ovale der langen Front, das vordere Oval der kurzen Front und die Glastür haben ein eigenes Bild: Koje, Mero-Rücken und Litfaß nah am Glas, Stadtplan und Fahne in der Tiefe; Ringlicht, Discokugel und Bildschirme leuchten abends von selbst.",
+   "Rundweg ohne Kreuzung: rechts hinein, innen an den Vitrinen entlang in die linke Hälfte, über die Fensterpromenade zurück; beide Wege sind einzeln nachgemessen mit 1,20 m befahrbar, Promenade und Gang hinter der Koje sind je 1,50 m breit.",
+   "Die rechte Halle bündelt Gebietsreform, Statistik und Slide-Show zum Thema „1970 bis heute“ und bleibt in der Mitte frei (rund 4,5 × 3,5 m stützenfrei) für Pubquiz und Eröffnung; alles steht rechtwinklig und ohne Zusatzwände."
+  ],
+  "schwaechen": [
+   "Insel 8 steht nicht mehr bei Insel 6, wie vom Team gedacht, sondern an der Engstelle; dort teilen sich Hin- und Rückweg 2,5 m Breite, wenn am Stadtplan jemand schreibt.",
+   "Das hintere Oval der kurzen Front (z ≈ 5,3) hat kein eigenes Exponat, nur den Schrägblick auf Theke und Koje-Rückseite; diese muss deshalb verkleidet werden, und wer sich verkleidet, steht sichtbar im Fenster.",
+   "Mero und Koje nehmen der linken Hälfte Tageslicht und verdecken sie von der Tür aus: Theke, Nische und Vitrinen brauchen Leuchten, die Aufsicht muss pendeln, und die Fahne braucht einen Deckenhaken (noch offen; Ersatz wäre ein Ausleger an der rechten Rundstütze)."
+  ],
+  "freieFlaeche": 84.1,
+  "warnungen": [
+   "Hoftür: nur über eine Engstelle unter 1,20 m erreichbar – bleibt, weil der vorgegebene Gang zwischen Stellwand am Wohnzimmer und Lager nur 0,97 m breit ist; kein bewegliches Element steht davor.",
+   "Lagertür: nur über eine Engstelle unter 1,20 m erreichbar – gleiche Ursache, derselbe feste Gang; betrifft nur das Team, nicht den Besucherweg.",
+   "Wohnzimmer: nur über eine Engstelle unter 1,20 m erreichbar – der vom Team vorgegebene Zugang zwischen Natursteinwand und Theke ist 1,00 m breit; das ließe sich nur durch Verrücken der Theke beheben."
+  ],
+  "pruefung": "Der Entwurf war fehlerfrei, aber der Rundgang kreuzte den Eingang (Litfaß links, dann zurück zur orangen Wand) und Insel 8 lag abseits des Rückwegs: Ich habe Statistik und Stadtplan getauscht und die Reihenfolge zu einer Schleife gedreht, die an der Tür endet. Mero und Koje stehen 10 cm weiter hinten (Promenade 1,50 statt 1,40 m), die Litfaß-Säule 35 cm weiter im Raum (fensterseitig 1,30 statt 0,95 m). Die Fahne hing nicht „an der Rundstütze“, sondern 1,7 m davon frei im Raum; sie ist leicht versetzt, damit sie die Tafel an der Rückwand nicht anschneidet. Korrigiert sind außerdem die Aussagen „alle sechs Ovale“ (es sind fünf plus Tür), „6 × 6 m frei“ (die Rundstützen stehen darin) und die besetzte Theke ohne Sicht zur Tür."
+ },
+ {
+  "key": "parcours",
+  "name": "Zwei Höfe",
+  "leitidee": "Alles Hohe steht an echten Wänden rund um den Treppenhaus-Kern, die Mitte und die ganze Sitz-Fensterbank bleiben frei. So entstehen zwei Mitmach-Höfe (rechts Statistik + Zukunft + Bildschirme, links Selfie + Wohnzimmer) mit dem Mero als Gelenk dazwischen: Eine Klasse teilt sich in zwei Hälften und tauscht, Rollator und Kinderwagen haben bis auf den vorgegebenen Wohnzimmer-Zugang überall mindestens 1,5 m.",
+  "rundgang": [
+   "s6",
+   "s8",
+   "s4",
+   "s7",
+   "s2",
+   "s3",
+   "s1",
+   "s5"
+  ],
+  "weg": "Von der Tür sieht man rechts die orange Wand, geradeaus zwischen den Rundstützen den Stadtplan an der Rückwand, halblinks die Bildschirme und davor die Fahne über dem Sammelplatz, ganz links am Ende der Fensterachse die Litfaß-Säule. Man geht an der orangen Wand entlang in den rechten Hof (Zukunft, Statistik, Sitzpause vor den Bildschirmen), dann an der Fahne vorbei durch den 2,6 m breiten Hals vor dem Mero in den linken Hof zu Selfie-Koje, Theke und Wohnzimmer. Zurück geht es von der Litfaß-Säule an der freien Sitz-Fensterbank entlang durch denselben Hals zur Tür.",
+  "pos": {
+   "s2": {
+    "x": 9.85,
+    "z": 6.41,
+    "r": 0
+   },
+   "s3": {
+    "x": 6.88,
+    "z": 4.15,
+    "r": 0
+   },
+   "s4": {
+    "x": 12.8,
+    "z": 0.52,
+    "r": 0
+   },
+   "s5": {
+    "x": 2.2,
+    "z": 8,
+    "r": 0
+   },
+   "s7": {
+    "x": 11.75,
+    "z": 4.1,
+    "r": 90
+   },
+   "s8": {
+    "x": 15.5,
+    "z": 0.65,
+    "r": 0
+   },
+   "fahne": {
+    "x": 14.45,
+    "z": 7.5,
+    "r": 40
+   }
+  },
+  "gruende": {
+   "s2": "Das Mero füllt die Treppenhaus-Stirnwand (3,1 von 3,25 m), steht kippsicher an der Wand, schließt rechts bündig mit der Treppenhaus-Ecke ab und deckt so den 30 cm überstehenden Rücken der letzten Medienstele; es liegt der Sitz-Fensterbank gegenüber und ist durch das Oval bei x 9,8 frontal von der Straße zu sehen.",
+   "s3": "Die Koje nutzt die zwei echten Wände der Nische (keine rohe Rückseite), liegt 1,5 m neben der Theke und wenige Schritte vom Wohnzimmer; die Warteschlange steht im Winkel zwischen Koje und Mero-Flanke außerhalb des Durchgangs, der Kleiderständer gehört in die Koje, damit der Gang zur Hoftür frei bleibt.",
+   "s4": "Die Vergleichstafel steht mit dem Rücken an der Rückwand in der Ecke zum Treppenhaus, weil sie flacher ist als die Zukunft-Station: vor den Drehwürfeln bleiben 1,58 m bis zur Bank, die Tafel verdeckt das Glasbaustein-Fenster (frei davor stellen, nicht daran befestigen) und nimmt den Bildschirmen das Seitenlicht.",
+   "s5": "Die Säule steht in der Ecke beider Fensterfronten als Zielpunkt der 16 m langen Achse von der Tür, ist durch je ein Oval von beiden Straßen zu sehen und hat jetzt 1,6 m Umgang auch zu den Fenstern, sodass man sie mit Rollator oder Kinderwagen ganz umrunden kann; der Hof davor bleibt frei für Sitzkreis und Pubquiz.",
+   "s7": "Die Stelen stehen an der Treppenhaus-Ostwand im dunkelsten Teil des Raums, die Bildschirme zeigen zur orangen Wand statt zu einem Fenster, Strom kommt aus der Wand; die Bank ist die Sitzpause im rechten Hof, am Südende bleibt neben der Bank Platz für einen Rollstuhl.",
+   "s8": "Der Stadtplan hängt an der Rückwand am Ende der Gebietsreform-Wand, wie vom Team gewünscht (erst die fünf Orte, dann der eigene Lieblingsplatz), und ist von der Tür aus zwischen den Rundstützen zu sehen; die rechte Stütze verdeckt von der Türmitte nur einen etwa 0,5 m breiten Streifen.",
+   "fahne": "Die Fahne hängt 3,6 m hinter der Tür mitten über dem Sammelplatz vor der geschlossenen Mero-Flanke: Von der Tür aus verdeckt sie nur diese Flanke, Bildschirme, Statistik, Stadtplan und Litfaß-Säule bleiben sichtbar, sie ist durch das Oval bei x 13,4 auch von der Straße zu lesen und hat ringsum mindestens 2 m Durchgang.",
+   "theke": "Kostümtresen im Alltag (Kisten mit Hüten, Brillen, Perücken für Koje und Sofa, davor ein niedriger Tisch für Kinder) und Quiz-Tresen beim Pubquiz, für das der freie linke Hof davor bestuhlt wird."
+  },
+  "staerken": [
+   "Alle Stationen stehen an echten Wänden: keine rohen Rückseiten, auch nicht durch die Ovale, nichts kippt, keine Zusatzwände, Aufbau ohne Messebauer.",
+   "Schon von der Tür sind orange Wand, Stadtplan, Bildschirme und Litfaß-Säule zu sehen; Sammelplatz an der Fahne, zwei getrennte Höfe und rund 16 m freie Sitz-Fensterbank lassen 25 Kinder sich aufteilen.",
+   "Alle beweglichen Stationen sind mit 1,5 m Durchgang erreichbar (nachgemessen, an der Statistik knapp mit 1,58 m); der linke Hof bleibt frei für Pubquiz und Begleitprogramm."
+  ],
+  "schwaechen": [
+   "Das Wohnzimmer bleibt wegen des 1,0 m breiten Zugangs neben der festen Theke Engstelle und Sackgasse; breite Rollstühle und Zwillingswagen kommen kaum durch, mehr als eine Kleingruppe passt nicht hinein.",
+   "Der 2,6 m breite Hals vor den Mero-Vitrinen ist die einzige Verbindung der Höfe (mit Betrachtern bleiben rund 1,4 m, Hin- und Rückweg kreuzen sich dort), und Mero plus Treppenhaus trennen den Raum so, dass eine Aufsicht allein nie beide Höfe und weder Koje noch Wohnzimmer von der Tür aus sieht.",
+   "Der rechte Hof ist mit Statistik, Zukunft, Bildschirmen und oranger Wand dicht und bei voller Klasse laut, der linke wirkt ohne Veranstaltung leer; die farbige Mero-Rückseite verschwindet an der Wand, und für die Vitrinen 2,6 m vor der Fensterfront ist UV-Schutz zu klären."
+  ],
+  "freieFlaeche": 90.8,
+  "warnungen": [
+   "Medienstelen mit Bank: Rundstütze links liegt im Betrachtungsraum – bewusst: die Stütze steht 44 cm hinter dem Südende der Bank, nicht zwischen Bank und Bildschirm; rückte man die Stelen nach Norden, blieben vor der Statistik weniger als 1,5 m.",
+   "Wohnzimmer: nur über eine Engstelle unter 1,20 m erreichbar – Vorgabe des Teams (Zugang 1,0 m zwischen Natursteinwand und fester Theke), mit beweglichen Teilen nicht zu beheben.",
+   "Hoftür: nur über eine Engstelle unter 1,20 m erreichbar – der feste Gang zwischen Stellwand und Lager ist 0,95 m breit und dient nur dem Team.",
+   "Lagertür: nur über eine Engstelle unter 1,20 m erreichbar – derselbe 0,95 m breite feste Gang, kein Besucherweg."
+  ],
+  "pruefung": "Nachgemessen: 0 Fehler, vier Warnungen wie angegeben; die Wandstellungen von Mero, Koje, Statistik, Zukunft und Stelen bleiben, weil nur diese Verteilung ganz ohne rohe Rückseiten auskommt. Die Fahne ist von (16,2/7,2) nach (14,45/7,5, r 40) versetzt: An der alten Stelle verdeckte sie von der Tür die Bildschirme ganz und je nach Türflügel auch Statistik oder Stadtplan, jetzt verdeckt sie nur die Mero-Flanke und ist von der Straße zu sehen. Die Litfaß-Säule ist von (1,9/8,3) nach (2,2/8,0) gerückt (1,6 statt 1,3 m Umgang zu den Fenstern), das Mero 7 cm nach rechts, damit der 12 cm breite Spalt zur überstehenden Stele bis auf eine Kabelfuge schließt. Im Text korrigiert: „überall 1,5 m“ gilt nicht für das Wohnzimmer, die Statistik hat 1,58 m Standtiefe, und Hals sowie fehlende Übersicht für die Aufsicht stehen jetzt als Schwäche drin."
+ }
+]
