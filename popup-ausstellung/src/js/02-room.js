@@ -32,12 +32,13 @@ function roomShape() {
 function buildRoom() {
   const g = new THREE.Group(), dims = new THREE.Group(), tags = [];
   const mWall = M('#f3f1ed', { roughness: 0.95 }), mWhite = M('#f6f5f2', { roughness: 0.6 }), mCut = M('#3b3344', { roughness: 1 });
-  const mFrame = M('#2f2a35', { roughness: 0.5 }), mDoor = M('#e4e1db', { roughness: 0.7 });
+  const mFrame = M('#2f2a35', { roughness: 0.5 }), mDoor = M('#e4e1db', { roughness: 0.7 }), mGold = new THREE.MeshStandardMaterial({ color: '#b9973a', metalness: 0.85, roughness: 0.35 });
+  const foilMat = new THREE.MeshBasicMaterial({ color: '#ededed', transparent: true, side: THREE.DoubleSide, depthWrite: false, visible: false });
   const mGlass = new THREE.MeshStandardMaterial({ color: '#cfe4ee', transparent: true, opacity: 0.09, roughness: 0.05, side: THREE.DoubleSide, depthWrite: false });
 
   /* Gehweg / Umgebung */
-  const pflaster = ctex(256, 256, (c, w) => { const r = rng(17); c.fillStyle = '#bdb8c4'; c.fillRect(0, 0, w, w); for (let y = 0; y < 8; y++) for (let x = -1; x < 4; x++) { c.fillStyle = `hsl(265, 6%, ${72 + r() * 9}%)`; c.fillRect((x + (y % 2) * 0.5) * 64 + 1.5, y * 32 + 1.5, 61, 29); } }, [26 / 1.6, 28.5 / 1.6]);
-  g.add(box(26, 0.06, 28.5, M('#ffffff', { map: pflaster, roughness: 1 }), 9.2, -0.08, 0.1, false));
+  const pflaster = ctex(256, 256, (c, w) => { const r = rng(17); c.fillStyle = '#bdb8c4'; c.fillRect(0, 0, w, w); for (let y = 0; y < 8; y++) for (let x = -1; x < 4; x++) { c.fillStyle = `hsl(265, 6%, ${72 + r() * 9}%)`; c.fillRect((x + (y % 2) * 0.5) * 64 + 1.5, y * 32 + 1.5, 61, 29); } }, [24 / 1.6, 14.4 / 1.6]);
+  g.add(box(24, 0.06, 14.4, M('#ffffff', { map: pflaster, roughness: 1 }), R.W / 2 - 0.9, -0.08, 6.2, false));
 
   /* Boden + Decke (Decke nur von innen sichtbar) */
   const fGeo = new THREE.ShapeGeometry(roomShape()); fGeo.rotateX(-PI / 2);
@@ -66,10 +67,19 @@ function buildRoom() {
     g.add(box(x1 - x0 + 0.04, 0.03, z1 - z0 + 0.04, mTop, (x0 + x1) / 2, R.SILL - 0.03, (z0 + z1) / 2));
   };
   bench(xG, zG - R.BENCH, xRet, zG); bench(xG, zWW, xG + R.BENCH, zG - R.BENCH);
-  g.add(box(xRet - xG, 0.05, 0.05, mFrame, (xRet + xG) / 2, H - 0.05, zG, false), box(0.05, 0.05, zG - zWW, mFrame, xG, H - 0.05, (zG + zWW) / 2, false));
-  for (const x of [R.colX, ...R.frontX]) g.add(cyl(0.11, H, mWhite, x, 0, R.colZ), box(0.05, H - R.SILL, 0.06, mFrame, x, R.SILL, zG, false));
-  for (const z of R.westZ) g.add(cyl(0.11, H, mWhite, R.colX, 0, z), box(0.06, H - R.SILL, 0.05, mFrame, xG, R.SILL, z, false));
-  g.add(box(0.07, H, 0.07, mFrame, xG, 0, zG, false), box(xRet - xG, 0.04, 0.05, mFrame, (xRet + xG) / 2, R.SILL, zG, false), box(0.05, 0.04, zG - zWW, mFrame, xG, R.SILL, (zG + zWW) / 2, false));
+  g.add(box(xRet - xG, 0.05, 0.05, mGold, (xRet + xG) / 2, H - 0.05, zG, false), box(0.05, 0.05, zG - zWW, mGold, xG, H - 0.05, (zG + zWW) / 2, false));
+  for (const x of [R.colX, ...R.frontX]) g.add(cyl(0.11, H, mWhite, x, 0, R.colZ), box(0.05, H - R.SILL, 0.06, mGold, x, R.SILL, zG, false));
+  for (const z of R.westZ) g.add(cyl(0.11, H, mWhite, R.colX, 0, z), box(0.06, H - R.SILL, 0.05, mGold, xG, R.SILL, z, false));
+  g.add(box(0.07, H, 0.07, mGold, xG, 0, zG, false), box(xRet - xG, 0.04, 0.05, mGold, (xRet + xG) / 2, R.SILL, zG, false), box(0.05, 0.04, zG - zWW, mGold, xG, R.SILL, (zG + zWW) / 2, false));
+  /* Dauerhafte Schaufensterfolierung nach der Vorlage: Skyline-Band, POP-UP, milchige Fläche, klares Oval */
+  new THREE.TextureLoader().load(FOIL_SRC, t => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; foilMat.map = t; foilMat.visible = true; foilMat.needsUpdate = true; invalidate(3); });
+  const foil = (x0, z0, x1, z1) => { const o = wall(x0, z0, x1, z1, foilMat, { h: H - R.SILL - 0.04, y0: R.SILL + 0.04 }); o.userData.noAO = true; o.receiveShadow = false; o.renderOrder = 2; g.add(o); };
+  const fxs = [R.colX, ...R.frontX], fzs = [zWW, ...R.westZ, zG];
+  for (let i = 0; i < fxs.length - 1; i++) foil(fxs[i] + 0.04, zG + 0.008, fxs[i + 1] - 0.04, zG + 0.008);
+  for (let i = 0; i < fzs.length - 1; i++) foil(xG - 0.008, fzs[i] + 0.04, xG - 0.008, fzs[i + 1] - 0.04);
+  /* Sockel außen: blaugraue Riemchen */
+  const riem = (len) => M('#ffffff', { roughness: 0.6, map: ctex(128, 64, (c, w, h) => { c.fillStyle = '#c9ccd2'; c.fillRect(0, 0, w, h); c.fillStyle = '#5d6b7c'; for (let y = 0; y < 4; y++) for (let x = -1; x < 2; x++) c.fillRect((x + (y % 2) * 0.5) * 64 + 2, y * 16 + 2, 60, 12); }, [len / 0.48, 2]) });
+  g.add(wall(xG, zG + 0.03, xRet, zG + 0.03, riem(xRet - xG), { h: R.SILL }), wall(xG - 0.03, zWW, xG - 0.03, zG + 0.03, riem(zG - zWW), { h: R.SILL }));
   /* Einbaustrahler in der Decke */
   const spots = []; for (let x = 1.2; x < W; x += 2.25) for (let z = 1.1; z < zG - 0.6; z += 2.25) if (!(x > L.x0 - 0.2 && x < K.x1 + 0.2 && z < (x < L.x1 ? L.z1 : K.z1) + 0.2) && !(x > xRet && z > D.z)) spots.push([x, z]);
   const sg = new THREE.CircleGeometry(0.07, 18); sg.rotateX(PI / 2);
@@ -102,16 +112,9 @@ function buildRoom() {
     g.add(box(0.01, 0.3, 0.01, mFrame, x, 2.2, 8.85, false));
   }
 
-  /* Nebenräume hinter dem Laden: nur als Umriss */
-  const nb = [[13.72, -0.4], [13.72, -12.11], [17.91, -12.98], [19.51, -5.74], [19.51, -0.4]];
-  const ns = new THREE.Shape(); nb.forEach(([x, z], i) => (i ? ns.lineTo(x, -z) : ns.moveTo(x, -z))); ns.closePath();
-  const ng = new THREE.ShapeGeometry(ns); ng.rotateX(-PI / 2);
-  const nm = new THREE.Mesh(ng, new THREE.MeshBasicMaterial({ color: '#8f879c', transparent: true, opacity: 0.22 })); nm.position.y = -0.015; nm.userData.noAO = true; g.add(nm);
-  g.add(new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(nb.map(([x, z]) => new V3(x, 0, z))), new THREE.LineBasicMaterial({ color: '#5d5569' })));
-
   /* Raumnamen (HTML-Marken) */
   tags.push({ p: [dx, 0.1, D.z + 1.5], t: 'Eingang' }, { p: [(L.x0 + L.x1) / 2, H, 1.4], t: 'Lager 6,3 m²' }, { p: [(K.x0 + K.x1) / 2, H, 2.4], t: 'Treppenhaus' },
-    { p: [16.6, 0, -5.5], t: 'Nebenräume 42,5 m² · WC 6,5 m²' }, { p: [0.05, 1.6, 1.8], t: 'Naturstein' });
+    { p: [0.05, 1.6, 1.8], t: 'Naturstein' });
 
   /* Maße aus dem Bestandsplan */
   const mLine = new THREE.LineBasicMaterial({ color: '#3a3145' });
@@ -137,5 +140,5 @@ function buildRoom() {
   const info = flatText('Raumhöhe ca. 2,50 m · Fensterhöhe rund 2,08 m · Brüstung ≈ 0,42 m', { size: 0.3 }); info.position.set(7.2, 0.03, zG + 2.0); dims.add(info);
   dims.visible = false;
   g.add(dims);
-  return { g, dims, tags, floor };
+  return { g, dims, tags, floor, foil: foilMat };
 }

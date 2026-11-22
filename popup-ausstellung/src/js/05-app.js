@@ -316,6 +316,7 @@ function renderUeber() {
       <tr><td>Gesamt Erdgeschoss</td><td>228,6 m²</td></tr>
       <tr><td>Raumhöhe</td><td>ca. 2,50 m</td></tr>
       <tr><td>Fensterfront</td><td>24,65 m · rund 2,08 m hoch</td></tr>
+      <tr><td>Schaufenster</td><td>dauerhaft foliert · klar nur die Ovale</td></tr>
       <tr><td>Fensterbreiten</td><td>3,25 · 3,61 · 4,33 · 3,91 · 3,57 · 3,63 · 2,35 m</td></tr>
       <tr><td>Brandmauer am Eingang</td><td>≈ 9,3 m frei</td></tr>
     </tbody></table>
@@ -324,6 +325,7 @@ function renderUeber() {
     <li>Fest vorgegeben sind: das Wohnzimmer in der Ecke an der Natursteinwand, Insel 6 an der langen Wand am Eingang, eine Stellwand zwischen 1 und 3, Insel 7/8 in der Nähe von 6, Fahne im Eingang, Kissen an der Fensterfront. Die Stellung aller übrigen Inseln ist ein Vorschlag.</li>
     <li>Die Lage der Theke ist nach einem Foto aus dem Exposé geschätzt, im Modell steht sie vor dem Wohnzimmer. Die Stellwand schirmt das Wohnzimmer zum Gang mit Hoftür und Lager ab.</li>
     <li>Größen von Mero-System, Medienstelen und Litfaß-Säule (im Modell Ø ${de(lp.d, 2)} m) sind angenommen.</li>
+    <li>Die Schaufensterfolierung stammt aus deiner Vorlage. Wie sie auf die einzelnen Scheiben verteilt ist, habe ich angenommen: je ein Motiv auf den vier Scheiben der langen und den zwei Scheiben der kurzen Front.</li>
     <li>Orange und Lila stammen aus dem Protokoll. Die Farbwelt des Mero-Systems fehlt noch.</li>
     <li>Im Modell gibt es keine Prilblume, solange die Freigabe von Henkel offen ist.</li></ul>
     <button type="button" class="btn" data-go="move">Inseln selbst verschieben</button></div>`;
@@ -457,6 +459,7 @@ function frame(now) {
   }
   if (dirty > 0 && renderer) {
     dirty--; if (shadowDirty) { renderer.shadowMap.needsUpdate = true; shadowDirty = false; }
+    room.foil.opacity = clamp((6.5 - camera.position.y) / 3.5, 0.1, 1);   // von oben wird die Folierung blass, damit man hineinsieht
     if (composer) composer.render(); else renderer.render(scene, camera);
     updateLabels();
   }
