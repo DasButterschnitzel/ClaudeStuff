@@ -53,6 +53,7 @@ function overlap(a, b) {   // Trennachsen-Test für konvexe Vielecke; Berühren 
 
 export function check(layout) {
   const errors = [], warnings = [], pos = layout.pos || {}, polys = {};
+  const FIXED_ALL = { ...FIXED, ...(layout.fest || {}) };   // fest: zusätzliche Einbauten eines Konzepts, z. B. Vorhang oder Bauzaun
   for (const id of Object.keys(ITEMS)) {
     const p = pos[id];
     if (!p && ITEMS[id].optional) continue;
@@ -60,7 +61,7 @@ export function check(layout) {
     const [a0, b0, a1, b1] = ITEMS[id].rect, T = 0.03;   // 3 cm Toleranz, damit „an der Wand“ nicht als Überschneidung zählt
     polys[id] = corners(p, [a0 + T, b0 + T, a1 - T, b1 - T]);
     if (!polys[id].every(q => inPoly(q, ROOM))) errors.push(`${ITEMS[id].name} (${id}) ragt aus dem Raum oder in Lager/Treppenhaus/Fensterbank`);
-    for (const [n, r] of Object.entries(FIXED)) if (overlap(polys[id], rectPoly(r))) errors.push(`${ITEMS[id].name} (${id}) steht in: ${n}`);
+    for (const [n, r] of Object.entries(FIXED_ALL)) if (overlap(polys[id], rectPoly(r))) errors.push(`${ITEMS[id].name} (${id}) steht in: ${n}`);
     for (const [n, r] of Object.entries(KEEP)) if (overlap(polys[id], rectPoly(r))) errors.push(`${ITEMS[id].name} (${id}) verstellt: ${n}`);
   }
   const ids = Object.keys(polys);
@@ -71,13 +72,13 @@ export function check(layout) {
     const [x0, , x1, z1] = it.rect, v = corners(pos[id], [x0 + 0.2, z1, x1 - 0.2, z1 + it.view]);
     if (!v.every(q => inPoly(q, ROOM))) warnings.push(`${it.name}: vor der Besucherseite sind keine ${it.view} m frei (Wand, Bank oder Raumkante)`);
     for (const o of ids) if (o !== id && overlap(v, polys[o])) warnings.push(`${it.name}: ${ITEMS[o].name} steht im Betrachtungsraum`);
-    for (const [n, r] of Object.entries(FIXED)) if (overlap(v, rectPoly(r))) warnings.push(`${it.name}: ${n} liegt im Betrachtungsraum`);
+    for (const [n, r] of Object.entries(FIXED_ALL)) if (overlap(v, rectPoly(r))) warnings.push(`${it.name}: ${n} liegt im Betrachtungsraum`);
   }
   // Medienstelen: Bildschirme nicht zur Fensterfront drehen
   if (pos.s7) { const r = (((pos.s7.r || 0) % 360) + 360) % 360; if (r < 45 || r > 315) warnings.push('Medienstelen: Bildschirme zeigen zur langen Fensterfront, Betrachter stehen im Gegenlicht davor'); if (r > 225 && r < 315 && pos.s7.x < 6) warnings.push('Medienstelen: Bildschirme zeigen zur kurzen Fensterfront'); }
   // Erreichbarkeit auf einem 10-cm-Raster, einmal mit 90 cm und einmal mit 1,20 m Durchgang
   const S = 0.1, W = Math.ceil(19.6 / S), H = Math.ceil(10.4 / S), solid = new Uint8Array(W * H);
-  const blockers = [...Object.values(FIXED).map(rectPoly), ...Object.values(polys)];
+  const blockers = [...Object.values(FIXED_ALL).map(rectPoly), ...Object.values(polys)];
   for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) { const q = [(i + 0.5) * S, (j + 0.5) * S]; if (!inPoly(q, ROOM) || blockers.some(b => inPoly(q, b))) solid[j * W + i] = 1; }
   const reach = (clear) => {
     const k = Math.floor(clear / 2 / S + 1e-9), free = new Uint8Array(W * H);

@@ -84,7 +84,7 @@ function updateBg() {
 updateBg();
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change', updateBg);
 new MutationObserver(updateBg).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-scene.add(new THREE.HemisphereLight(0xffffff, 0xcfc6ba, 0.62));
+const hemi = new THREE.HemisphereLight(0xffffff, 0xcfc6ba, 0.62); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xfff0d8, 2.5);
 sun.position.set(-3, 15, 17); sun.target.position.set(9.5, 0, 5);
 sun.castShadow = true; sun.shadow.mapSize.set(COARSE ? 2048 : 4096, COARSE ? 2048 : 4096); sun.shadow.radius = 3; sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.03;
@@ -126,7 +126,7 @@ function wrapText(g, text, cx, cy, maxW, size, font, weight = 700, lh = 1.15) {
   lines.forEach((l, i) => g.fillText(l, cx, cy - H / 2 + (i + 0.5) * size * lh));
   return H;
 }
-const C = { orange: '#f2690d', lila: '#7b3fa0', pink: '#d9457e', gelb: '#f5b70a', braun: '#6b4226', creme: '#f3ead7', teak: '#a06b3c', oliv: '#7d8a2e', tuerkis: '#1d9aa6', weiss: '#f5f3ef', dunkel: '#2b2533' };
+const C = { orange: '#f2690d', lila: '#7b3fa0', pink: '#d9457e', gelb: '#f5b70a', braun: '#6b4226', creme: '#f3ead7', teak: '#a06b3c', oliv: '#7d8a2e', tuerkis: '#1d9aa6', weiss: '#f5f3ef', dunkel: '#2b2533', tief: '#5f2b84', tinte: '#3b1d57' };
 
 const TEX = {
   holz: ctex(1024, 1024, (g, w, h) => {

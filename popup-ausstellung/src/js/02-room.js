@@ -149,5 +149,5 @@ function buildRoom() {
   const info = flatText('Raumhöhe ca. 2,50 m · Fensterhöhe rund 2,08 m · Brüstung ≈ 0,42 m', { size: 0.3 }); info.position.set(7.2, 0.03, zG + 2.0); dims.add(info);
   dims.visible = false;
   g.add(dims);
-  return { g, dims, tags, floor, foil: foilMat };
+  return { g, dims, tags, floor, foil: foilMat, floorMat: floor.material, wallMat: mWall, ceilMat: ceil.material };
 }

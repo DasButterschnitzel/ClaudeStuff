@@ -87,9 +87,9 @@ const TV = (() => {
     g.fillStyle = '#58b368'; g.beginPath(); g.ellipse(70, 196, 130, 62, 0, 0, 7); g.fill(); g.fillStyle = '#3f9c58'; g.beginPath(); g.ellipse(210, 200, 110, 54, 0, 0, 7); g.fill();
     const x = 30 + (t * 34) % 200, y = 132 - Math.abs(Math.sin(t * 4.2)) * 46;
     g.fillStyle = 'rgba(0,0,0,.18)'; g.beginPath(); g.ellipse(x, 150, 16, 4, 0, 0, 7); g.fill();
-    g.fillStyle = '#f2690d'; g.beginPath(); g.arc(x, y, 17, 0, 7); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(x - 6, y - 4, 4, 0, 7); g.arc(x + 6, y - 4, 4, 0, 7); g.fill();
+    g.fillStyle = C.orange; g.beginPath(); g.arc(x, y, 17, 0, 7); g.fill(); g.fillStyle = '#fff'; g.beginPath(); g.arc(x - 6, y - 4, 4, 0, 7); g.arc(x + 6, y - 4, 4, 0, 7); g.fill();
     g.fillStyle = '#222'; g.beginPath(); g.arc(x - 5, y - 4, 1.8, 0, 7); g.arc(x + 7, y - 4, 1.8, 0, 7); g.fill(); g.strokeStyle = '#222'; g.lineWidth = 2; g.beginPath(); g.arc(x, y + 2, 8, 0.2, PI - 0.2); g.stroke();
-    g.fillStyle = '#5f2b84'; g.font = `800 18px ${FB}`; g.textAlign = 'left'; g.fillText('KINDERSTUNDE', 12, 28 + Math.sin(t * 3) * 2);
+    g.fillStyle = C.tief; g.font = `800 18px ${FB}`; g.textAlign = 'left'; g.fillText('KINDERSTUNDE', 12, 28 + Math.sin(t * 3) * 2);
   };
   const test = () => {
     ['#e8e8e8', '#e6d21c', '#22c7c7', '#2bbf3a', '#c531c5', '#d22a2a', '#2a3fd2'].forEach((col, i) => { g.fillStyle = col; g.fillRect(i * W / 7, 0, W / 7 + 1, H * 0.7); });
@@ -206,12 +206,12 @@ function buildMero() {
   const px = (i, j, k, mat) => g.add(box(0.012, s, s, mat, ox + i * m, cy(j), oz + (k + 0.5) * m));
   const txt = (head, bg = '#f6f3ee', fg = '#2b2533') => texMat(textPanel(bg, fg, head));
   const foto = (seed, old) => texMat(photoPanel(seed, old ? ['#d9c9a3', '#f1e6c9'] : ['#8fbfe6', '#e6f2fb'], old ? '#7a644a' : '#4c6a58'));
-  pz(0, 0, 0, M(C.orange)); pz(0, 1, 0, foto(3, true)); pz(0, 2, 0, texMat(numPanel('#5f2b84', C.gelb, '1977')));
+  pz(0, 0, 0, M(C.orange)); pz(0, 1, 0, foto(3, true)); pz(0, 2, 0, texMat(numPanel(C.tief, C.gelb, '1977')));
   pz(1, 0, 0, txt('Exponate')); pz(1, 1, 0, M(C.lila)); pz(1, 2, 0, foto(8, true));
   pz(2, 0, 0, foto(12, false)); pz(2, 1, 0, mWhite);
   pz(3, 0, 0, M(C.lila)); pz(3, 1, 0, txt('Objekte')); pz(3, 2, 0, texMat(numPanel(C.orange, '#fff', '2027')));
   px(0, 0, 0, txt('Texte')); px(0, 2, 0, M(C.orange)); px(0, 1, 1, foto(21, true)); px(0, 2, 1, M(C.gelb));
-  px(4, 1, 0, M(C.orange)); px(4, 2, 0, foto(5, false)); px(4, 0, 1, txt('Fotos', '#5f2b84', '#fff'));
+  px(4, 1, 0, M(C.orange)); px(4, 2, 0, foto(5, false)); px(4, 0, 1, txt('Fotos', C.tief, '#fff'));
   pz(0, 2, 2, txt('Dreieich um 1977')); pz(3, 1, 2, M(C.pink));
   /* Böden, Vitrinen, Exponate */
   const plate = (i, j, k, mat = mWhite) => { const o = box(s + 0.03, 0.014, s + 0.03, mat, ox + (i + 0.5) * m, y0 + j * m + 0.012, oz + (k + 0.5) * m); if (mat === mVitrine) o.userData.noAO = true; g.add(o); };
@@ -256,7 +256,7 @@ function buildSelfie() {
   for (const a of [0, 2.1, 4.2]) { const leg = cyl(0.008, 0.6, mDark, 0, 0, 0, 6); leg.position.set(0.35 + Math.cos(a) * 0.13, 0.28, 0.92 + Math.sin(a) * 0.13); leg.rotation.set(Math.sin(a) * 0.45, 0, -Math.cos(a) * 0.45); g.add(leg); }
   g.add(cyl(0.01, 0.9, mDark, 0.35, 0.5, 0.92, 8));
   const ring = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.02, 10, 32), new THREE.MeshBasicMaterial({ color: '#fff6e0' })); ring.position.set(0.35, 1.52, 0.92); g.add(ring);
-  const s = sign(1.3, 0.3, (c, w, h) => { c.fillStyle = C.gelb; c.fillRect(0, 0, w, h); c.fillStyle = '#3b1d57'; wrapText(c, 'SELFIE 1977', w / 2, h / 2, w, h * 0.5, FD, 800); });
+  const s = sign(1.3, 0.3, (c, w, h) => { c.fillStyle = C.gelb; c.fillRect(0, 0, w, h); c.fillStyle = C.tinte; wrapText(c, 'SELFIE 1977', w / 2, h / 2, w, h * 0.5, FD, 800); });
   s.position.set(-0.1, 2.12, -1.005); g.add(s);
   return g;
 }
@@ -275,16 +275,16 @@ function buildStatistik() {
   const tafel = sign(2.58, 1.28, (c, w, h) => {
     c.fillStyle = '#f6f3ee'; c.fillRect(0, 0, w, h); c.textBaseline = 'middle';
     c.fillStyle = '#2b2533'; c.textAlign = 'left'; c.font = `700 ${h * 0.085}px ${FD}`; c.fillText('Dreieich in Zahlen', w * 0.04, h * 0.1);
-    c.font = `600 ${h * 0.05}px ${FB}`; c.fillStyle = '#5f2b84'; c.fillRect(w * 0.62, h * 0.075, h * 0.05, h * 0.05); c.fillText('1970', w * 0.66, h * 0.1); c.fillStyle = C.orange; c.fillRect(w * 0.8, h * 0.075, h * 0.05, h * 0.05); c.fillText('heute', w * 0.84, h * 0.1);
+    c.font = `600 ${h * 0.05}px ${FB}`; c.fillStyle = C.tief; c.fillRect(w * 0.62, h * 0.075, h * 0.05, h * 0.05); c.fillText('1970', w * 0.66, h * 0.1); c.fillStyle = C.orange; c.fillRect(w * 0.8, h * 0.075, h * 0.05, h * 0.05); c.fillText('heute', w * 0.84, h * 0.1);
     ['Einwohnerinnen und Einwohner', 'Schulen', 'Vereine', 'Autos'].forEach((lab, i) => {
       const y = h * (0.27 + i * 0.185); c.fillStyle = '#2b2533'; c.font = `600 ${h * 0.052}px ${FB}`; c.fillText(lab, w * 0.04, y - h * 0.035);
-      c.fillStyle = '#5f2b84'; c.fillRect(w * 0.04, y + h * 0.01, w * (0.28 + (i * 37 % 23) / 100), h * 0.04); c.fillStyle = C.orange; c.fillRect(w * 0.04, y + h * 0.06, w * (0.5 + (i * 53 % 31) / 100), h * 0.04);
+      c.fillStyle = C.tief; c.fillRect(w * 0.04, y + h * 0.01, w * (0.28 + (i * 37 % 23) / 100), h * 0.04); c.fillStyle = C.orange; c.fillRect(w * 0.04, y + h * 0.06, w * (0.5 + (i * 53 % 31) / 100), h * 0.04);
       c.fillStyle = '#8a8296'; c.font = `700 ${h * 0.06}px ${FD}`; c.textAlign = 'right'; c.fillText('?', w * 0.96, y + h * 0.05); c.textAlign = 'left';
     });
   }, { res: 200 });
   tafel.position.set(0, 1.4, -0.422); g.add(tafel);
   const face = (bg, fg, t, size) => new THREE.MeshStandardMaterial({ roughness: 0.55, map: ctex(256, 256, (c, w) => { c.fillStyle = bg; c.fillRect(0, 0, w, w); c.fillStyle = fg; wrapText(c, t, w / 2, w / 2, w * 0.9, size, FD, 800); }) });
-  const mats = [face(C.lila, '#fff', '1970', 70), face(C.orange, '#fff', 'heute', 60), face(C.gelb, '#3b1d57', '?', 150)];
+  const mats = [face(C.lila, '#fff', '1970', 70), face(C.orange, '#fff', 'heute', 60), face(C.gelb, C.tinte, '?', 150)];
   [-0.9, -0.3, 0.3, 0.9].forEach((x, i) => {
     g.add(cyl(0.18, 0.03, mDark, x, 0, 0.25, 28), cyl(0.018, 1.25, mChrome, x, 0.03, 0.25, 8));
     for (let j = 0; j < 2; j++) { const c = rbox(0.3, 0.3, 0.3, mats[(i + j) % 3], x, 0.62 + j * 0.34, 0.25, 0.02); c.rotation.y = Math.round(r() * 4) * PI / 8 - PI / 4; g.add(c); }
@@ -335,8 +335,8 @@ function kreisLayout(n) {
 }
 function buildGebietsreform(n) {
   const g = new THREE.Group(), x = R.W - 0.012;
-  g.add(wall(x, 0.02, x, R.door.z - 0.02, M('#f2690d', { roughness: 0.95 })));
-  const styles = [['#ffffff', '#3b1d57'], ['#f5b70a', '#3b1d57'], ['#5f2b84', '#ffffff'], ['#f3ead7', '#b8430a']];
+  g.add(wall(x, 0.02, x, R.door.z - 0.02, M(C.orange, { roughness: 0.95 })));
+  const styles = [['#ffffff', C.tinte], ['#f5b70a', C.tinte], [C.tief, '#ffffff'], ['#f3ead7', '#b8430a']];
   kreisLayout(n).forEach((k, i) => {
     const [bg, fg] = styles[i % styles.length], title = KREIS_TITEL[i] || `Text ${i + 1}`;
     const t = ctex(320, 320, (c, w) => {
@@ -374,11 +374,11 @@ function buildZukunft() {
   g.add(rbox(2.5, 1.5, 0.04, mWhite, 0, 0.55, -0.4, 0.012), rbox(0.05, 0.55, 0.4, mDark, -1.1, 0, -0.4, 0.012), rbox(0.05, 0.55, 0.4, mDark, 1.1, 0, -0.4, 0.012));
   const map = sign(2.42, 1.42, (c, w, h) => {
     c.fillStyle = '#f3ead7'; c.fillRect(0, 0, w, h);
-    c.fillStyle = '#3b1d57'; c.textAlign = 'left'; c.font = `700 ${h * 0.085}px ${FD}`; c.textBaseline = 'top'; c.fillText('Mein Lieblingsplatz', w * 0.03, h * 0.05);
+    c.fillStyle = C.tinte; c.textAlign = 'left'; c.font = `700 ${h * 0.085}px ${FD}`; c.textBaseline = 'top'; c.fillText('Mein Lieblingsplatz', w * 0.03, h * 0.05);
     const blob = (x, y, rx, ry, col, name) => { c.fillStyle = col; c.beginPath(); c.ellipse(w * x, h * y, w * rx, h * ry, 0.3, 0, 7); c.fill(); c.fillStyle = '#2b2533'; c.font = `600 ${h * 0.043}px ${FB}`; c.textAlign = 'center'; c.fillText(name, w * x, h * y - h * 0.025); };
     blob(0.1, 0.56, 0.075, 0.12, '#cfe3b4', 'Buchschlag'); blob(0.3, 0.36, 0.11, 0.15, '#f6c9a0', 'Sprendlingen'); blob(0.3, 0.76, 0.1, 0.13, '#d9c4ec', 'Dreieichenhain');
     blob(0.52, 0.52, 0.085, 0.14, '#f7e0a0', 'Götzenhain'); blob(0.54, 0.87, 0.07, 0.085, '#bfe1e4', 'Offenthal');
-    c.fillStyle = '#5f2b84'; c.fillRect(w * 0.66, 0, w * 0.34, h); c.fillStyle = '#fff'; wrapText(c, 'Dreieich 2077', w * 0.83, h * 0.14, w * 0.3, h * 0.075, FD, 700); wrapText(c, 'Was wünschst du dir?', w * 0.83, h * 0.3, w * 0.3, h * 0.055, FB, 600);
+    c.fillStyle = C.tief; c.fillRect(w * 0.66, 0, w * 0.34, h); c.fillStyle = '#fff'; wrapText(c, 'Dreieich 2077', w * 0.83, h * 0.14, w * 0.3, h * 0.075, FD, 700); wrapText(c, 'Was wünschst du dir?', w * 0.83, h * 0.3, w * 0.3, h * 0.055, FB, 600);
     const rr = rng(4); [C.gelb, '#fff', C.orange, '#fff', C.gelb, C.pink].forEach((col, i) => { c.fillStyle = col; c.save(); c.translate(w * (0.71 + (i % 2) * 0.15), h * (0.44 + Math.floor(i / 2) * 0.18)); c.rotate((rr() - 0.5) * 0.3); c.fillRect(0, 0, w * 0.11, h * 0.13); c.restore(); });
   });
   map.position.set(0, 1.3, -0.378); g.add(map);
@@ -399,7 +399,7 @@ function buildTheke(orange) {
 function buildFahne() {
   const g = new THREE.Group();
   const t = ctex(480, 760, (c, w, h) => {
-    c.fillStyle = C.orange; c.fillRect(0, 0, w, h); c.fillStyle = '#5f2b84'; c.beginPath(); c.arc(w / 2, h * 0.5, w * 0.36, 0, 7); c.fill();
+    c.fillStyle = C.orange; c.fillRect(0, 0, w, h); c.fillStyle = C.tief; c.beginPath(); c.arc(w / 2, h * 0.5, w * 0.36, 0, 7); c.fill();
     c.fillStyle = '#fff'; wrapText(c, 'Willkommen', w / 2, h * 0.14, w * 0.94, w * 0.105, FD, 700);
     c.fillStyle = C.gelb; wrapText(c, '50', w / 2, h * 0.5, w, w * 0.34, FD, 800);
     c.fillStyle = '#fff'; wrapText(c, 'Jahre Dreieich', w / 2, h * 0.86, w * 0.9, w * 0.095, FB, 700);

@@ -17,7 +17,7 @@ function litfassParams() {
 /* ---------- Szene ---------- */
 const room = buildRoom(); scene.add(room.g);
 const expo = new THREE.Group(); scene.add(expo);
-const kissen = buildKissen(); expo.add(kissen);
+let kissen = buildKissen(); expo.add(kissen);
 const figuren = new THREE.Group(); scene.add(figuren);
 FIGUREN.forEach(([x, z, r, col]) => { const f = buildFigur(col); f.position.set(x, 0, z); f.rotation.y = r; figuren.add(f); });
 
@@ -52,10 +52,29 @@ placeFiguren();
 function placeFiguren() {
   const l = curLayout();
   figuren.children.forEach(f => {
-    f.visible = !Object.keys(RECTS).some(id => { const p = poseIn(l, id); if (!p) return false; const r = RECTS[id], c = Math.cos(p.r * PI / 180), sn = Math.sin(p.r * PI / 180), dx = f.position.x - p.x, dz = f.position.z - p.z, lx = dx * c - dz * sn, lz = dx * sn + dz * c; return lx > r[0] - 0.35 && lx < r[2] + 0.35 && lz > r[1] - 0.35 && lz < r[3] + 0.35; });
+    const inFest = Object.values(l.fest || {}).some(([x0, z0, x1, z1]) => f.position.x > x0 - 0.3 && f.position.x < x1 + 0.3 && f.position.z > z0 - 0.3 && f.position.z < z1 + 0.3);
+    f.visible = !inFest && !Object.keys(RECTS).some(id => { const p = poseIn(l, id); if (!p) return false; const r = RECTS[id], c = Math.cos(p.r * PI / 180), sn = Math.sin(p.r * PI / 180), dx = f.position.x - p.x, dz = f.position.z - p.z, lx = dx * c - dz * sn, lz = dx * sn + dz * c; return lx > r[0] - 0.35 && lx < r[2] + 0.35 && lz > r[1] - 0.35 && lz < r[3] + 0.35; });
   });
 }
-const applyLayout = () => { Object.keys(items).forEach(place); placeFiguren(); touch(); updateInspect(); };
+/* Stil des gewählten Layouts: Farbwelt, Boden, Wände, Licht und Bühnenelemente */
+let stilKey = 'standard', buehne = null;
+function applyStil() {
+  const l = curLayout(), st = { ...STIL_STANDARD, ...(l.stil || {}) }, key = l.stil ? l.key : 'standard';
+  if (key !== stilKey) {
+    stilKey = key;
+    for (const k of Object.keys(C)) C[k] = C_BASE[k]; Object.assign(C, st.palette || {});
+    room.floorMat.color.set(st.boden.color); room.floorMat.map = { holz: TEX.holz, beton: TEX_BETON }[st.boden.tex] || (st.boden.tex === 'karte' ? texKarte() : null); room.floorMat.needsUpdate = true;
+    room.wallMat.color.set(st.wand); room.ceilMat.color.set(st.decke);
+    hemi.color.set(st.licht.hemi[0]); hemi.groundColor.set(st.licht.hemi[1]); hemi.intensity = st.licht.hemi[2];
+    sun.color.set(st.licht.sonne[0]); sun.intensity = st.licht.sonne[1]; if (renderer) renderer.toneMappingExposure = st.licht.exp;
+    Object.values(items).forEach(it => it.remake());
+    expo.remove(kissen); kissen = buildKissen(); expo.add(kissen);
+  }
+  if (buehne) expo.remove(buehne);
+  buehne = l.stil && BUEHNE[l.stil.buehne] ? BUEHNE[l.stil.buehne](l) : null; if (buehne) expo.add(buehne);
+}
+const applyLayout = () => { applyStil(); Object.keys(items).forEach(place); placeFiguren(); touch(); updateInspect(); };
+applyStil();   // falls ein Konzept mit eigenem Stil gemerkt war
 
 /* ---------- Marken über dem Modell ---------- */
 const labelsEl = $('#labels'), labels = [], tmp = new V3();
@@ -139,7 +158,7 @@ function setMove(on) {
 }
 const curPose = id => { const g = items[id].group; return { x: +g.position.x.toFixed(2), z: +g.position.z.toFixed(2), r: Math.round(g.rotation.y * 180 / PI) }; };
 function moveSet(id, p) { (state.moves[state.layout] = state.moves[state.layout] || {})[id] = p; write('plan', { moves: { [state.layout]: { [id]: p } } }, fullPlan); }
-function commitPose(id) { moveSet(id, curPose(id)); updateInspect(); renderLayouts(); }
+function commitPose(id) { moveSet(id, curPose(id)); applyStil(); updateInspect(); renderLayouts(); }
 function rotateSel(deg) { const id = state.sel; if (!id || defOf(id).fixed) return; const g = items[id].group; g.rotation.y = ((Math.round(g.rotation.y * 180 / PI) + deg + 360) % 360) * PI / 180; commitPose(id); touch(); }
 function resetPose(id) { delete (state.moves[state.layout] || {})[id]; const p = poseIn(curLayout(), id); if (p) moveSet(id, p); place(id); updateInspect(); touch(); renderLayouts(); }
 function resetAll() {
@@ -351,7 +370,7 @@ function renderUeber() {
     <li>Die Schaufensterfolierung stammt aus deiner Vorlage. Wie sie auf die einzelnen Scheiben verteilt ist, habe ich angenommen: je ein Motiv auf den vier Scheiben der langen und den zwei Scheiben der kurzen Front.</li>
     <li>Orange und Lila stammen aus dem Protokoll. Die Farbwelt des Mero-Systems fehlt noch.</li>
     <li>Im Modell gibt es keine Prilblume, solange die Freigabe von Henkel offen ist.</li></ul>
-    <div class="row"><button type="button" class="btn" data-jump="layouts">Fünf Layouts vergleichen</button><button type="button" class="btn ghost" data-go="move">Inseln selbst verschieben</button></div></div>`;
+    <div class="row"><button type="button" class="btn" data-jump="layouts">Neun Layouts vergleichen</button><button type="button" class="btn ghost" data-go="move">Inseln selbst verschieben</button></div></div>`;
 }
 function renderInseln() {
   $('#tab-inseln').innerHTML = `<p class="note">Eine Insel antippen, um sie im Raum zu zeigen. Stellung und Maße sind ein Vorschlag und lassen sich über „Inseln verschieben“ ändern.</p>` + ST.map(d => {
@@ -386,16 +405,18 @@ function miniPlan(l) {
     <path d="M-0.5 0H19.45V9.35H16.55V10.7H-0.5Z" class="rm"/><path d="M5.55 0H11.4V5.2H8.15V3.1H5.55Z" class="blk"/>
     <rect x="0.05" y="0.02" width="4.4" height="2.9" rx="0.1" fill="${col('s1')}"/><text x="2.25" y="1.8" class="mn">1</text>
     <rect x="1" y="3.12" width="3.2" height="0.66" class="th"/><rect x="19.05" y="0.1" width="0.4" height="9.1" fill="${col('s6')}"/><text x="18.55" y="4.95" class="mn dk">6</text>
-    <line x1="4.52" y1="0.1" x2="4.52" y2="2.3" class="sw"/>${ov}${['s2', 's3', 's4', 's5', 's7', 's8', 'wand2', 'wand3', 'fahne'].map(item).join('')}
+    <line x1="4.52" y1="0.1" x2="4.52" y2="2.3" class="sw"/>${ov}${Object.values(l.fest || {}).map(([x0, z0, x1, z1]) => `<rect x="${x0}" y="${z0}" width="${Math.max(x1 - x0, 0.16)}" height="${Math.max(z1 - z0, 0.16)}" class="fx"/>`).join('')}${['s2', 's3', 's4', 's5', 's7', 's8', 'wand2', 'wand3', 'fahne'].map(item).join('')}
     <path d="M17.72 10.1l0.55 1h-1.1z" class="in"/></svg>`;
 }
 function renderLayouts() {
   const el = $('#tab-layouts'); if (!el) return;
-  el.innerHTML = `<p class="note">Fünf Layouts zum Vergleichen. A ist die Ausgangslage, B bis E haben vier Gestalter-Agenten entworfen; je eine zweite Instanz hat Wege, Engstellen und Vorgaben nachgemessen und korrigiert. Fest sind überall das Wohnzimmer in der Ecke, die Theke und die orange Wand. Welches Layout du ansiehst, gilt nur für dich; verschobene Inseln gelten für alle.</p>` + LAYOUTS.map((l, i) => {
+  el.innerHTML = `<p class="note">Neun Layouts zum Vergleichen. A ist die Ausgangslage. B bis E stellen dieselben Inseln neu; vier Gestalter-Agenten haben sie entworfen, je eine zweite Instanz hat nachgemessen und korrigiert. F bis I sind radikale Konzepte mit eigenem Stil. Fest sind überall das Wohnzimmer in der Ecke, die Theke und die orange Wand. Welches Layout du ansiehst, gilt nur für dich; verschobene Inseln gelten für alle.</p>` + LAYOUTS.map((l, i) => {
+    const kopf = l.stil && !(LAYOUTS[i - 1] || {}).stil ? '<h2 class="grp-h">Radikal: anderer Stil, andere Bühne</h2><p class="note">Diese vier Konzepte ändern nicht nur die Stellung, sondern Boden, Wände, Licht, Farben und Material. Beim Umschalten baut sich der Raum um.</p>' : '';
+    const stil = l.stil ? `<div class="stil"><div class="sw">${l.stil.farben.map(f => `<i style="background:${f}"></i>`).join('')}</div><p class="sm"><b>Stil:</b> ${esc(l.stil.text)}</p><p class="sm"><b>Material:</b> ${esc(l.stil.material)}</p></div>` : '';
     const act = l.key === state.layout, moved = Object.keys(state.moves[l.key] || {}).some(id => { const m = state.moves[l.key][id], d = l.pos[id] || (DEFS[id].optional ? null : defPose(DEFS[id])); return !d || Math.abs(m.x - d.x) > 0.01 || Math.abs(m.z - d.z) > 0.01 || Math.abs(m.r - d.r) > 0.5; });
-    return `<article class="lay${act ? ' act' : ''}" id="lay-${l.key}">
+    return kopf + `<article class="lay${act ? ' act' : ''}" id="lay-${l.key}">
       <header><span class="lk">${String.fromCharCode(65 + i)}</span><div><h3>${esc(l.name)}</h3><p>${esc(l.leitidee)}</p></div></header>
-      <div class="mini">${miniPlan(l)}</div>
+      <div class="mini">${miniPlan(l)}</div>${stil}
       <div class="route"><span class="eyebrow">Rundgang</span>${l.rundgang.map(id => `<b style="background:${DEFS[id].color}" title="${esc(DEFS[id].name)}">${DEFS[id].n}</b>`).join('<i>›</i>')}</div>
       <p class="sm"><b>Theke:</b> ${esc((l.gruende || {}).theke || '–')}</p>
       <details class="more"><summary>Weg, Stärken, Schwächen, Prüfung</summary>
