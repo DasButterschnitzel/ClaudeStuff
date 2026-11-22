@@ -1,9 +1,9 @@
 /* =====================================================================
    APP: Zustand, Szene, Kamera, Verschieben, Begehen, Rundgang, Akte
    ===================================================================== */
-const LS = 'popup3-plan-v1';
+const LS = 'popup3-plan-v2';
 const DEF_CALC = { litfass: { d: 100, h: 190, gap: 0 }, kreise: 11 };
-const state = { tab: 'ueber', view: 'iso', expo: true, dims: false, people: true, move: false, walk: false, tour: -1, sel: null, filter: 'alle', done: {}, layout: 'a', moves: {}, calc: JSON.parse(JSON.stringify(DEF_CALC)), open: new Set() };
+const state = { tab: 'ueber', view: 'iso', expo: true, dims: false, people: true, move: false, walk: false, tour: -1, sel: null, filter: 'alle', done: {}, layout: LAYOUTS[0].key, moves: {}, an: 'aus', radarFilter: 'alle', calc: JSON.parse(JSON.stringify(DEF_CALC)), open: new Set() };
 const mergeCalc = c => { state.calc = { kreise: clamp(Number(c.kreise) || DEF_CALC.kreise, 6, 16), litfass: { ...DEF_CALC.litfass, ...(c.litfass || {}) } }; };
 try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s) { state.done = s.done || {}; state.moves = s.moves || {}; if (LAYOUTS.some(l => l.key === s.layout)) state.layout = s.layout; if (s.calc) mergeCalc(s.calc); } } catch (e) { /* ohne Speicher weiter */ }
 const saveLocal = () => { try { localStorage.setItem(LS, JSON.stringify({ done: state.done, moves: state.moves, layout: state.layout, calc: state.calc })); } catch (e) { /* egal */ } };
@@ -73,7 +73,7 @@ function applyStil() {
   if (buehne) expo.remove(buehne);
   buehne = l.stil && BUEHNE[l.stil.buehne] ? BUEHNE[l.stil.buehne](l) : null; if (buehne) expo.add(buehne);
 }
-const applyLayout = () => { applyStil(); Object.keys(items).forEach(place); placeFiguren(); touch(); updateInspect(); };
+const applyLayout = () => { applyStil(); Object.keys(items).forEach(place); placeFiguren(); touch(); updateInspect(); analyseNeu(); };
 applyStil();   // falls ein Konzept mit eigenem Stil gemerkt war
 
 /* ---------- Marken über dem Modell ---------- */
@@ -158,7 +158,7 @@ function setMove(on) {
 }
 const curPose = id => { const g = items[id].group; return { x: +g.position.x.toFixed(2), z: +g.position.z.toFixed(2), r: Math.round(g.rotation.y * 180 / PI) }; };
 function moveSet(id, p) { (state.moves[state.layout] = state.moves[state.layout] || {})[id] = p; write('plan', { moves: { [state.layout]: { [id]: p } } }, fullPlan); }
-function commitPose(id) { moveSet(id, curPose(id)); applyStil(); updateInspect(); renderLayouts(); }
+function commitPose(id) { moveSet(id, curPose(id)); applyStil(); updateInspect(); renderLayouts(); analyseNeu(); }
 function rotateSel(deg) { const id = state.sel; if (!id || defOf(id).fixed) return; const g = items[id].group; g.rotation.y = ((Math.round(g.rotation.y * 180 / PI) + deg + 360) % 360) * PI / 180; commitPose(id); touch(); }
 function resetPose(id) { delete (state.moves[state.layout] || {})[id]; const p = poseIn(curLayout(), id); if (p) moveSet(id, p); place(id); updateInspect(); touch(); renderLayouts(); }
 function resetAll() {
@@ -270,6 +270,7 @@ $('#b-move').addEventListener('click', () => setMove(!state.move));
 $('#tour-prev').addEventListener('click', () => tourGo(state.tour - 1));
 $('#tour-next').addEventListener('click', () => tourGo(state.tour + 1));
 $('#tour-stop').addEventListener('click', stopTour);
+$('#an').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setAn(b.dataset.an); });
 
 /* ---------- Gemeinsamer Speicher ---------- */
 const store = { docs: {}, exists: {}, q: {}, ro: false };
@@ -304,7 +305,8 @@ function write(name, patch, full) {
 function setTab(t) {
   state.tab = t;
   $$('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
-  for (const k of ['ueber', 'layouts', 'inseln', 'todos', 'rechner']) $(`#tab-${k}`).hidden = k !== t;
+  for (const k of ['ueber', 'layouts', 'analyse', 'inseln', 'todos', 'radar', 'rechner']) $(`#tab-${k}`).hidden = k !== t;
+  if (t === 'analyse') renderAnalyse();
 }
 $('#tabs').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { setTab(b.dataset.tab); if (matchMedia('(min-width: 901px)').matches) $('#tabbody').scrollTop = 0; } });
 
@@ -370,7 +372,7 @@ function renderUeber() {
     <li>Die Schaufensterfolierung stammt aus deiner Vorlage. Wie sie auf die einzelnen Scheiben verteilt ist, habe ich angenommen: je ein Motiv auf den vier Scheiben der langen und den zwei Scheiben der kurzen Front.</li>
     <li>Orange und Lila stammen aus dem Protokoll. Die Farbwelt des Mero-Systems fehlt noch.</li>
     <li>Im Modell gibt es keine Prilblume, solange die Freigabe von Henkel offen ist.</li></ul>
-    <div class="row"><button type="button" class="btn" data-jump="layouts">13 Layouts vergleichen</button><button type="button" class="btn ghost" data-go="move">Inseln selbst verschieben</button></div></div>`;
+    <div class="row"><button type="button" class="btn" data-jump="layouts">Layouts vergleichen</button><button type="button" class="btn ghost" data-jump="analyse">Analyse öffnen</button><button type="button" class="btn ghost" data-go="move">Inseln selbst verschieben</button></div></div>`;
 }
 function renderInseln() {
   $('#tab-inseln').innerHTML = `<p class="note">Eine Insel antippen, um sie im Raum zu zeigen. Stellung und Maße sind ein Vorschlag und lassen sich über „Inseln verschieben“ ändern.</p>` + ST.map(d => {
@@ -394,6 +396,82 @@ function renderTodos() {
     (list.length ? GRUPPEN.map(g => { const rows = list.filter(t => t.st === g.id); return rows.length ? `<div class="grp"><h3><i style="background:${g.color}"></i>${esc(g.name)}</h3>${rows.map(t => todoRow(t, 't')).join('')}</div>` : ''; }).join('') : '<p class="empty">Keine Aufgaben in dieser Auswahl.</p>');
 }
 function renderCounts() { const s = stats(); $('#cnt-open').textContent = s.open; }
+/* ---------- Analyse: Laufwege und Sicht ---------- */
+const heat = (() => {
+  const c = document.createElement('canvas'); c.width = 196; c.height = 104;
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const geo = new THREE.PlaneGeometry(19.6, 10.4); geo.rotateX(-PI / 2);
+  const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false })); mesh.position.set(9.8, 0.035, 5.2); mesh.renderOrder = 1; mesh.userData.noAO = true; mesh.visible = false;
+  const weg = new THREE.Group(); weg.visible = false; scene.add(mesh, weg);
+  return { c, tex, mesh, weg };
+})();
+const RAMPE = { lauf: [[255, 224, 138], [255, 138, 31], [215, 38, 61]], sicht: [[185, 236, 255], [59, 155, 255], [58, 43, 214]] };
+const anLayout = l => { const pos = {}; for (const id of Object.keys(A_ITEMS)) { const p = poseIn(l, id); if (p) pos[id] = p; } return { rundgang: l.rundgang, pos, fest: l.fest }; };
+const anCache = new Map();
+function rechne(l = curLayout(), voll = true) {
+  const la = anLayout(l), key = (voll ? 'v' : 'k') + JSON.stringify(la);
+  if (!anCache.has(key)) { if (anCache.size > 40) anCache.clear(); anCache.set(key, analyse(la, { ohneSichtkarte: !voll })); }
+  return anCache.get(key);
+}
+function zeichneAnalyse() {
+  const on = state.an !== 'aus'; heat.mesh.visible = on; heat.weg.visible = on; $('#legende').hidden = !on;
+  $$('#an button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.an === state.an)));
+  if (!on) { invalidate(); return; }
+  const erg = rechne(), g = erg[state.an], ctx = heat.c.getContext('2d'), img = ctx.createImageData(erg.W, erg.H), r = RAMPE[state.an];
+  for (let k = 0; k < g.length; k++) { const v = g[k]; if (v < 0.035) continue; const t = v < 0.5 ? v * 2 : (v - 0.5) * 2, a = v < 0.5 ? r[0] : r[1], b = v < 0.5 ? r[1] : r[2]; img.data[k * 4] = a[0] + (b[0] - a[0]) * t; img.data[k * 4 + 1] = a[1] + (b[1] - a[1]) * t; img.data[k * 4 + 2] = a[2] + (b[2] - a[2]) * t; img.data[k * 4 + 3] = 70 + 170 * v; }
+  ctx.putImageData(img, 0, 0); heat.tex.needsUpdate = true;
+  /* Rundgang als Linie mit Pfeilen und Halten */
+  heat.weg.clear(); const dunkel = new THREE.MeshBasicMaterial({ color: '#1d1626' }), hell = new THREE.MeshBasicMaterial({ color: '#ffffff' });
+  let rest = 0;
+  for (const bein of erg.pfad) { const pts = bein.punkte.map(([x, z]) => new V3(x, 0.06, z)); if (pts.length < 2) continue;
+    heat.weg.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: '#1d1626' })));
+    for (let i = 1; i < pts.length; i++) { rest += pts[i].distanceTo(pts[i - 1]); if (rest > 2.2) { rest = 0; const k = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.3, 3), dunkel); k.position.copy(pts[i]); k.rotation.set(PI / 2, 0, -Math.atan2(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z)); k.rotation.order = 'YXZ'; k.rotation.set(PI / 2, Math.atan2(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z), 0); k.scale.z = 0.25; k.userData.noAO = true; heat.weg.add(k); } } }
+  for (const h of erg.halte) { const ring = new THREE.Mesh(new THREE.RingGeometry(0.15, 0.24, 24), hell); ring.rotation.x = -PI / 2; ring.position.set(h.x, 0.065, h.z); const kern = new THREE.Mesh(new THREE.CircleGeometry(0.15, 20), new THREE.MeshBasicMaterial({ color: DEFS[h.id].color })); kern.rotation.x = -PI / 2; kern.position.set(h.x, 0.066, h.z); ring.userData.noAO = kern.userData.noAO = true; heat.weg.add(ring, kern); }
+  const k = erg.kennzahlen, rr = RAMPE[state.an].map(c => `rgb(${c.join(',')})`);
+  $('#legende').innerHTML = `<b>${state.an === 'lauf' ? 'Laufwege: wo Besucher gehen und stehen' : 'Sicht: was man auf dem Rundgang sieht'}</b><div class="ramp" style="background:linear-gradient(90deg,${rr.join(',')})"></div><div class="rl"><span>selten</span><span>oft</span></div><p>${state.an === 'lauf' ? `Rundgang ${de(k.rundgang_m, 0)} m · ${Math.round(k.doppelwegAnteil * 100)} % doppelt gelaufen · ${k.engstellen.length} Engstellen unter 1,20 m` : `Im Mittel ist eine Insel von ${Math.round(k.mittlereSicht * 100)} % des Wegs zu sehen · ${k.inselnVomEingang} von 8 schon an der Tür`}. Linie und Punkte zeigen den Rundgang.</p>`;
+  invalidate(3);
+}
+function setAn(m) { state.an = m; zeichneAnalyse(); }
+function analyseNeu() { if (state.an !== 'aus') zeichneAnalyse(); if (state.tab === 'analyse') renderAnalyse(); }
+function renderAnalyse() {
+  const el = $('#tab-analyse'); if (!el) return;
+  const l = curLayout(), erg = rechne(), k = erg.kennzahlen, pz = v => Math.round(v * 100) + ' %';
+  const zeile = id => { const i = erg.inseln[id]; if (!i) return ''; return `<tr><td><b style="color:${DEFS[id].color}">${DEFS[id].n}</b> ${esc(DEFS[id].name)}</td><td class="${i.sichtAnteil < 0.35 ? 'bad' : ''}"><i class="bar-i" style="width:${Math.round(i.sichtAnteil * 44)}px"></i>${pz(i.sichtAnteil)}</td><td>${i.erstkontakt_m === null ? '–' : de(i.erstkontakt_m, 0) + ' m'}</td><td>${i.vomEingang ? 'ja' : '–'}</td><td class="${i.ovale ? '' : 'bad'}">${i.ovale}</td></tr>`; };
+  const vergleich = LAYOUTS.filter(x => !x.stil).map(x => { const e = x === l ? erg : rechne(x, false), q = e.kennzahlen; return `<tr class="${x === l ? 'act' : ''}"><td>${LBL(x)} ${esc(x.name)}</td><td>${q.gesamtwert}</td><td>${de(q.rundgang_m, 0)}</td><td>${pz(q.doppelwegAnteil)}</td><td>${pz(q.mittlereSicht)}</td><td>${q.inselnVomEingang}</td><td>${q.inselnVonDerStrasse}</td><td class="${q.engstellen.length ? 'bad' : 'good'}">${q.engstellen.length}</td></tr>`; }).join('');
+  el.innerHTML = `
+  <div class="blk"><span class="eyebrow">Analyse · Layout ${LBL(l)} ${esc(l.name)}</span>
+    <p class="lead">Simulierte Besucher laufen den Rundgang ab. Gemessen wird, wo sie gehen und stehen und was sie dabei sehen. Verschiebst du eine Insel, rechnet die Analyse neu.</p>
+    <div class="row"><button type="button" class="btn" data-an="lauf">Laufwege im Raum zeigen</button><button type="button" class="btn ghost" data-an="sicht">Sicht im Raum zeigen</button></div></div>
+  <div class="tiles">
+    <div class="tile"><b>${k.gesamtwert}</b><span>Gesamtwert von 100</span></div>
+    <div class="tile"><b>${de(k.rundgang_m, 0)} m</b><span>Rundgang ab Tür und zurück</span></div>
+    <div class="tile ${k.engstellen.length ? 'o' : ''}"><b>${k.engstellen.length}</b><span>Engstellen unter 1,20 m</span></div>
+    <div class="tile"><b>${pz(k.doppelwegAnteil)}</b><span>des Wegs doppelt gelaufen</span></div>
+    <div class="tile"><b>${pz(k.abseitsAnteil)}</b><span>der Fläche abseits des Wegs</span></div>
+    <div class="tile"><b>${k.inselnVonDerStrasse}/8</b><span>Inseln von der Straße zu sehen</span></div>
+  </div>
+  <div class="blk"><h2>Sichtbarkeit je Insel</h2>
+    <div class="tw"><table class="cmp"><thead><tr><th>Insel</th><th>unterwegs gesehen</th><th>ab</th><th>von der Tür</th><th>Ovale</th></tr></thead><tbody>${l.rundgang.map(zeile).join('')}</tbody></table></div>
+    <p class="note">„Unterwegs gesehen“: von wie viel Prozent des Rundgangs die Besucherseite der Insel frei im Blick liegt. „Ab“: nach wie vielen Metern man sie zum ersten Mal sieht. „Ovale“: durch wie viele der sechs klaren Schaufenster-Ovale sie von der Straße aus zu sehen ist (bis 8 m Entfernung).</p></div>
+  ${k.engstellen.length ? `<div class="blk"><h2>Engstellen auf dem Rundgang</h2><ul class="plain">${k.engstellen.map(e => `<li>${de(e.breite_m)} m breit bei x ${de(e.x, 1)} / Tiefe ${de(e.z, 1)} m</li>`).join('')}</ul></div>` : ''}
+  <div class="blk"><h2>Vergleich der Layouts</h2>
+    <div class="tw"><table class="cmp"><thead><tr><th>Layout</th><th>Wert</th><th>Weg m</th><th>doppelt</th><th>Sicht</th><th>Tür</th><th>Straße</th><th>eng</th></tr></thead><tbody>${vergleich}</tbody></table></div>
+    <p class="note">So wird gerechnet: 60 % der Besucher folgen dem Rundgang, 25 % gehen immer zur nächsten Insel, 15 % sehen nur drei Inseln und gehen wieder. Sicht zählt in Augenhöhe; Mero-System, Koje, Tafeln, Stelen, Säule, Fahne und Stellwände versperren den Blick, Theke und Fensterbank nicht. Der Gesamtwert fasst Sicht (32 %), wenig Doppelwege (20 %), Sicht von der Straße (15 %), wenig abseits liegende Fläche (13 %), Engstellen (10 %) und Sicht von der Tür (10 %) zusammen. Das ist ein Modell, keine Besucherzählung.</p></div>`;
+}
+
+/* ---------- Radar: was noch niemand auf dem Schirm hat ---------- */
+const RADAR = (EMPF_DATA && EMPF_DATA.radar || []).map((r, i) => ({ ...r, id: 'r' + String(i + 1).padStart(2, '0') }));
+function renderRadar() {
+  const el = $('#tab-radar'); if (!el) return;
+  if (!RADAR.length) { el.innerHTML = '<p class="empty">Die Liste entsteht gerade.</p>'; return; }
+  const WANN = ['sofort', 'vor dem Aufbau', 'zur Eröffnung', 'im Betrieb', 'zum Abbau'], f = state.radarFilter, chip = (kk, t) => `<button type="button" data-rfilter="${kk}" aria-pressed="${f === kk}">${esc(t)}</button>`;
+  const liste = RADAR.filter(r => f === 'alle' || r.wann === f), offen = liste.filter(r => !state.done[r.id]).length, bereiche = [...new Set(liste.map(r => r.bereich))];
+  el.innerHTML = `<div class="blk"><span class="eyebrow">Noch nicht auf dem Schirm</span><p class="lead">${RADAR.length} Punkte, die in den Protokollen nicht vorkommen und der Ausstellung später auf die Füße fallen können. Zusammengetragen von fünf Fachrollen, verdichtet von der Museumsleitung, gegengeprüft.</p></div>
+    <div class="filters" role="group" aria-label="Zeitpunkt">${chip('alle', 'Alle')}${WANN.map(w => chip(w, w)).join('')}</div>
+    <p class="note">${offen} von ${liste.length} offen. Ein Haken gilt für alle, die diese Seite öffnen.</p>` +
+    bereiche.map(b => `<div class="grp"><h3>${esc(b)}</h3>${liste.filter(r => r.bereich === b).map(r => `<div class="radar${state.done[r.id] ? ' done' : ''}"><input type="checkbox" id="rd-${r.id}" data-todo="${r.id}"${state.done[r.id] ? ' checked' : ''}><div><label for="rd-${r.id}">${esc(r.titel)}</label><p>${esc(r.warum)}</p><div class="meta"><span class="pill ${r.wann === 'sofort' ? 'open' : 'warn'}">${esc(r.wann)}</span><span class="pill">Aufwand ${esc(r.aufwand)}</span></div></div></div>`).join('')}</div>`).join('');
+}
+
 /* ---------- Layouts ---------- */
 function miniPlan(l) {
   const P = id => poseIn(l, id), col = id => DEFS[id].color, f2 = v => +v.toFixed(2);
@@ -410,14 +488,14 @@ function miniPlan(l) {
 }
 function renderLayouts() {
   const el = $('#tab-layouts'); if (!el) return;
-  el.innerHTML = `<p class="note">Dreizehn Layouts zum Vergleichen. A ist die Ausgangslage. B bis E stellen dieselben Inseln neu; vier Gestalter-Agenten haben sie entworfen, je eine zweite Instanz hat nachgemessen und korrigiert. F bis I sind radikale Konzepte mit eigenem Stil, J bis M ganz neue Ideen zum Jubiläum. Fest sind überall das Wohnzimmer in der Ecke, die Theke und die orange Wand. Welches Layout du ansiehst, gilt nur für dich; verschobene Inseln gelten für alle.</p>` + LAYOUTS.map((l, i) => {
+  const karten = LAYOUTS.map((l, i) => {
     const gr = l.gruppe || (l.stil ? 'radikal' : ''), vor = LAYOUTS[i - 1] || {}, grVor = vor.gruppe || (vor.stil ? 'radikal' : '');
     const kopf = gr === grVor ? '' : gr === 'radikal' ? '<h2 class="grp-h">Radikal: anderer Stil, andere Bühne</h2><p class="note">Diese vier Konzepte ändern nicht nur die Stellung, sondern Boden, Wände, Licht, Farben und Material. Beim Umschalten baut sich der Raum um.</p>'
       : '<h2 class="grp-h">Ganz neue Ideen zum 50. Geburtstag</h2><p class="note">Vier Ideen, die vom Anlass ausgehen: vom Stadtnamen, von der Dreieichbahn, vom Geburtstag und von den fünf Orten. Jede bringt ein eigenes großes Bild mit; die acht Inseln bleiben als Inhalt erhalten.</p>';
     const stil = l.stil ? `<div class="stil"><div class="sw">${l.stil.farben.map(f => `<i style="background:${f}"></i>`).join('')}</div><p class="sm"><b>Stil:</b> ${esc(l.stil.text)}</p><p class="sm"><b>Material:</b> ${esc(l.stil.material)}</p></div>` : '';
     const act = l.key === state.layout, moved = Object.keys(state.moves[l.key] || {}).some(id => { const m = state.moves[l.key][id], d = l.pos[id] || (DEFS[id].optional ? null : defPose(DEFS[id])); return !d || Math.abs(m.x - d.x) > 0.01 || Math.abs(m.z - d.z) > 0.01 || Math.abs(m.r - d.r) > 0.5; });
     return kopf + `<article class="lay${act ? ' act' : ''}" id="lay-${l.key}">
-      <header><span class="lk">${String.fromCharCode(65 + i)}</span><div><h3>${esc(l.name)}</h3><p>${esc(l.leitidee)}</p></div></header>
+      <header><span class="lk">${LBL(l)}</span><div><h3>${esc(l.name)}</h3><p>${esc(l.leitidee)}</p></div></header>
       <div class="mini">${miniPlan(l)}</div>${stil}
       <div class="route"><span class="eyebrow">Rundgang</span>${l.rundgang.map(id => `<b style="background:${DEFS[id].color}" title="${esc(DEFS[id].name)}">${DEFS[id].n}</b>`).join('<i>›</i>')}</div>
       <p class="sm"><b>Theke:</b> ${esc((l.gruende || {}).theke || '–')}</p>
@@ -429,9 +507,12 @@ function renderLayouts() {
         ${l.warnungen && l.warnungen.length ? `<p class="sm"><b>Bewusst in Kauf genommen:</b></p><ul class="plain sm">${l.warnungen.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : ''}
       </details>
       <div class="row">${act ? '<span class="pill ok">wird gezeigt</span>' : `<button type="button" class="btn" data-layout="${l.key}">Dieses Layout zeigen</button>`}${moved ? '<span class="pill warn">von Hand verändert</span>' : ''}</div>
-    </article>`; }).join('');
+    </article>`; });
+  const exp = LAYOUTS.map((l, i) => (l.stil ? karten[i] : '')).join(''), offen = !!curLayout().stil;
+  el.innerHTML = `<p class="note">${LAYOUT_EMPF ? '★ ist die Empfehlung: das Originalkonzept, mit Messwerkzeug optimiert und gegengeprüft. ' : ''}A ist die Ausgangslage, B bis E stellen dieselben Inseln anders. Fest sind überall das Wohnzimmer in der Ecke, die Theke und die orange Wand. Welches Layout du ansiehst, gilt nur für dich; verschobene Inseln gelten für alle.</p>` + LAYOUTS.map((l, i) => (l.stil ? '' : karten[i])).join('') +
+    `<details class="archiv"${offen ? ' open' : ''}><summary>Experimente: andere Stile und Bühnenbilder (F bis M)</summary>${exp}</details>`;
 }
-function renderTodoViews() { renderUeber(); renderInseln(); renderTodos(); renderCounts(); }
+function renderTodoViews() { renderUeber(); renderInseln(); renderTodos(); renderRadar(); renderCounts(); }
 $('#tabbody').addEventListener('change', e => {
   const id = e.target.dataset.todo; if (!id) return;
   const v = e.target.checked; if (v) state.done[id] = true; else delete state.done[id];
@@ -442,6 +523,8 @@ $('#tabbody').addEventListener('click', e => {
   const f = e.target.closest('[data-filter]'); if (f) { state.filter = f.dataset.filter; renderTodos(); return; }
   const s = e.target.closest('[data-show]'); if (s) { if (!state.expo) toggleExpo(true); select(s.dataset.show, { fly: true }); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
   const jp = e.target.closest('[data-jump]'); if (jp) { setTab(jp.dataset.jump); $('#tabbody').scrollTop = 0; return; }
+  const rf = e.target.closest('[data-rfilter]'); if (rf) { state.radarFilter = rf.dataset.rfilter; renderRadar(); return; }
+  const ab = e.target.closest('[data-an]'); if (ab) { setAn(ab.dataset.an); if (!state.walk && !state.move) setView('plan'); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
   const lb = e.target.closest('[data-layout]'); if (lb) { setLayout(lb.dataset.layout); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
   const g = e.target.closest('[data-go]'); if (g) { setMove(true); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); }
 });
@@ -521,7 +604,7 @@ function resize() {
 new ResizeObserver(resize).observe(stageEl);
 resize();
 renderTodoViews(); renderRechner(); renderLayouts(); setTab('ueber');
-$('#layout-sel').innerHTML = LAYOUTS.map((l, i) => `<option value="${l.key}">${String.fromCharCode(65 + i)} · ${esc(l.name)}</option>`).join(''); $('#layout-sel').value = state.layout;
+{ const opt = l => `<option value="${l.key}">${LBL(l)} · ${esc(l.name)}</option>`; $('#layout-sel').innerHTML = `<optgroup label="Originalkonzept">${LAYOUTS.filter(l => !l.stil).map(opt).join('')}</optgroup><optgroup label="Experimente">${LAYOUTS.filter(l => l.stil).map(opt).join('')}</optgroup>`; } $('#layout-sel').value = state.layout;
 $('#layout-sel').addEventListener('change', e => setLayout(e.target.value));
 if (controls) { const [p, t] = POSES.iso(); camera.position.copy(p); controls.target.copy(t); controls.update(); }
 let last = performance.now(), tvNext = 0; const tvPos = new V3();
@@ -549,4 +632,4 @@ function frame(now) {
 }
 requestAnimationFrame(frame);
 initStore();
-window.__popup = { state, items, setView, select, setMove, setWalk, startTour, setTab, setLayout, camera, controls, invalidate };
+window.__popup = { state, items, setView, select, setMove, setWalk, startTour, setTab, setLayout, setAn, camera, controls, invalidate };

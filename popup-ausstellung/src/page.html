@@ -126,6 +126,31 @@ ul.pm .minus::before { content: '−'; color: var(--open); }
 .mini:hover { background: var(--chip); }
 #tourbar { bottom: 62px; left: 50%; translate: -50% 0; display: flex; align-items: center; gap: 8px; white-space: nowrap; max-width: calc(100% - 32px); }
 #tourbar b { font-family: var(--font-mono); font-weight: 500; }
+#legende { top: 56px; left: var(--gl); width: min(270px, calc(100% - 32px)); display: flex; flex-direction: column; gap: 5px; }
+#legende b { font-size: 12.5px; }
+#legende .ramp { height: 9px; border-radius: 5px; }
+#legende .rl { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-2); }
+#legende p { font-size: 11.5px; color: var(--ink-2); }
+.archiv { border: 1px dashed var(--line); border-radius: 12px; padding: 10px 12px; }
+.archiv > summary { cursor: pointer; font-weight: 700; font-size: 13px; }
+.archiv[open] > summary { margin-bottom: 12px; }
+.archiv > * + * { margin-top: 12px; }
+table.cmp { width: 100%; border-collapse: collapse; font-size: 12.5px; font-variant-numeric: tabular-nums; }
+table.cmp th { text-align: right; font-size: 10.5px; color: var(--ink-3); font-weight: 600; padding: 4px 4px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+table.cmp th:first-child, table.cmp td:first-child { text-align: left; }
+table.cmp td { padding: 6px 4px; border-bottom: 1px solid var(--line); text-align: right; font-family: var(--font-mono); font-size: 12px; }
+table.cmp td:first-child { font-family: var(--font-body); font-size: 12.5px; }
+table.cmp tr.act td { font-weight: 700; background: var(--chip); }
+table.cmp .bad { color: var(--open); } table.cmp .good { color: var(--ok); }
+.bar-i { display: inline-block; height: 7px; border-radius: 4px; background: var(--lila); vertical-align: middle; margin-right: 5px; }
+.radar { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 9px; align-items: start; padding: 9px 10px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+.radar input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--orange); }
+.radar label { font-weight: 700; cursor: pointer; }
+.radar p { font-size: 13px; color: var(--ink-2); margin-top: 2px; max-width: 62ch; }
+.radar.done label, .radar.done p { text-decoration: line-through; color: var(--ink-3); }
+.ent { border-left: 3px solid var(--orange); padding-left: 10px; }
+.ent b { display: block; font-size: 13px; }
+.ent span { font-size: 13px; color: var(--ink-2); }
 #hint { bottom: 62px; left: var(--gl); max-width: min(360px, calc(100% - 32px)); color: var(--ink-2); }
 #nogl { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; padding: 24px; z-index: 50; background: var(--stage-b); }
 
@@ -249,6 +274,7 @@ table.mat td:nth-child(2) { font-family: var(--font-mono); font-size: 11.5px; }
       </div>
 
       <div class="float" id="inspect" hidden></div>
+      <div class="float" id="legende" hidden></div>
       <div class="float" id="hint" hidden></div>
       <div class="float" id="tourbar" hidden>
         <button type="button" class="mini" id="tour-prev" aria-label="Vorherige Insel">←</button>
@@ -261,6 +287,12 @@ table.mat td:nth-child(2) { font-family: var(--font-mono); font-size: 11.5px; }
         <button type="button" class="tool" id="b-tour" aria-pressed="false">Rundgang</button>
         <button type="button" class="tool" id="b-walk" aria-pressed="false">Begehen</button>
         <button type="button" class="tool" id="b-move" aria-pressed="false">Inseln verschieben</button>
+        <span class="spacer"></span>
+        <div class="seg" role="group" aria-label="Analyse einblenden" id="an">
+          <button type="button" data-an="aus" aria-pressed="true">Analyse aus</button>
+          <button type="button" data-an="lauf" aria-pressed="false" title="Wo Besucher laufen und stehen">Laufwege</button>
+          <button type="button" data-an="sicht" aria-pressed="false" title="Was man auf dem Rundgang sieht">Sicht</button>
+        </div>
       </div>
       <div id="nogl" hidden><div><h2>3D nicht verfügbar</h2><p>Dieser Browser stellt kein WebGL bereit. Die Planungsakte rechts funktioniert trotzdem.</p></div></div>
     </section>
@@ -269,15 +301,19 @@ table.mat td:nth-child(2) { font-family: var(--font-mono); font-size: 11.5px; }
       <div class="tabs" role="tablist" id="tabs">
         <button type="button" role="tab" data-tab="ueber" aria-selected="true">Überblick</button>
         <button type="button" role="tab" data-tab="layouts" aria-selected="false">Layouts</button>
+        <button type="button" role="tab" data-tab="analyse" aria-selected="false">Analyse</button>
         <button type="button" role="tab" data-tab="inseln" aria-selected="false">Inseln</button>
         <button type="button" role="tab" data-tab="todos" aria-selected="false">To-dos<span class="cnt" id="cnt-open"></span></button>
+        <button type="button" role="tab" data-tab="radar" aria-selected="false">Radar</button>
         <button type="button" role="tab" data-tab="rechner" aria-selected="false">Rechner</button>
       </div>
       <div class="tabbody" id="tabbody">
         <section id="tab-ueber"></section>
         <section id="tab-layouts" hidden></section>
+        <section id="tab-analyse" hidden></section>
         <section id="tab-inseln" hidden></section>
         <section id="tab-todos" hidden></section>
+        <section id="tab-radar" hidden></section>
         <section id="tab-rechner" hidden></section>
       </div>
     </aside>

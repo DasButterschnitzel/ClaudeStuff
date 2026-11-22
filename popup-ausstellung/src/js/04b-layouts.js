@@ -15,4 +15,7 @@ const LAYOUT_A = {
   schwaechen: ['Kein eindeutiger Rundweg, die Reihenfolge ergibt sich zufällig.', 'Die Zukunftsinsel steht im Betrachtungsraum der Medienstelen.', 'Wohnzimmer und Hoftür sind nur über Durchgänge unter 1,20 m erreichbar.'],
   freieFlaeche: 86.1, warnungen: [], pruefung: '',
 };
-const LAYOUTS = [LAYOUT_A, ...LAYOUT_DATA, ...RADIKAL_DATA, ...IDEEN_DATA];   // J–M: ganz neue Ideen zum Jubiläum   // F–I: radikale Konzepte mit eigenem Stil
+/* Empfehlung der Museumsleitung: das Originalkonzept, mit Messwerkzeug optimiert und gegengeprüft */
+const LAYOUT_EMPF = EMPF_DATA ? { ...EMPF_DATA, key: 'empf', empf: true } : null;
+const LAYOUTS = [...(LAYOUT_EMPF ? [LAYOUT_EMPF] : []), LAYOUT_A, ...LAYOUT_DATA, ...RADIKAL_DATA, ...IDEEN_DATA];   // F–I radikale Konzepte, J–M neue Ideen: Experimente
+const LBL = l => (l.empf ? '★' : String.fromCharCode(65 + LAYOUTS.filter(x => !x.empf).indexOf(l)));
