@@ -98,8 +98,13 @@ function buildRoom() {
   const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.5, 3), M(C.orange)); arrow.rotation.x = -PI / 2; arrow.position.set(dx, 0.03, D.z + 0.85); arrow.scale.y = 1; g.add(arrow);
 
   /* Rückwand: Glasbaustein-Fenster mit Heizkörper, Türen, Klimagerät */
-  const mGB = new THREE.MeshStandardMaterial({ map: TEX.glasbaustein, emissive: '#6aa6c9', emissiveIntensity: 0.25, roughness: 0.3 });
-  const win = (x0, x1) => { const p = wall(x0, 0.012, x1, 0.012, mGB, { h: 1.2, y0: 1.0 }); g.add(p, box(x1 - x0 - 0.1, 0.55, 0.1, mWhite, (x0 + x1) / 2, 0.22, 0.08)); };
+  const mGB = new THREE.MeshStandardMaterial({ map: TEX.glasbaustein, emissive: '#6aa6c9', emissiveIntensity: 0.25, roughness: 0.3, side: THREE.DoubleSide });   // auch von außen sichtbar
+  const win = (x0, x1) => {
+    const p = wall(x0, 0.012, x1, 0.012, mGB, { h: 1.2, y0: 1.0 }), cx = (x0 + x1) / 2, w = x1 - x0;
+    g.add(p, box(w - 0.1, 0.55, 0.1, mWhite, cx, 0.22, 0.08));
+    /* Rahmen und Sprosse, von beiden Seiten zu sehen */
+    g.add(box(w + 0.08, 0.05, 0.08, mWhite, cx, 0.96, -0.012), box(w + 0.08, 0.05, 0.08, mWhite, cx, 2.19, -0.012), box(0.05, 1.28, 0.08, mWhite, x0 - 0.015, 0.96, -0.012), box(0.05, 1.28, 0.08, mWhite, x1 + 0.015, 0.96, -0.012), box(0.035, 1.2, 0.06, mWhite, cx, 1.0, -0.012));
+  };
   win(1.5, 2.7); win(11.9, 13.05);
   const doorLeaf = (x0, x1) => g.add(box(x1 - x0, 2.05, 0.05, mDoor, (x0 + x1) / 2, 0, 0.03, false), box(0.03, 0.12, 0.05, mFrame, x1 - 0.12, 1.02, 0.07, false));
   doorLeaf(4.5, 5.5); doorLeaf(17.1, 17.95);

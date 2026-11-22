@@ -115,7 +115,8 @@ function buildWohnzimmer() {
   const g = new THREE.Group(), sub = (x, z, ry = 0) => { const s = new THREE.Group(); s.position.set(x, 0, z); s.rotation.y = ry; g.add(s); return s; };
   const cord = M('#8a5a33', { roughness: 1 }), cord2 = M('#a06c40', { roughness: 1 }), cordO = M('#c4611c', { roughness: 1 }), teak = M(C.teak, { roughness: 0.5 }), brass = new THREE.MeshStandardMaterial({ color: '#c9a24a', metalness: 0.9, roughness: 0.3 });
   /* Tapete an der Rückwand, um das Glasbaustein-Fenster herum; die Natursteinwand links bleibt, wie sie ist */
-  const tap = (w, h, x, y) => g.add(box(w, h, 0.02, M('#ffffff', { map: repTex(TEX.tapeteA, w / 0.53, h / 0.53) }), x, y, -1.44, false));
+  const rueck = M('#eceae6', { roughness: 0.95 });   // von hinten ist die Wand weiß, nicht tapeziert
+  const tap = (w, h, x, y) => g.add(box(w, h, 0.02, [rueck, rueck, rueck, rueck, M('#ffffff', { map: repTex(TEX.tapeteA, w / 0.53, h / 0.53) }), rueck], x, y, -1.44, false));
   tap(1.45, 2.46, -1.475, 0); tap(1.75, 2.46, 1.325, 0); tap(1.2, 1.0, -0.15, 0); tap(1.2, 0.26, -0.15, 2.2);
   /* Vorhänge und Stange */
   const stoff = M('#ffffff', { roughness: 1, map: ctex(64, 64, (c, w) => { ['#b8531a', '#e9861f', '#f3ead7', '#7a3f17'].forEach((col, i) => { c.fillStyle = col; c.fillRect(i * w / 4, 0, w / 4, w); }); }, [3, 1]) });
