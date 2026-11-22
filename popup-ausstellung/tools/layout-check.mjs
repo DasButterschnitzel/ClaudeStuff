@@ -2,6 +2,8 @@
 // Prüft ein Ausstellungs-Layout für den Pop-up-Store: liegt alles im Raum, überschneidet sich nichts,
 // bleiben Türen frei, kommt man mit 90 cm (und mit 1,20 m) Durchgang überall hin?
 // Aufruf: node layout-check.mjs layout.json      (oder JSON direkt als Argument)
+// Optional: "fest": { Name: [x0, z0, x1, z1] } zusätzliche hohe Einbauten · "niedrig": dasselbe für Niedriges (versperrt den Weg, nicht die Sicht).
+// Optional: "stellwandX": 4.25 – Stellwand am Wohnzimmer weiter links (Standard 4,52), das Wohnzimmer wird entsprechend schmaler.
 // Eingabe: { "pos": { "s2": {"x":3.4,"z":7.5,"r":0}, "s3": …, "s4": …, "s5": …, "s7": …, "s8": …, "fahne": …, optional "wand2", "wand3" } }
 // x = Breite ab Natursteinwand (0 … 19,45), z = Tiefe ab Rückwand (0 … 10,2), r = Drehung in Grad.
 // r = 0: Besucherseite zeigt zur langen Fensterfront (+z) · 90: zur Brandmauer (+x) · 180: zur Rückwand · 270: zur Natursteinwand.
@@ -18,7 +20,7 @@ export const FIXED = {
   'Stellwand am Wohnzimmer': [4.46, 0.1, 4.58, 2.3],
 };
 // Flächen, die frei bleiben müssen
-export const KEEP = {
+export const KEEP_STD = {
   'Eingang': [16.5, 7.7, 19.0, 9.35], 'Gang zu Hoftür und Lager': [4.6, 0, 5.55, 3.1], 'Tür zu den Nebenräumen': [16.9, 0, 18.15, 1.2],
   'Zugang Wohnzimmer': [0, 2.92, 1.0, 4.1], 'Betrachtungsstreifen vor der Gebietsreform-Wand': [18.2, 0.3, 19.4, 7.6],
 };
@@ -53,7 +55,12 @@ function overlap(a, b) {   // Trennachsen-Test für konvexe Vielecke; Berühren 
 
 export function check(layout) {
   const errors = [], warnings = [], pos = layout.pos || {}, polys = {};
-  const FIXED_ALL = { ...FIXED, ...(layout.fest || {}) };   // fest: zusätzliche Einbauten eines Konzepts, z. B. Vorhang oder Bauzaun
+  const FIXED_ALL = { ...FIXED, ...(layout.fest || {}), ...(layout.niedrig || {}) };   // fest: zusätzliche Einbauten eines Konzepts, z. B. Vorhang oder Bauzaun
+  const KEEP = { ...KEEP_STD };
+  if (layout.stellwandX) {   // Wohnzimmer schmaler bauen: Stellwand rückt nach links, der Gang zur Hoftür wird breiter
+    const w = layout.stellwandX;
+    FIXED_ALL['Wohnzimmer (Insel 1)'] = [0.05, 0.02, w - 0.07, 2.92]; FIXED_ALL['Stellwand am Wohnzimmer'] = [w - 0.06, 0.1, w + 0.06, 2.3]; KEEP['Gang zu Hoftür und Lager'] = [w + 0.08, 0, 5.55, 3.1];
+  }
   for (const id of Object.keys(ITEMS)) {
     const p = pos[id];
     if (!p && ITEMS[id].optional) continue;

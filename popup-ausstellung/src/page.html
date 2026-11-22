@@ -151,11 +151,23 @@ table.cmp .bad { color: var(--open); } table.cmp .good { color: var(--ok); }
 .ent { border-left: 3px solid var(--orange); padding-left: 10px; }
 .ent b { display: block; font-size: 13px; }
 .ent span { font-size: 13px; color: var(--ink-2); }
+.ent + .ent { margin-top: 9px; }
+.ent.no { border-left-color: var(--line); }
+.blk.empf { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.blk.empf .row { margin: 10px 0 2px; }
+.blk.empf details.more { margin-top: 10px; }
+.blk.empf details.more > * + * { margin-top: 8px; }
+.sub-h { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-2); margin: 14px 0 8px; }
+ol.num { list-style: decimal; padding-left: 20px; }
+ol.num li { font-size: 13px; margin-top: 5px; }
+.pill.src { background: transparent; border: 1px solid var(--line); color: var(--ink-2); }
+table.cmp td.good b { color: var(--ok); }
 #hint { bottom: 62px; left: var(--gl); max-width: min(360px, calc(100% - 32px)); color: var(--ink-2); }
 #nogl { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; padding: 24px; z-index: 50; background: var(--stage-b); }
 
 .panel { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; min-width: 0; background: var(--panel); border-left: 1px solid var(--line); }
 .tabs { display: flex; gap: 2px; padding: 8px 12px 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+@media (min-width: 901px) { .tabs { flex-wrap: wrap; overflow: visible; } .tabs button { padding: 7px 9px 8px; } }
 .tabs button { border: 0; background: transparent; padding: 8px 10px 10px; font-weight: 600; font-size: 13px; color: var(--ink-2); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
 .tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--orange); }
 .tabs .cnt { font-family: var(--font-mono); font-size: 11px; font-weight: 500; background: var(--open-bg); color: var(--open); padding: 1px 6px; border-radius: 99px; margin-left: 4px; }

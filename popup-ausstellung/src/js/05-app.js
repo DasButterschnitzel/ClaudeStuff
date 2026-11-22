@@ -5,8 +5,8 @@ const LS = 'popup3-plan-v2';
 const DEF_CALC = { litfass: { d: 100, h: 190, gap: 0 }, kreise: 11 };
 const state = { tab: 'ueber', view: 'iso', expo: true, dims: false, people: true, move: false, walk: false, tour: -1, sel: null, filter: 'alle', done: {}, layout: LAYOUTS[0].key, moves: {}, an: 'aus', radarFilter: 'alle', calc: JSON.parse(JSON.stringify(DEF_CALC)), open: new Set() };
 const mergeCalc = c => { state.calc = { kreise: clamp(Number(c.kreise) || DEF_CALC.kreise, 6, 16), litfass: { ...DEF_CALC.litfass, ...(c.litfass || {}) } }; };
-try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s) { state.done = s.done || {}; state.moves = s.moves || {}; if (LAYOUTS.some(l => l.key === s.layout)) state.layout = s.layout; if (s.calc) mergeCalc(s.calc); } } catch (e) { /* ohne Speicher weiter */ }
-const saveLocal = () => { try { localStorage.setItem(LS, JSON.stringify({ done: state.done, moves: state.moves, layout: state.layout, calc: state.calc })); } catch (e) { /* egal */ } };
+try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s) { state.done = s.done || {}; state.moves = s.moves || {}; if (LAYOUTS.some(l => l.key === s.layout) && (s.empf || !LAYOUT_EMPF)) state.layout = s.layout; /* wer die Empfehlung noch nicht kennt, sieht sie einmal zuerst */ if (s.calc) mergeCalc(s.calc); } } catch (e) { /* ohne Speicher weiter */ }
+const saveLocal = () => { try { localStorage.setItem(LS, JSON.stringify({ done: state.done, moves: state.moves, layout: state.layout, calc: state.calc, empf: 1 })); } catch (e) { /* egal */ } };
 
 function litfassParams() {
   const { d, h, gap } = state.calc.litfass, U = PI * d;
@@ -26,7 +26,8 @@ const defOf = id => items[id].def;
 const defPose = d => ({ x: d.pos[0], z: d.pos[1], r: d.rot });
 const curLayout = () => LAYOUTS.find(l => l.key === state.layout) || LAYOUTS[0];
 /* Stellung eines Teils in einem Layout: von Hand verschoben > Layout > Ausgangslage */
-const poseIn = (l, id) => (state.moves[l.key] || {})[id] || l.pos[id] || (DEFS[id].optional ? null : defPose(DEFS[id]));
+const wzDx = l => (l.stellwandX ? +(4.52 - l.stellwandX).toFixed(2) : 0);   // Empfehlung: Wohnzimmer schmaler, Gang zur Hoftür breiter
+const poseIn = (l, id) => (state.moves[l.key] || {})[id] || l.pos[id] || (id === 'wand' && l.stellwandX ? { x: l.stellwandX, z: 1.2, r: 90 } : DEFS[id].optional ? null : defPose(DEFS[id]));
 const fullPlan = () => ({ moves: state.moves, calc: state.calc });
 function mount(def) {
   const group = new THREE.Group(); let inner = def.make(); group.add(inner);
@@ -46,13 +47,14 @@ function place(id) {
   const p = poseIn(curLayout(), id); group.visible = !!p; if (!p) return;
   group.position.set(p.x, 0, p.z); group.rotation.y = (p.r || 0) * PI / 180;
 }
+WZ_DX = wzDx(curLayout());
 [...ST, ...EXTRA].forEach(mount);
 placeFiguren();
 /* Figuren ausblenden, die im gewählten Layout in einer Insel stünden */
 function placeFiguren() {
   const l = curLayout();
   figuren.children.forEach(f => {
-    const inFest = Object.values(l.fest || {}).some(([x0, z0, x1, z1]) => f.position.x > x0 - 0.3 && f.position.x < x1 + 0.3 && f.position.z > z0 - 0.3 && f.position.z < z1 + 0.3);
+    const inFest = [...Object.values(l.fest || {}), ...Object.values(l.niedrig || {})].some(([x0, z0, x1, z1]) => f.position.x > x0 - 0.3 && f.position.x < x1 + 0.3 && f.position.z > z0 - 0.3 && f.position.z < z1 + 0.3);
     f.visible = !inFest && !Object.keys(RECTS).some(id => { const p = poseIn(l, id); if (!p) return false; const r = RECTS[id], c = Math.cos(p.r * PI / 180), sn = Math.sin(p.r * PI / 180), dx = f.position.x - p.x, dz = f.position.z - p.z, lx = dx * c - dz * sn, lz = dx * sn + dz * c; return lx > r[0] - 0.35 && lx < r[2] + 0.35 && lz > r[1] - 0.35 && lz < r[3] + 0.35; });
   });
 }
@@ -71,7 +73,8 @@ function applyStil() {
     expo.remove(kissen); kissen = buildKissen(); expo.add(kissen);
   }
   if (buehne) expo.remove(buehne);
-  buehne = l.stil && BUEHNE[l.stil.buehne] ? BUEHNE[l.stil.buehne](l) : null; if (buehne) expo.add(buehne);
+  const bk = l.stil ? l.stil.buehne : l.buehne; buehne = BUEHNE[bk] ? BUEHNE[bk](l) : null; if (buehne) expo.add(buehne);
+  if (wzDx(l) !== WZ_DX) { WZ_DX = wzDx(l); items.s1.remake(); }
 }
 const applyLayout = () => { applyStil(); Object.keys(items).forEach(place); placeFiguren(); touch(); updateInspect(); analyseNeu(); };
 applyStil();   // falls ein Konzept mit eigenem Stil gemerkt war
@@ -168,7 +171,7 @@ function resetAll() {
 }
 function setLayout(key) {
   if (!LAYOUTS.some(l => l.key === key)) return;
-  state.layout = key; saveLocal(); stopTour(); select(null); applyLayout(); renderLayouts(); renderInseln();
+  state.layout = key; saveLocal(); stopTour(); select(null); applyLayout(); renderLayouts(); renderInseln(); renderUeber();
   $('#layout-sel').value = key; if (!state.walk && !state.move) setView(state.view || 'iso');
 }
 function updateInspect() {
@@ -323,9 +326,35 @@ function todoRow(t, pre) {
   ].join('');
   return `<div class="todo${isDone(t) ? ' done' : ''}"><input type="checkbox" id="${pre}-${t.id}" data-todo="${t.id}"${isDone(t) ? ' checked' : ''}><div><label for="${pre}-${t.id}">${esc(t.text)}</label><div class="meta">${pills}</div></div></div>`;
 }
+function empfBlock() {
+  const e = LAYOUT_EMPF; if (!e) return '';
+  const a = rechne(LAYOUT_A, false).kennzahlen, n = rechne(e, false).kennzahlen, pz = v => Math.round(v * 100) + ' %';
+  const zl = (t, v, w, gut) => `<tr><td>${esc(t)}</td><td>${esc(v)}</td><td class="${gut ? 'good' : ''}"><b>${esc(w)}</b></td></tr>`;
+  const offen = RADAR.filter(r => !state.done[r.id]), sofort = offen.filter(r => r.wann === 'sofort').length;
+  return `<div class="blk empf"><span class="eyebrow">★ Empfehlung der Museumsleitung</span>
+    <p class="lead">${esc(e.leitidee)}</p>
+    <div class="tw"><table class="cmp"><thead><tr><th></th><th>Erster Vorschlag</th><th>Empfehlung</th></tr></thead><tbody>
+      ${zl('Rundgang ab Tür und zurück', de(a.rundgang_m, 0) + ' m', de(n.rundgang_m, 0) + ' m', n.rundgang_m < a.rundgang_m)}
+      ${zl('Weg, der doppelt gelaufen wird', pz(a.doppelwegAnteil), pz(n.doppelwegAnteil), n.doppelwegAnteil < a.doppelwegAnteil)}
+      ${zl('Engstellen unter 1,20 m auf dem Rundgang', String(a.engstellen.length), String(n.engstellen.length), n.engstellen.length < a.engstellen.length)}
+      ${zl('Inseln, die man von der Tür aus sieht', a.inselnVomEingang + ' von 8', n.inselnVomEingang + ' von 8', n.inselnVomEingang > a.inselnVomEingang)}
+      ${(e.fest_vergleich || []).map(([t, v, w]) => zl(t, v, w, true)).join('')}
+      ${zl('Gesamtwert der Analyse', a.gesamtwert + ' von 100', n.gesamtwert + ' von 100', n.gesamtwert > a.gesamtwert)}
+    </tbody></table></div>
+    <div class="row">${state.layout === e.key ? '<span class="pill ok">wird gezeigt</span>' : `<button type="button" class="btn" data-layout="${e.key}">Empfehlung im Raum zeigen</button>`}<button type="button" class="btn ghost" data-an="lauf">Laufwege</button><button type="button" class="btn ghost" data-an="sicht">Sicht</button></div>
+    <h3 class="sub-h">Was sich ändert und warum</h3>
+    ${e.entscheidungen.map(x => `<div class="ent"><b>${esc(x.thema)}</b><span>${esc(x.entscheidung)} ${esc(x.grund)}</span></div>`).join('')}
+    <details class="more"><summary>Geprüft und nicht übernommen (${e.verworfen.length})</summary>${e.verworfen.map(x => `<div class="ent no"><b>${esc(x.thema)}</b><span>${esc(x.grund)}</span></div>`).join('')}</details>
+    <details class="more"><summary>Fragen ans Team für den 24.11. (${e.teamfragen.length})</summary><ol class="plain num">${e.teamfragen.map(t => `<li>${esc(t)}</li>`).join('')}</ol></details>
+    <details class="more"><summary>Wie die Empfehlung entstanden ist</summary>
+      <p class="sm">Fünf Fachrollen sollten das Konzept unabhängig prüfen, danach die Leitung entscheiden und eine externe Stelle gegenprüfen. Drei Gutachten sind fertig geworden und haben ihre Vorschläge selbst nachgemessen. Die Gutachten zu Betrieb und Technik sowie zu Recht und Geld und die externe Gegenprüfung sind nicht zustande gekommen. Diese Themen stammen aus der Durchsicht der Leitung und sind im Radar so gekennzeichnet.</p>
+      ${e.gutachten.map(x => `<div class="ent"><b>${esc(x.rolle)}</b><span>${esc(x.kern)}</span></div>`).join('')}
+      <p class="sm">${esc(e.pruefung)}</p></details>
+    <div class="row"><button type="button" class="btn ghost" data-jump="radar">Noch nicht auf dem Schirm: ${offen.length} Punkte, ${sofort} davon sofort</button></div></div>`;
+}
 function renderUeber() {
   const s = stats(), lp = litfassParams();
-  $('#tab-ueber').innerHTML = `
+  $('#tab-ueber').innerHTML = empfBlock() + `
   <div class="blk"><span class="eyebrow">Zusammenfassung · Protokoll 1 + 2</span>
     <p class="lead">Im Pop-up-Store entsteht die Ausstellung „50 Jahre Dreieich“ mit <b>acht Themeninseln</b>. Leitlinie: informativ, fröhlich, bunt, niederschwellig, mit Mitmachstationen. Ein Titel steht noch nicht fest.</p></div>
   <div class="tiles">
@@ -406,7 +435,7 @@ const heat = (() => {
   return { c, tex, mesh, weg };
 })();
 const RAMPE = { lauf: [[255, 224, 138], [255, 138, 31], [215, 38, 61]], sicht: [[185, 236, 255], [59, 155, 255], [58, 43, 214]] };
-const anLayout = l => { const pos = {}; for (const id of Object.keys(A_ITEMS)) { const p = poseIn(l, id); if (p) pos[id] = p; } return { rundgang: l.rundgang, pos, fest: l.fest }; };
+const anLayout = l => { const pos = {}; for (const id of Object.keys(A_ITEMS)) { const p = poseIn(l, id); if (p) pos[id] = p; } return { rundgang: l.rundgang, pos, fest: l.fest, niedrig: l.niedrig, stellwandX: l.stellwandX }; };
 const anCache = new Map();
 function rechne(l = curLayout(), voll = true) {
   const la = anLayout(l), key = (voll ? 'v' : 'k') + JSON.stringify(la);
@@ -466,10 +495,10 @@ function renderRadar() {
   if (!RADAR.length) { el.innerHTML = '<p class="empty">Die Liste entsteht gerade.</p>'; return; }
   const WANN = ['sofort', 'vor dem Aufbau', 'zur Eröffnung', 'im Betrieb', 'zum Abbau'], f = state.radarFilter, chip = (kk, t) => `<button type="button" data-rfilter="${kk}" aria-pressed="${f === kk}">${esc(t)}</button>`;
   const liste = RADAR.filter(r => f === 'alle' || r.wann === f), offen = liste.filter(r => !state.done[r.id]).length, bereiche = [...new Set(liste.map(r => r.bereich))];
-  el.innerHTML = `<div class="blk"><span class="eyebrow">Noch nicht auf dem Schirm</span><p class="lead">${RADAR.length} Punkte, die in den Protokollen nicht vorkommen und der Ausstellung später auf die Füße fallen können. Zusammengetragen von fünf Fachrollen, verdichtet von der Museumsleitung, gegengeprüft.</p></div>
+  el.innerHTML = `<div class="blk"><span class="eyebrow">Noch nicht auf dem Schirm</span><p class="lead">${RADAR.length} Punkte, die in den Protokollen nicht vorkommen und der Ausstellung später auf die Füße fallen können. Sie stammen aus drei Fachgutachten und der Durchsicht der Museumsleitung; bei jedem Punkt steht, woher er kommt.</p></div>
     <div class="filters" role="group" aria-label="Zeitpunkt">${chip('alle', 'Alle')}${WANN.map(w => chip(w, w)).join('')}</div>
     <p class="note">${offen} von ${liste.length} offen. Ein Haken gilt für alle, die diese Seite öffnen.</p>` +
-    bereiche.map(b => `<div class="grp"><h3>${esc(b)}</h3>${liste.filter(r => r.bereich === b).map(r => `<div class="radar${state.done[r.id] ? ' done' : ''}"><input type="checkbox" id="rd-${r.id}" data-todo="${r.id}"${state.done[r.id] ? ' checked' : ''}><div><label for="rd-${r.id}">${esc(r.titel)}</label><p>${esc(r.warum)}</p><div class="meta"><span class="pill ${r.wann === 'sofort' ? 'open' : 'warn'}">${esc(r.wann)}</span><span class="pill">Aufwand ${esc(r.aufwand)}</span></div></div></div>`).join('')}</div>`).join('');
+    bereiche.map(b => `<div class="grp"><h3>${esc(b)}</h3>${liste.filter(r => r.bereich === b).map(r => `<div class="radar${state.done[r.id] ? ' done' : ''}"><input type="checkbox" id="rd-${r.id}" data-todo="${r.id}"${state.done[r.id] ? ' checked' : ''}><div><label for="rd-${r.id}">${esc(r.titel)}</label><p>${esc(r.warum)}</p><div class="meta"><span class="pill ${r.wann === 'sofort' ? 'open' : 'warn'}">${esc(r.wann)}</span><span class="pill">Aufwand ${esc(r.aufwand)}</span>${r.quelle ? `<span class="pill src">${esc(r.quelle)}</span>` : ''}</div></div></div>`).join('')}</div>`).join('');
 }
 
 /* ---------- Layouts ---------- */
@@ -481,9 +510,9 @@ function miniPlan(l) {
   const ov = [1.9, 5.9, 9.8, 13.4].map(x => `<line x1="${x - 1.4}" y1="10.75" x2="${x + 1.4}" y2="10.75" class="ov"/>`).join('') + [5.3, 8.8].map(z => `<line x1="-0.55" y1="${z - 1.4}" x2="-0.55" y2="${z + 1.4}" class="ov"/>`).join('');
   return `<svg viewBox="-1 -0.7 21.2 12.6" role="img" aria-label="Grundriss Layout ${esc(l.name)}">
     <path d="M-0.5 0H19.45V9.35H16.55V10.7H-0.5Z" class="rm"/><path d="M5.55 0H11.4V5.2H8.15V3.1H5.55Z" class="blk"/>
-    <rect x="0.05" y="0.02" width="4.4" height="2.9" rx="0.1" fill="${col('s1')}"/><text x="2.25" y="1.8" class="mn">1</text>
+    <rect x="0.05" y="0.02" width="${f2(4.4 - wzDx(l))}" height="2.9" rx="0.1" fill="${col('s1')}"/><text x="${f2(2.25 - wzDx(l) / 2)}" y="1.8" class="mn">1</text>
     <rect x="1" y="3.12" width="3.2" height="0.66" class="th"/><rect x="19.05" y="0.1" width="0.4" height="9.1" fill="${col('s6')}"/><text x="18.55" y="4.95" class="mn dk">6</text>
-    <line x1="4.52" y1="0.1" x2="4.52" y2="2.3" class="sw"/>${ov}${Object.values(l.fest || {}).map(([x0, z0, x1, z1]) => `<rect x="${x0}" y="${z0}" width="${Math.max(x1 - x0, 0.16)}" height="${Math.max(z1 - z0, 0.16)}" class="fx"/>`).join('')}${['s2', 's3', 's4', 's5', 's7', 's8', 'wand2', 'wand3', 'fahne'].map(item).join('')}
+    <line x1="${f2(4.52 - wzDx(l))}" y1="0.1" x2="${f2(4.52 - wzDx(l))}" y2="2.3" class="sw"/>${ov}${[...Object.values(l.fest || {}), ...Object.values(l.niedrig || {})].map(([x0, z0, x1, z1]) => `<rect x="${x0}" y="${z0}" width="${Math.max(x1 - x0, 0.16)}" height="${Math.max(z1 - z0, 0.16)}" class="fx"/>`).join('')}${['s2', 's3', 's4', 's5', 's7', 's8', 'wand2', 'wand3', 'fahne'].map(item).join('')}
     <path d="M17.72 10.1l0.55 1h-1.1z" class="in"/></svg>`;
 }
 function renderLayouts() {
@@ -503,13 +532,14 @@ function renderLayouts() {
         <p>${esc(l.weg)}</p>
         <ul class="pm">${l.staerken.map(t => `<li class="plus">${esc(t)}</li>`).join('')}${l.schwaechen.map(t => `<li class="minus">${esc(t)}</li>`).join('')}</ul>
         <p class="sm"><b>Frei begehbar:</b> ${de(l.freieFlaeche, 0)} m² bei 90 cm Durchgang (nachgemessen mit dem Prüfwerkzeug, 0 Fehler).</p>
-        ${l.pruefung ? `<p class="sm"><b>Was die Prüfung geändert hat:</b> ${esc(l.pruefung)}</p>` : ''}
+        ${l.empf ? `<p class="sm"><b>Stellung je Insel:</b></p><ul class="plain sm">${l.rundgang.map(id => `<li><b>${DEFS[id].n} ${esc(DEFS[id].name)}:</b> ${esc(l.gruende[id] || '')}</li>`).join('')}<li><b>Banner:</b> ${esc(l.gruende.fahne)}</li></ul>` : ''}
+        ${l.pruefung ? `<p class="sm"><b>${l.empf ? 'Wie sie entstanden ist' : 'Was die Prüfung geändert hat'}:</b> ${esc(l.pruefung)}</p>` : ''}
         ${l.warnungen && l.warnungen.length ? `<p class="sm"><b>Bewusst in Kauf genommen:</b></p><ul class="plain sm">${l.warnungen.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : ''}
       </details>
       <div class="row">${act ? '<span class="pill ok">wird gezeigt</span>' : `<button type="button" class="btn" data-layout="${l.key}">Dieses Layout zeigen</button>`}${moved ? '<span class="pill warn">von Hand verändert</span>' : ''}</div>
     </article>`; });
   const exp = LAYOUTS.map((l, i) => (l.stil ? karten[i] : '')).join(''), offen = !!curLayout().stil;
-  el.innerHTML = `<p class="note">${LAYOUT_EMPF ? '★ ist die Empfehlung: das Originalkonzept, mit Messwerkzeug optimiert und gegengeprüft. ' : ''}A ist die Ausgangslage, B bis E stellen dieselben Inseln anders. Fest sind überall das Wohnzimmer in der Ecke, die Theke und die orange Wand. Welches Layout du ansiehst, gilt nur für dich; verschobene Inseln gelten für alle.</p>` + LAYOUTS.map((l, i) => (l.stil ? '' : karten[i])).join('') +
+  el.innerHTML = `<p class="note">${LAYOUT_EMPF ? '★ ist die Empfehlung: das Konzept des Teams, nach drei Fachgutachten überarbeitet und nachgemessen. ' : ''}A ist die Ausgangslage, B bis E stellen dieselben Inseln anders. Fest sind überall das Wohnzimmer in der Ecke, die Theke und die orange Wand. Welches Layout du ansiehst, gilt nur für dich; verschobene Inseln gelten für alle.</p>` + LAYOUTS.map((l, i) => (l.stil ? '' : karten[i])).join('') +
     `<details class="archiv"${offen ? ' open' : ''}><summary>Experimente: andere Stile und Bühnenbilder (F bis M)</summary>${exp}</details>`;
 }
 function renderTodoViews() { renderUeber(); renderInseln(); renderTodos(); renderRadar(); renderCounts(); }

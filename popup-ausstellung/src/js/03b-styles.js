@@ -230,3 +230,33 @@ BUEHNE.haeuser = l => {
   const t = flatText('Dorfplatz', { size: 0.3, color: '#6b5d45', weight: 700 }); const p5 = poseIn(l, 's5'); if (p5) { t.position.set(p5.x, 0.02, p5.z + 1.55); g.add(t); }
   return g;
 };
+
+/* =====================================================================
+   EMPFEHLUNG der Museumsleitung: kein neuer Stil, nur das, was im Betrieb fehlt –
+   Aufsichtsplatz, Programmfläche, Abstellfläche, Fotopunkt, freier Gang zur Hoftür.
+   ===================================================================== */
+BUEHNE.leitung = l => {
+  const g = new THREE.Group();
+  const feld = ([x0, z0, x1, z1], col, text, dreh = 0) => {   // Bodenmarkierung: dünner Rahmen mit Schrift
+    const m = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.85 }), f = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.1, depthWrite: false }), b = 0.05, y = 0.012;
+    const fl = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, z1 - z0), f); fl.rotation.x = -PI / 2; fl.position.set((x0 + x1) / 2, y, (z0 + z1) / 2); fl.userData.noAO = true; g.add(fl);
+    for (const [w, d, x, z] of [[x1 - x0, b, (x0 + x1) / 2, z0], [x1 - x0, b, (x0 + x1) / 2, z1], [b, z1 - z0, x0, (z0 + z1) / 2], [b, z1 - z0, x1, (z0 + z1) / 2]]) { const k = box(w, 0.004, d, m, x, y, z, false); k.userData.noAO = true; g.add(k); }
+    if (text) { const t = flatText(text, { size: 0.2, color: col, weight: 700 }); t.position.set((x0 + x1) / 2, 0.02, (z0 + z1) / 2); t.rotation.y = dreh; g.add(t); }
+  };
+  /* Aufsichtsplatz: Stehpult mit Hocker zwischen zwei Ovalen, Blick zur Tür und in beide Raumhälften */
+  const pult = (l.niedrig || {})['Aufsichtspult'];
+  if (pult) { const [x, z] = mitte(pult);
+    g.add(rbox(0.66, 1.04, 0.4, M(C.orange, { roughness: 0.6 }), x, 0, z, 0.02), box(0.72, 0.03, 0.46, M(C.teak, { roughness: 0.5 }), x, 1.04, z));
+    g.add(cyl(0.17, 0.04, mDark, x + 0.05, 0.66, z + 0.48, 20), cyl(0.02, 0.66, mChrome, x + 0.05, 0, z + 0.48, 8), cyl(0.2, 0.015, mChrome, x + 0.05, 0, z + 0.48, 20));
+    const s = schild('Aufsicht · Info', 0.56, 0.16, '#ffffff', C.tinte); s.position.set(x, 0.86, z - 0.203); s.rotation.y = PI; g.add(s); }
+  feld([13.6, 1.5, 16.7, 4.7], C.lila, 'Programmfläche · 15 Stühle');
+  feld([14.7, 9.45, 16.4, 10.12], C.tinte, 'Kinderwagen · Ranzen');
+  feld([4.3, 0.12, 5.48, 3.0], '#c0392b', 'Gang zur Hoftür frei', PI / 2);
+  /* Fotopunkt vor der Selfie-Koje */
+  const p3 = poseIn(l, 's3'); if (p3) { const a = p3.r * PI / 180, x = p3.x + Math.sin(a) * 2.25, z = p3.z + Math.cos(a) * 2.25;
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.2, 0.26, 28), new THREE.MeshBasicMaterial({ color: C.orange })); ring.rotation.x = -PI / 2; ring.position.set(x, 0.014, z); ring.userData.noAO = true; g.add(ring);
+    const t = flatText('Foto', { size: 0.13, color: C.orange, weight: 700 }); t.position.set(x, 0.02, z); g.add(t); }
+  /* Wölbspiegel an der Lagerecke: die Aufsicht sieht in den Gang zur Hoftür */
+  const sp = new THREE.Mesh(new THREE.SphereGeometry(0.2, 24, 12, 0, PI * 2, 0, 0.9), new THREE.MeshStandardMaterial({ color: '#dfe6ea', metalness: 1, roughness: 0.08 })); sp.position.set(5.62, 2.02, 3.17); sp.rotation.set(PI / 2 + 0.5, 0, -0.7); sp.userData.noAO = true; g.add(sp);
+  return g;
+};

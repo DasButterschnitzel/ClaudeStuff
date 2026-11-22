@@ -26,7 +26,10 @@ Die Lage der Theke ist nach einem Foto aus dem Exposé geschätzt.
 - Mero-System als Raumfachwerk im 75-cm-Raster: Kugelknoten mit 18 Anschlussflächen, Stäbe mit konischen Enden, Farbtafeln, Texte, Fotos, Vitrinen mit Exponaten
 - Wohnzimmer um 1977 in der Ecke an der Natursteinwand: tapezierte Rückwand, Cordsofa, Sessel, Fernseher mit laufender Simulation (Nachrichten, Kinderstunde, Testbild)
 - Dauerhafte Schaufensterfolierung (Skyline-Band, POP-UP, klares Oval) als Textur aus der Vorlage, `src/foil.webp`; von oben blendet sie aus, damit man in den Raum sieht
-- **13 Layouts** zum Umschalten und Vergleichen: A Ausgangslage, B–E aus dem Gestalter-Workflow, F–I radikale Konzepte mit eigenem Stil (Begehbarer Stadtplan, Tag und Nacht, Alles Orange, Baustelle Dreieich), J–M neue Ideen zum Jubiläum (Drei Eichen, Endstation 1977, Geburtstagstafel, Fünf Häuser). F–M bauen Boden, Wände, Licht, Farbwelt und Bühnenelemente um
+- **14 Layouts** zum Umschalten und Vergleichen: ★ Empfehlung, A Ausgangslage, B–E aus dem Gestalter-Workflow, F–I radikale Konzepte mit eigenem Stil (Begehbarer Stadtplan, Tag und Nacht, Alles Orange, Baustelle Dreieich), J–M neue Ideen zum Jubiläum (Drei Eichen, Endstation 1977, Geburtstagstafel, Fünf Häuser). F–M bauen Boden, Wände, Licht, Farbwelt und Bühnenelemente um
+- **★ Empfehlung der Museumsleitung**: das Konzept des Teams, nach drei Fachgutachten (Besucherforschung, Barrierefreiheit und Sicherheit, Vermittlung) überarbeitet und nachgemessen. Zukunft ans Ende des Rundgangs, Statistik neben die Gebietsreform, Wohnzimmer 35 cm schmaler für einen 1,30 m breiten Gang zur Hoftür, Banner an der Stütze, Aufsichtspult, Programmfläche. Die Gutachten zu Betrieb/Technik und Recht/Geld sowie die externe Gegenprüfung sind nicht zustande gekommen; diese Themen stammen aus der Durchsicht der Leitung
+- **Analyse**: simulierte Besucher laufen den Rundgang ab. Heatmap der Laufwege, Heatmap der Sicht, Engstellen, Sichtbarkeit je Insel von der Tür und durch die Schaufenster-Ovale, Vergleich aller Layouts. Rechnet neu, sobald eine Insel verschoben wird
+- **Radar**: 49 Punkte, die in den Protokollen nicht vorkommen (Rettungsweg, Personenzahl, Brandlast, Personalplan, Leihverträge, GEMA, Rückbau, Zeitplan …), mit Zeitpunkt, Aufwand und Herkunft, zum Abhaken
 - Vergleich im Reiter „Layouts“ (Reiter „Layouts“ mit Mini-Grundriss, Rundgang, Stärken und Schwächen); verschobene Inseln werden je Layout gespeichert
 - Außenwände sind massiv und von außen sichtbar; in den Raum sieht man von oben und durch die Schaufenster
 - Weiche Kontaktschatten (Umgebungsverdeckung) auf Geräten mit Maus; Schatten werden nur neu gerechnet, wenn sich etwas bewegt
@@ -47,8 +50,11 @@ src/js/03b-styles.js     Stile und Bühnenelemente der radikalen Konzepte
 src/radikal.json         Konzepte F–I mit Stellungen, Stil und festen Einbauten
 src/ideen.json           Ideen J–M mit Stellungen, Stil und festen Einbauten
 src/layouts.json         Entwürfe B–E aus dem Gestalter-Workflow (Entwurf + unabhängige Prüfung)
+src/js/00-analyse.js     Besuchersimulation: Laufwege, Sicht, Kennzahlen (läuft im Browser und in Node)
+src/empfehlung.json      Empfehlung: Stellung, Begründungen, Entscheidungen, Teamfragen, Radar-Liste
 src/foil.webp            Schaufensterfolierung als Textur
 tools/layout-check.mjs   Prüfwerkzeug: Überschneidungen, freie Türen, Erreichbarkeit mit 90 cm und 1,20 m
+tools/layout-score.mjs   Prüfung plus Kennzahlen aus der Besuchersimulation für ein Layout
 build.mjs                baut dist/index.html (eine Datei) + dist/preview.html
 ```
 

@@ -152,11 +152,23 @@ table.cmp .bad { color: var(--open); } table.cmp .good { color: var(--ok); }
 .ent { border-left: 3px solid var(--orange); padding-left: 10px; }
 .ent b { display: block; font-size: 13px; }
 .ent span { font-size: 13px; color: var(--ink-2); }
+.ent + .ent { margin-top: 9px; }
+.ent.no { border-left-color: var(--line); }
+.blk.empf { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+.blk.empf .row { margin: 10px 0 2px; }
+.blk.empf details.more { margin-top: 10px; }
+.blk.empf details.more > * + * { margin-top: 8px; }
+.sub-h { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-2); margin: 14px 0 8px; }
+ol.num { list-style: decimal; padding-left: 20px; }
+ol.num li { font-size: 13px; margin-top: 5px; }
+.pill.src { background: transparent; border: 1px solid var(--line); color: var(--ink-2); }
+table.cmp td.good b { color: var(--ok); }
 #hint { bottom: 62px; left: var(--gl); max-width: min(360px, calc(100% - 32px)); color: var(--ink-2); }
 #nogl { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; padding: 24px; z-index: 50; background: var(--stage-b); }
 
 .panel { display: grid; grid-template-rows: auto minmax(0, 1fr); min-height: 0; min-width: 0; background: var(--panel); border-left: 1px solid var(--line); }
 .tabs { display: flex; gap: 2px; padding: 8px 12px 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
+@media (min-width: 901px) { .tabs { flex-wrap: wrap; overflow: visible; } .tabs button { padding: 7px 9px 8px; } }
 .tabs button { border: 0; background: transparent; padding: 8px 10px 10px; font-weight: 600; font-size: 13px; color: var(--ink-2); cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; }
 .tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--orange); }
 .tabs .cnt { font-family: var(--font-mono); font-size: 11px; font-weight: 500; background: var(--open-bg); color: var(--open); padding: 1px 6px; border-radius: 99px; margin-left: 4px; }
@@ -1680,7 +1692,598 @@ const IDEEN_DATA = [
   }
  }
 ];
-const EMPF_DATA = null;
+const EMPF_DATA = {
+ "name": "Empfehlung der Museumsleitung",
+ "leitidee": "Das Konzept des Teams bleibt: acht Inseln, Wohnzimmer in der Ecke, orange Wand am Eingang. Geändert wird nur, was Messung und Fachgutachten als Schwäche zeigen. Der Rundgang bekommt einen Anfang und ein Ende, die Wege werden breiter, und der Betrieb bekommt die Plätze, die bisher fehlten.",
+ "rundgang": [
+  "s6",
+  "s4",
+  "s7",
+  "s5",
+  "s3",
+  "s1",
+  "s2",
+  "s8"
+ ],
+ "weg": "Vier Kapitel. Gründung: rechts an der orangen Wand entlang (6). Zahlen und Bilder: an der Rückwand die Statistik (4), daneben die Medienstelen (7). Alltag der 70er: zurück in die Halle zur Litfaß-Säule (5), dann nach links zu Selfie-Koje (3), Wohnzimmer (1) und Mero-System (2). Und morgen: an der Fensterfront zurück zur Lieblingsplatz-Wand (8), von dort sind es wenige Schritte zur Tür.",
+ "stellwandX": 4.15,
+ "buehne": "leitung",
+ "niedrig": {
+  "Aufsichtspult": [
+   11.25,
+   9.0,
+   11.95,
+   9.45
+  ]
+ },
+ "pos": {
+  "s2": {
+   "x": 3.4,
+   "z": 7.5,
+   "r": 0
+  },
+  "s3": {
+   "x": 6.85,
+   "z": 4.15,
+   "r": 0
+  },
+  "s4": {
+   "x": 15.4,
+   "z": 0.5,
+   "r": 0
+  },
+  "s5": {
+   "x": 13.2,
+   "z": 7.4,
+   "r": 0
+  },
+  "s7": {
+   "x": 11.85,
+   "z": 2.1,
+   "r": 90
+  },
+  "s8": {
+   "x": 9.78,
+   "z": 5.85,
+   "r": 0
+  },
+  "fahne": {
+   "x": 16.4,
+   "z": 5.3,
+   "r": 0
+  }
+ },
+ "gruende": {
+  "s1": "Bleibt in der Ecke an der Natursteinwand, wird aber rund 35 cm schmaler: Die Stellwand rückt nach links, der Gang zu Hoftür und Lager wird 1,30 m breit. Aus dem Dreisitzer wird ein kürzeres Sofa.",
+  "s2": "Unverändert vor den beiden linken Ovalen: das beste Schaufenster der linken Raumhälfte, und man kann rundherum gehen. Auf dem Fensterbank-Abschnitt dahinter liegen keine Kissen.",
+  "s3": "Bleibt in der Nische, die zwei echte Wände mitbringt. Neu ist der Fotopunkt am Boden, gut 2 m vor der Koje, damit niemand rückwärts in die Stütze läuft.",
+  "s4": "Neu an der Rückwand, direkt neben der Gebietsreform: erst die Gründung, dann die Zahlen dazu. Sie ist das Blickziel am Ende der orangen Wand und lässt die Tür zu den Nebenräumen frei.",
+  "s5": "30 cm näher zur Raummitte. Rundherum bleibt genug Platz für einen Rollstuhl, und die Sichtachse von der Tür an der Fensterfront entlang nach links bleibt offen.",
+  "s6": "Unverändert an der langen Wand am Eingang. Neu: eine Auftakt-Platte am Anfang, die in einem Satz sagt, was hier gefeiert wird.",
+  "s7": "50 cm näher zur Rückwand und dicht an der Treppenhauswand. Die Engstelle an der Rundstütze verschwindet, die Bildschirme stehen nicht im Gegenlicht, und davor entsteht die Programmfläche.",
+  "s8": "Neu an der Stirnwand des Treppenhauses, als letzte Station vor dem Ausgang. Die Wand ist von der Tür und durch vier Ovale von der Straße zu sehen: Die Karten der Besucher werden zum Schaufensterbild.",
+  "fahne": "Hängt nicht mehr frei im Raum, sondern als schmales Banner an der rechten Rundstütze. Dafür braucht es keine Deckenhaken.",
+  "theke": "Bleibt Infotheke und Materialausgabe. Die Aufsicht bekommt zusätzlich ein Stehpult an der Fensterfront, von dem aus sie Tür und beide Raumhälften sieht."
+ },
+ "staerken": [
+  "Der Rundgang ist knapp 10 m kürzer und hat keine Engstelle unter 1,20 m mehr.",
+  "Hoftür und Lager sind mit 1,20 m Durchgang erreichbar.",
+  "Die Zukunftsinsel ist Schlusspunkt statt zweite Station und durch vier Ovale von der Straße zu sehen.",
+  "Vor den Medienstelen bleibt eine Fläche für Schulklasse, Erzählcafé und Pubquiz frei.",
+  "Die Aufsicht sieht den Eingang."
+ ],
+ "schwaechen": [
+  "Die Statistik ist von der Straße aus nicht mehr zu sehen.",
+  "Wohnzimmer, Selfie-Station und Mero-System kommen weiterhin erst nach 15 bis 19 m in den Blick.",
+  "Der Zugang zum Wohnzimmer zwischen Theke und Natursteinwand bleibt rund 1,0 m breit. Die Lage der Theke ist geschätzt und muss vor Ort gemessen werden."
+ ],
+ "freieFlaeche": 86.9,
+ "warnungen": [
+  "Wohnzimmer: nur über einen Durchgang unter 1,20 m erreichbar (Rollstuhl, Kinderwagen). Lösen lässt sich das nur an der Theke."
+ ],
+ "pruefung": "Drei Fachgutachten lagen vor: Besucherforschung, Barrierefreiheit und Sicherheit, Vermittlung. Jedes brachte eine eigene, nachgemessene Stellung mit. Die Empfehlung kombiniert sie und wurde mit dem Messwerkzeug erneut durchgerechnet (rund 500 Varianten für Säule, Statistik, Stelen und Banner).",
+ "entscheidungen": [
+  {
+   "thema": "Zukunft ans Ende, Statistik zur Gebietsreform",
+   "entscheidung": "Insel 8 und Insel 4 tauschen die Plätze.",
+   "grund": "Zwei Gutachten verlangen die Zukunft als Schluss. Im ersten Vorschlag war sie zweite Station und stand im Betrachtungsraum der Stelen."
+  },
+  {
+   "thema": "Rundgang in vier Kapiteln",
+   "entscheidung": "Gründung (6) · Zahlen und Bilder (4, 7) · Alltag der 70er (5, 3, 1, 2) · und morgen? (8).",
+   "grund": "Bisher ergab sich die Reihenfolge zufällig. Die vier Überschriften tragen Rallye, Führung und Pubquiz."
+  },
+  {
+   "thema": "Wohnzimmer 35 cm schmaler",
+   "entscheidung": "Stellwand bei 4,15 m statt 4,52 m.",
+   "grund": "Der Gang zur Hoftür war rund 1,0 m breit. Solange nicht geklärt ist, ob sie Rettungsweg ist, wird er wie einer behandelt."
+  },
+  {
+   "thema": "Fahne wird Banner an der Stütze",
+   "entscheidung": "Kein frei hängendes Tuch im Eingangsbereich.",
+   "grund": "Bei 2,50 m Raumhöhe hängt es in Kopfhöhe im Fluchtweg, verdeckt die Slide-Show und braucht Deckenhaken, die vielleicht nicht erlaubt sind."
+  },
+  {
+   "thema": "Stelen zur Rückwand, davor Programmfläche",
+   "entscheidung": "Medienstelen 50 cm nach hinten, rund 10 m² davor bleiben frei.",
+   "grund": "Die Engstelle von 1,13 m an der Rundstütze verschwindet. Die Bank wird zur ersten Reihe, dahinter passen 15 Stühle."
+  },
+  {
+   "thema": "Zweiter Aufsichtsplatz",
+   "entscheidung": "Stehpult mit Hocker an der Fensterfront zwischen zwei Ovalen.",
+   "grund": "Von der Theke aus sieht man weder die Tür noch die rechte Raumhälfte. Alle drei Gutachten nennen das unabhängig voneinander."
+  },
+  {
+   "thema": "Ton nur auf Knopfdruck",
+   "entscheidung": "Slide-Show stumm mit Untertiteln, Fernsehton über Taster oder Hörer.",
+   "grund": "Alle drei Gutachten warnen vor Dauerschleifen mit Ton in einem niedrigen Raum mit zwei Glasfronten."
+  },
+  {
+   "thema": "Fernsehprogramm selbst produzieren",
+   "entscheidung": "Schleife aus Dreieicher Privatfotos, Dias und kurzen Zeitzeugen-Aussagen als Plan A.",
+   "grund": "Die Rechte liegen dann bei der Stadt, die Anfrage bei den Sendern wird zum Zusatz. Der Aufruf nach Material ist zugleich Werbung."
+  }
+ ],
+ "verworfen": [
+  {
+   "thema": "Zukunftsinsel frei stehend neben dem Ausgang",
+   "grund": "Vorschlag aus der Vermittlung, im Messwert sogar leicht vorn (90 statt 87). Verworfen, weil eine 2,60 m breite Wand frei neben dem Fluchtweg stünde, gegen Kippen gesichert werden müsste und den Eingang zu einem Korridor mit Text auf beiden Seiten macht."
+  },
+  {
+   "thema": "Mero-System quer stellen",
+   "grund": "Wäre von der Tür aus zu sehen, kostet aber den Rundlauf: 20 Prozent des Wegs würden doppelt gegangen."
+  },
+  {
+   "thema": "Theke versetzen oder kürzen",
+   "grund": "Würde den Zugang zum Wohnzimmer auf 1,20 m bringen. Die Lage der Theke ist aber nur nach einem Foto geschätzt und ob sie beweglich ist, weiß niemand. Erst messen."
+  },
+  {
+   "thema": "Nur die kleinste Korrektur",
+   "grund": "Banner, Stelen und Zukunftsinsel je ein Stück verschieben bringt fast dieselben Messwerte, lässt die Zukunft aber als zweite Station stehen. Der Inhalt geht vor."
+  }
+ ],
+ "teamfragen": [
+  "Sind Laufzeit und Öffnungszeiten schon festgelegt? Davon hängen Personal, Schulangebot und Zeitplan ab.",
+  "Ist die Hoftür ein Notausgang, und wie viele Personen dürfen gleichzeitig im Raum sein?",
+  "Ist die Theke fest eingebaut? Wie breit ist der Durchgang zwischen Theke und Natursteinwand wirklich?",
+  "Darf in Wände und Decke gebohrt werden? Wenn nein: Wie hängen die runden Platten?",
+  "Welchen Durchmesser hat die Litfaß-Säule, und kommt sie in Segmenten?",
+  "Wer bezahlt das Zurückstreichen der orangen Wand und das Entfernen der Tapete?",
+  "Gibt es ein Budget und eine Kostenstelle? Wer gibt Bestellungen frei?",
+  "Soll die Ausstellung danach durch die Stadtteile wandern? Dann müssen die Tafeln transportfähig gebaut werden.",
+  "Dürfen Besucher das WC in den Nebenräumen benutzen?",
+  "Gibt es für 1970 Zahlen je Gemeinde, und zeigt die Ausstellung auch Gegenstimmen zur Zusammenlegung?"
+ ],
+ "gutachten": [
+  {
+   "rolle": "Besucherforschung und Wegführung",
+   "kern": "Der geplante Rundgang ist nicht der, den Besucher gehen. Fahne an die Stütze, Statistik und Zukunft tauschen, Mitte der rechten Halle frei lassen."
+  },
+  {
+   "rolle": "Barrierefreiheit, Sicherheit und Brandschutz",
+   "kern": "Hoftür als Rettungsweg ungeklärt und faktisch verstellt, keine Personenobergrenze, Brandlasten über Sponsoring. Wohnzimmer schmaler, Stelen nach hinten."
+  },
+  {
+   "rolle": "Bildung und Vermittlung",
+   "kern": "Kein Einstieg, kein Schluss, sechs von acht Inseln nur zum Lesen. Vier Kapitel, Zukunft ans Ende, Programmfläche vor den Stelen."
+  },
+  {
+   "rolle": "Museumsleitung (eigene Durchsicht)",
+   "kern": "Betrieb, Technik, Recht, Leihverkehr, Geld und Kommunikation: Für diese Themen kam kein eigenes Gutachten zustande. Die Punkte dazu stammen aus der Durchsicht der Leitung."
+  }
+ ],
+ "radar": [
+  {
+   "titel": "Hoftür: Ist sie der zweite Rettungsweg?",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Niemand hat bisher geklärt, ob die Hoftür Notausgang ist, wie sie aufschlägt und ob der Hof stufenlos zur Straße führt. Im ersten Vorschlag war der Gang dorthin knapp einen Meter breit. Ortstermin mit Gebäudemanagement und Brandschutzdienststelle ansetzen, bevor Möbel bestellt werden."
+  },
+  {
+   "titel": "Höchstzahl an Personen festlegen",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Für Eröffnung, Pubquiz und Schulklassen gibt es keine Obergrenze. Bei der Bauaufsicht die genehmigte Nutzung und die zulässige Personenzahl erfragen. Bis dahin mit einem eigenen Planwert arbeiten, Vorschlag 40 Personen gleichzeitig, und ihn in den Dienstplan schreiben."
+  },
+  {
+   "titel": "Brandlast: Nachweise für Stoffe, Sofa, Tapete, Forex",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Über Sponsoring und Leihgaben kommen Polster, Kissen, Fahne und Tapete ungeprüft in den Raum. In jede Anfrage einen Satz aufnehmen: schwer entflammbar (B1) mit Nachweis. Für Forex und Folien das Datenblatt anfordern."
+  },
+  {
+   "titel": "Feuerlöscher, Notlicht, Sicherungskasten, Steckdosen einmessen",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Die Bestandstechnik fehlt in jedem Plan. Statistik, Stelen, Zukunftswand und alles über 2 m Höhe können Rettungszeichen, Löscher oder Schalter verdecken. Beim Ortstermin fotografieren und in dieses Modell eintragen lassen."
+  },
+  {
+   "titel": "Kippsicherheit, wenn nicht gebohrt werden darf",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Die Frage nach dem Bohren betrifft nicht nur die Fahne. Litfaß-Säule, Stelen, Schrankwand, Stehlampe und Monitor müssen gegen Umkippen gesichert sein, auch wenn Kinder daran ziehen. Für jedes frei stehende Teil vorab festlegen: Ballast im Sockel, Verbindung untereinander oder Winkel an der Wand."
+  },
+  {
+   "titel": "Fensterbank als Sitzbank vor ungeprüftem Glas",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Kissen auf der 42 cm hohen Bank laden Kinder ein, darauf zu stehen, direkt vor gut 2 m hohen Scheiben. Stempel an den Scheiben suchen (ESG oder VSG) oder beim Vermieter fragen. Ohne Sicherheitsglas die Kissen nur als Sitzplätze für Erwachsene ausweisen oder weglassen."
+  },
+  {
+   "titel": "Elektroprüfung für Leihgaben, ein Schalter für alles",
+   "bereich": "Technik, Licht & Klima",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Private Lampen, Radios und Verlängerungskabel aus den 70ern dürfen in einem städtischen Betrieb nicht ungeprüft ans Netz. Leihgaben stromlos zeigen oder prüfen lassen. Dazu eine schaltbare Leiste oder Zeitschaltuhr, damit abends alles sicher aus ist."
+  },
+  {
+   "titel": "Strom und Kabelwege: Wo sind die Steckdosen?",
+   "bereich": "Technik, Licht & Klima",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Museumsleitung",
+   "warum": "Stelen, Fernseher, Licht für Mero-Vitrinen und Litfaß-Säule brauchen Strom, die Lage der Steckdosen kennt niemand. Kabel quer über Laufwege sind Stolperstellen. Steckdosen einmessen, Kabelbrücken einplanen, Gesamtleistung je Stromkreis prüfen."
+  },
+  {
+   "titel": "Ton: drei Quellen in einem halligen Glasraum",
+   "bereich": "Technik, Licht & Klima",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Fernseher, Slide-Show und Selfie-Station laufen gleichzeitig, der Raum hat zwei Glasfronten, Naturstein und 2,50 m Decke. Die Aufsicht hört acht Stunden dieselbe Schleife. Slide-Show stumm mit Untertiteln, Fernsehton nur auf Knopfdruck oder über einen Hörer am Sofa."
+  },
+  {
+   "titel": "Sonne: Blendung, Hitze, ausbleichende Originale",
+   "bereich": "Technik, Licht & Klima",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Vermittlung",
+   "warum": "Beide Fronten bringen Tageslicht. Originalplakate und handgeschriebene Karten bleichen in acht Wochen aus, Bildschirme spiegeln. An einem sonnigen Tag prüfen, wann die Sonne wo steht. Plakate scannen und als Reproduktion zeigen, Originale nur im hinteren Raumteil."
+  },
+  {
+   "titel": "Technik-Routine: Wer startet morgens die Bildschirme?",
+   "bereich": "Technik, Licht & Klima",
+   "wann": "zur Eröffnung",
+   "aufwand": "klein",
+   "quelle": "Museumsleitung",
+   "warum": "Schleifen sollten ohne Internet vom Stick laufen und nach einem Stromausfall von selbst starten. Eine Seite Anleitung an die Theke: einschalten, ausschalten, was tun bei schwarzem Bild, wen anrufen. Dazu ein Schild „Dieser Bildschirm macht Pause“."
+  },
+  {
+   "titel": "Eingang: Schwelle, Türgewicht, Schmutzmatte",
+   "bereich": "Barrierefreiheit",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Ob es an der Glastür eine Stufe gibt und wie schwer die Flügel gehen, ist nicht erfasst. Bei Regen wird der Boden hinter der Tür rutschig. Messen und fotografieren, bei einer Schwelle über 2 cm eine Rampe besorgen, Schmutzfangmatte einplanen."
+  },
+  {
+   "titel": "Sitzplätze mit Lehne für Ältere",
+   "bereich": "Barrierefreiheit",
+   "wann": "zur Eröffnung",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Wer 1977 dabei war, ist heute über 65. Die Fensterbank ist niedrig und ohne Lehne, das Sofa liegt hinter einem schmalen Zugang. Drei bis vier Stühle mit Armlehne: bei den Stelen, an der Litfaß-Säule und vor der orangen Wand."
+  },
+  {
+   "titel": "Lesbarkeit: ein Regelblatt für alle, die Texte schreiben",
+   "bereich": "Barrierefreiheit",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Mehrere Gruppen schreiben Texte, runde Platten fassen wenig. Jetzt festlegen: Textmitte zwischen 1,10 und 1,60 m, Fließtext mindestens 30 Punkt, höchstens 45 bis 60 Wörter je Platte, dunkle Schrift auf hellem Grund. Darüber und darunter hängen nur Bilder und Jahreszahlen."
+  },
+  {
+   "titel": "Großdruck-Heft und Kurzfassung in weiteren Sprachen",
+   "bereich": "Barrierefreiheit",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Vermittlung",
+   "warum": "Kurze Texte im Gegenlicht sind für ältere Besucher schwer zu lesen, Zugezogene mit wenig Deutsch finden keinen Einstieg. Alle Tafeltexte als Heft zum Ausleihen, dazu eine Seite Kurzfassung in den zwei oder drei häufigsten Sprachen der Stadt."
+  },
+  {
+   "titel": "Aufsicht an der Theke sieht die Tür nicht",
+   "bereich": "Betrieb & Personal",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Die Theke liegt hinter dem Treppenhaus, 14 m vom Eingang. Niemand wird begrüßt, Leihgaben im rechten Raumteil stehen unbeobachtet. Zweiten Platz einrichten: Stehpult mit Hocker an der Fensterfront, im Modell eingezeichnet. Die Theke bleibt Ablage und Materialausgabe."
+  },
+  {
+   "titel": "Personalplan: Wie viele Aufsichtsstunden sind das?",
+   "bereich": "Betrieb & Personal",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Museumsleitung",
+   "warum": "Öffnungszeiten und Laufzeit stehen in keinem Protokoll, davon hängt alles ab. Rechnung aufmachen: Wochen mal Öffnungstage mal Stunden, bei Veranstaltungen doppelt besetzt. Klären, wer das leistet (Verwaltung, Ehrenamt, Vereine) und wie Ehrenamtliche versichert und eingewiesen sind."
+  },
+  {
+   "titel": "Allein im Dienst: Notfall, Pause, Räumung",
+   "bereich": "Betrieb & Personal",
+   "wann": "zur Eröffnung",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Wer allein Aufsicht hat, kann weder zum WC noch einen Notfall versorgen und gleichzeitig räumen. Eine Seite Dienstanweisung: Notruf mit Adresse, Standort von Verbandskasten und Löscher, wer als zweite Person erreichbar ist, wie die Tür in der Pause gesichert wird."
+  },
+  {
+   "titel": "Abstellplatz für Kinderwagen, Rollatoren, Ranzen, nasse Jacken",
+   "bereich": "Betrieb & Personal",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Ohne ausgewiesene Fläche stehen sie in der Eingangszone oder im Gang zur Hoftür, also in den Fluchtwegen. Fläche links neben der Tür markieren (im Modell eingezeichnet), Hakenleiste und Schirmständer dazu, dort keine Sitzkissen."
+  },
+  {
+   "titel": "WC: Dürfen Besucher es benutzen?",
+   "bereich": "Betrieb & Personal",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Die Tür zu den Nebenräumen liegt am Ende der orangen Wand und sieht aus wie ein Teil der Ausstellung. Klären, ob das WC für Besucher offen und stufenlos erreichbar ist. Je nach Antwort beschildern oder auf das nächste öffentliche WC verweisen."
+  },
+  {
+   "titel": "Perücken und Kostüme: Hygiene und Haltbarkeit",
+   "bereich": "Betrieb & Personal",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Vermittlung",
+   "warum": "Geteilte Perücken sind bei Schulklassen ein Läuse- und Beschwerdethema und nach zwei Wochen verfilzt. Besser Hüte, Brillen, Westen und Halterequisiten, abwischbar oder waschbar, in doppeltem Satz mit festem Waschtag."
+  },
+  {
+   "titel": "Reinigung, Müll, Verbrauchsmaterial",
+   "bereich": "Betrieb & Personal",
+   "wann": "zur Eröffnung",
+   "aufwand": "klein",
+   "quelle": "Museumsleitung",
+   "warum": "Glasfronten voller Fingerabdrücke, nasser Boden bei Regen, volle Pinnwand, leere Stiftebecher. Festlegen, wer wöchentlich putzt, wer täglich Karten, Stifte und Rallyebögen auffüllt und wo Nachschub lagert."
+  },
+  {
+   "titel": "Besucher zählen und in der ersten Woche beobachten",
+   "bereich": "Betrieb & Personal",
+   "wann": "zur Eröffnung",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Sponsoren und Magistrat fragen später nach Zahlen, rückwirkend gibt es keine. Handzähler oder Strichliste am Eingang. In der ersten Woche zehn Besucher beobachten: Wohin gehen sie zuerst, wo bleiben sie stehen? Danach nachjustieren und mit den Heatmaps hier vergleichen."
+  },
+  {
+   "titel": "Schlüssel, Schließdienst, Schaufenster bei Nacht",
+   "bereich": "Betrieb & Personal",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Museumsleitung",
+   "warum": "Leihgaben stehen wochenlang hinter Glas an der Straße. Klären: Wer schließt auf und ab, gibt es eine Alarmanlage, was verlangt die Versicherung? Wertvolles nicht in die Ovale stellen. Schaufensterlicht per Zeitschaltuhr bis etwa 22 Uhr, das ist zugleich die beste Werbung."
+  },
+  {
+   "titel": "Leihverträge, Zustandsprotokolle, Versicherung",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Museumsleitung",
+   "warum": "Einrichtung, Plakate, Fotos und Exponate kommen von Privatleuten, Bürgerhaus und Sponsoren. Für jedes Stück einen einfachen Leihschein mit Foto, Wert und Rückgabetermin. Bei der städtischen Versicherung anmelden, vom Abholen bis zur Rückgabe."
+  },
+  {
+   "titel": "Einwilligungen für Zeitzeugen, Privatfotos und Besucherfotos",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Vermittlung",
+   "warum": "Die Rechtefrage ist bisher nur für Fernsehbilder und ein Motiv gestellt. Für Zeitzeugen-Aufnahmen, eingereichte Familienfotos, abgebildete Personen und Fotos von Schulklassen braucht es eine einseitige Einwilligung. An der Selfie-Station ein Hinweis, was mit Bildern passiert, die die Stadt selbst veröffentlicht."
+  },
+  {
+   "titel": "Musik der 70er: GEMA anmelden",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Museumsleitung",
+   "warum": "Läuft im Wohnzimmer, bei der Eröffnung oder beim Pubquiz Musik, ist das eine öffentliche Wiedergabe. Vorher klären, ob die Stadt einen Rahmenvertrag hat, oder die Nutzung anmelden. Alternative: lizenzfreie Musik im Stil der Zeit."
+  },
+  {
+   "titel": "Nutzungsrechte für Fotos und Plakate schriftlich",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Museumsleitung",
+   "warum": "Für die Bilder des Fotografen und für Reproduktionen alter Plakate braucht die Stadt das Recht, sie auszustellen, in der Presse zu zeigen und ins Netz zu stellen. Kurz schriftlich vereinbaren, bevor die Grafik beginnt, samt Namensnennung."
+  },
+  {
+   "titel": "Sponsoring: Vereinbarung, Gegenleistung, Vergaberegeln",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Museumsleitung",
+   "warum": "Möbelhaus und Malerfirmen sollen sponsern. Die Kämmerei fragen: Wie wird das vereinbart und verbucht, welche Gegenleistung (Logo, Nennung) ist zulässig, ab welchem Wert braucht ein Auftrag Vergleichsangebote? Eine Sponsorentafel am Eingang einplanen."
+  },
+  {
+   "titel": "Kostenplan mit Reserve und einer verantwortlichen Person",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Museumsleitung",
+   "warum": "In den Protokollen steht kein Budget. Druck, Folien, Forex, Kissen, Requisiten, Technik, Reinigung, Versicherung und Rückbau zusammenzählen, 15 Prozent Reserve dazu. Festlegen, wer Bestellungen freigibt und über welche Kostenstelle."
+  },
+  {
+   "titel": "Rückbau: Wer streicht die orange Wand zurück?",
+   "bereich": "Aufbau, Abbau & Logistik",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Museumsleitung",
+   "warum": "Streichen und Tapezieren werden gerade erst erfragt. Zur Erlaubnis gehört die Frage, in welchem Zustand der Raum zurückgegeben wird und wer das Zurückstreichen und das Entfernen der Tapete bezahlt. Gleich mit klären, sonst frisst der Rückbau die Reserve."
+  },
+  {
+   "titel": "Litfaß-Säule: passt sie durch die Tür und unter die Decke?",
+   "bereich": "Aufbau, Abbau & Logistik",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Ein 2,40 m hoher Zylinder mit 1,0 bis 1,2 m Durchmesser lässt sich unter einer 2,50 m hohen Decke nicht aufrichten und passt womöglich nicht durch einen Türflügel. Beim Hersteller jetzt nach Bauweise in Segmenten fragen und den Durchmesser festlegen, erst dann die Zahl der Plakate nennen."
+  },
+  {
+   "titel": "Runde Platten auf frischer Farbe: Klebeband hält nicht",
+   "bereich": "Aufbau, Abbau & Logistik",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Montageband löst sich auf frisch gestrichener, besonnter Wand nach Wochen. Platten mit 60 cm Durchmesser fallen dann aus 2 m Höhe. Mit dem Vermieter klären, ob geschraubt werden darf, sonst eine Schiene oder eine vorgesetzte Platte planen und ein Muster vier Wochen testen."
+  },
+  {
+   "titel": "Zeitplan rückwärts von der Eröffnung",
+   "bereich": "Aufbau, Abbau & Logistik",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Museumsleitung",
+   "warum": "Bisher gibt es Einzeltermine, keinen Gesamtplan. Druck von Forex und Folien braucht zwei bis drei Wochen, davor Korrektur und Freigabe, davor Texte und Bildrechte. Vom Eröffnungstag rückwärts rechnen und für jede Insel einen Redaktionsschluss setzen. Der Titel blockiert Tür, Banner und Flyer."
+  },
+  {
+   "titel": "Abbau, Rückgabe und Nachnutzung planen",
+   "bereich": "Aufbau, Abbau & Logistik",
+   "wann": "zum Abbau",
+   "aufwand": "mittel",
+   "quelle": "Museumsleitung",
+   "warum": "Was passiert nach der Laufzeit? Leihgaben mit Protokoll zurückgeben, Forex getrennt entsorgen. Besser: Tafeln so bauen, dass sie danach ins Rathaus, in Schulen oder die Bürgerhäuser der fünf Stadtteile wandern können. Vor dem Abbau alles fotografieren und ans Stadtarchiv geben."
+  },
+  {
+   "titel": "Kein Auftakt: In zehn Sekunden muss klar sein, worum es geht",
+   "bereich": "Inhalt & Gestaltung",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Wer hereinkommt, sieht eine orange Wand mit vielen Kreisen, aber keinen Satz, der erklärt, was hier gefeiert wird. Eine Auftakt-Platte in anderer Farbe am Anfang der Wand: Titel und ein Satz zum 1. Januar 1977. Titel, Laufzeit, Öffnungszeiten und „Eintritt frei“ als Folie an die Glastür."
+  },
+  {
+   "titel": "Alle fünf Stadtteile zählen: Wer kommt wie oft vor?",
+   "bereich": "Inhalt & Gestaltung",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Vermittlung",
+   "warum": "Die Ausstellung steht in Sprendlingen, die Plakate kommen aus einem Bürgerhaus, die Fotos von einem Fotografen. Das Material kippt leicht zu einem Stadtteil. Vor der Druckfreigabe eine Strichliste über alle Inseln führen und Lücken gezielt füllen."
+  },
+  {
+   "titel": "Umgang mit Streit: War die Zusammenlegung umstritten?",
+   "bereich": "Inhalt & Gestaltung",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Museumsleitung",
+   "warum": "Gebietsreformen wurden vielerorts nicht nur gefeiert. Mit dem Stadtarchiv klären, wie es in den fünf Orten war, und entscheiden, ob Gegenstimmen gezeigt werden. Eine städtische Ausstellung gewinnt, wenn sie das selbst anspricht, statt im Gästebuch daran erinnert zu werden."
+  },
+  {
+   "titel": "Faktencheck und Korrektorat durch eine Person",
+   "bereich": "Inhalt & Gestaltung",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Museumsleitung",
+   "warum": "Viele Hände schreiben, niemand liest alles. Eine Person prüft Jahreszahlen, Namen und Zahlen gegen die Quellen des Stadtarchivs, eine zweite liest Korrektur. Erst danach geht etwas in den Druck. Ein falsches Datum auf Forex bleibt acht Wochen hängen."
+  },
+  {
+   "titel": "Statistik: Gibt es die Zahlen von 1970 überhaupt je Ort?",
+   "bereich": "Inhalt & Gestaltung",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Vermittlung",
+   "warum": "Die Stadt gab es 1970 noch nicht, gebraucht werden Zahlen der fünf damaligen Gemeinden. Bei Stadtarchiv und Statistischem Landesamt anfragen. Sechs Würfel mit Fragen, die man schätzen kann, reichen. Die Quelle klein dazuschreiben."
+  },
+  {
+   "titel": "Pro Insel eine Handlung und eine Frage",
+   "bereich": "Vermittlung & Programm",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Vermittlung",
+   "warum": "Mitmachen ist als Leitlinie beschlossen, an sechs von acht Inseln kann man bisher nur lesen oder schauen. Für jede Insel eine einfache Handlung festlegen: klappen, drehen, blättern, schätzen, kleben. Als einseitige Tabelle fürs Team."
+  },
+  {
+   "titel": "Schulangebot muss früh bei den Schulen liegen",
+   "bereich": "Vermittlung & Programm",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Vermittlung",
+   "warum": "Ausflugstage sind Monate im Voraus vergeben. Ein einseitiges Angebot mit buchbaren Vormittagen, 60 Minuten, zwei Halbgruppen und einer Buchungsadresse formulieren. Rallyebogen, Pubquiz-Fragen und Führung entstehen aus denselben Tafeltexten."
+  },
+  {
+   "titel": "Pinnwand: Wer pflegt, wertet aus und bewahrt auf?",
+   "bereich": "Vermittlung & Programm",
+   "wann": "im Betrieb",
+   "aufwand": "klein",
+   "quelle": "Vermittlung",
+   "warum": "Die Lieblingsplatz-Wand ist nach dem ersten Wochenende voll und von der Straße zu sehen, samt möglicher Schmierereien. Täglich fotografieren, ausdünnen, Material auffüllen. Karten ohne Namen, mit Stadtteil und Alter. Am Ende geht die Sammlung ans Stadtarchiv."
+  },
+  {
+   "titel": "Scan-Nachmittage: Besucher bringen eigene Fotos mit",
+   "bereich": "Vermittlung & Programm",
+   "wann": "im Betrieb",
+   "aufwand": "mittel",
+   "quelle": "Vermittlung",
+   "warum": "Viele werden Bilder, Plakate und Geschichten aus den 70ern mitbringen wollen. Ohne Annahmeweg schickt die Aufsicht sie weg. Zwei oder drei feste Nachmittage ansetzen: scannen, sofort zurückgeben, Einwilligung unterschreiben lassen."
+  },
+  {
+   "titel": "Gruppen: Wo sitzen Schulklasse, Erzählcafé und Pubquiz?",
+   "bereich": "Vermittlung & Programm",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Vermittlung",
+   "warum": "Für 20 bis 25 Personen gab es im ersten Vorschlag keinen Platz. In der Empfehlung bleibt die Fläche vor den Medienstelen frei, 15 bis 20 Stapelstühle lagern im Nebenraum. Stühle leihen und die Höchstzahl je Veranstaltung festlegen."
+  },
+  {
+   "titel": "Die linke Raumhälfte ist von der Tür aus unsichtbar",
+   "bereich": "Kommunikation & Sichtbarkeit",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Wohnzimmer, Selfie-Station und Mero-System sind die stärksten Inseln und kommen laut Messung erst nach 15 bis 19 m Weg in den Blick. Abhilfe ohne Umbau: Sichtachse an der Fensterfront frei halten, ein Streifen derselben 70er-Tapete als Vorbote an der Treppenhauswand, ein Pfeil auf dem Banner."
+  },
+  {
+   "titel": "Jedes Oval ein beleuchtetes Schaufensterbild",
+   "bereich": "Kommunikation & Sichtbarkeit",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Von der Straße sieht man nur durch sechs Ovale, abends sind sie schwarze Löcher. Jedem Oval ein Motiv zuweisen und anstrahlen: Litfaß-Säule, Lieblingsplatz-Wand, Mero-Vitrinen, Wohnzimmerlampe. Kein Aufsteller und keine Kissenstapel in diese Blickachsen."
+  },
+  {
+   "titel": "Öffentliche Nummern in Gehreihenfolge",
+   "bereich": "Kommunikation & Sichtbarkeit",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Die Nummern 1 bis 8 sind Arbeitsnummern und folgen nicht dem Rundgang. Für Besucher neu zählen oder nur Namen und Farben verwenden: 1 Gebietsreform, 2 Statistik, 3 Slide-Show, 4 Litfaß-Säule, 5 Selfie, 6 Wohnzimmer, 7 Mero, 8 Zukunft. Intern bleiben die alten Nummern."
+  },
+  {
+   "titel": "Eröffnung, Einladungsliste, Auffindbarkeit",
+   "bereich": "Kommunikation & Sichtbarkeit",
+   "wann": "zur Eröffnung",
+   "aufwand": "mittel",
+   "quelle": "Museumsleitung",
+   "warum": "Wer wird eingeladen: Zeitzeugen der Gründung, Vereine aller fünf Stadtteile, Sponsoren, Leihgeber, Presse? Dazu das Einfache: Öffnungszeiten an der Tür und auf der städtischen Website, Eintrag in den Kartendiensten, Plakate in allen fünf Stadtteilen, nicht nur in Sprendlingen."
+  }
+ ],
+ "fest_vergleich": [
+  [
+   "Gang zu Hoftür und Lager",
+   "rund 1,0 m",
+   "1,30 m"
+  ],
+  [
+   "Zukunftsinsel von der Straße",
+   "durch kein Oval",
+   "durch 4 Ovale"
+  ],
+  [
+   "Platz für eine Gruppe",
+   "keiner",
+   "rund 10 m² vor den Stelen"
+  ]
+ ]
+};
 // ---- 00-analyse.js ----
 /* =====================================================================
    ANALYSE: Besucherfluss und Sicht. Reine Rechenfunktionen ohne Browser,
@@ -1731,8 +2334,10 @@ export function analyse(layout, opt = {}) {
       if (lx >= x0 - pad && lx <= x1 + pad && lz >= z0 - pad && lz <= z1 + pad) g[j * W + i] = 1;
     }
   };
-  for (const [, r, w, d] of A_FEST) { if (w) fillRect(wand, r); if (d) fillRect(dicht, r); }
+  const sw = layout.stellwandX;   // Wohnzimmer schmaler: Stellwand weiter links
+  for (const [n, r0, w, d] of A_FEST) { const r = !sw ? r0 : n === 'Wohnzimmer' ? [0.05, 0.02, sw - 0.07, 2.92] : n === 'Stellwand am Wohnzimmer' ? [sw - 0.06, 0.1, sw + 0.06, 2.3] : r0; if (w) fillRect(wand, r); if (d) fillRect(dicht, r); }
   for (const r of Object.values(layout.fest || {})) { fillRect(wand, r); fillRect(dicht, r); }
+  for (const r of Object.values(layout.niedrig || {})) fillRect(wand, r);   // niedrige Einbauten: Weg versperrt, Sicht frei
   for (const [id, it] of Object.entries(A_ITEMS)) { const p = pos[id]; if (!p) continue; fillRot(wand, p, it.rect); for (const r of it.sicht) fillRot(dicht, p, r, 0.03); }
 
   /* Abstand zur nächsten Kante (für Engstellen und angenehme Wegführung) */
@@ -2310,20 +2915,21 @@ const TV = (() => {
 })();
 
 /* ---- 1 · Wohnzimmer um 1977 (4,4 × 2,9 m): in der Ecke an der Natursteinwand, Tapete an der Rückwand ---- */
+let WZ_DX = 0;   // um so viel ist das Wohnzimmer schmaler als im ersten Vorschlag (Stellwand weiter links)
 function buildWohnzimmer() {
-  const g = new THREE.Group(), sub = (x, z, ry = 0) => { const s = new THREE.Group(); s.position.set(x, 0, z); s.rotation.y = ry; g.add(s); return s; };
+  const dx = WZ_DX, g = new THREE.Group(), sub = (x, z, ry = 0) => { const s = new THREE.Group(); s.position.set(x, 0, z); s.rotation.y = ry; g.add(s); return s; };
   const cord = M('#8a5a33', { roughness: 1 }), cord2 = M('#a06c40', { roughness: 1 }), cordO = M('#c4611c', { roughness: 1 }), teak = M(C.teak, { roughness: 0.5 }), brass = new THREE.MeshStandardMaterial({ color: '#c9a24a', metalness: 0.9, roughness: 0.3 });
   /* Tapete an der Rückwand, um das Glasbaustein-Fenster herum; die Natursteinwand links bleibt, wie sie ist */
   const rueck = M('#eceae6', { roughness: 0.95 });   // von hinten ist die Wand weiß, nicht tapeziert
   const tap = (w, h, x, y) => g.add(box(w, h, 0.02, [rueck, rueck, rueck, rueck, M('#ffffff', { map: repTex(TEX.tapeteA, w / 0.53, h / 0.53) }), rueck], x, y, -1.44, false));
-  tap(1.45, 2.46, -1.475, 0); tap(1.75, 2.46, 1.325, 0); tap(1.2, 1.0, -0.15, 0); tap(1.2, 0.26, -0.15, 2.2);
+  tap(1.45, 2.46, -1.475, 0); tap(1.75 - dx, 2.46, 1.325 - dx / 2, 0); tap(1.2, 1.0, -0.15, 0); tap(1.2, 0.26, -0.15, 2.2);
   /* Vorhänge und Stange */
   const stoff = M('#ffffff', { roughness: 1, map: ctex(64, 64, (c, w) => { ['#b8531a', '#e9861f', '#f3ead7', '#7a3f17'].forEach((col, i) => { c.fillStyle = col; c.fillRect(i * w / 4, 0, w / 4, w); }); }, [3, 1]) });
   g.add(rbox(0.36, 1.55, 0.06, stoff, -0.9, 0.82, -1.38, 0.025), rbox(0.36, 1.55, 0.06, stoff, 0.6, 0.82, -1.38, 0.025));
   const rod = cyl(0.012, 1.95, brass, 0, 0, 0, 8); rod.rotation.z = PI / 2; rod.position.set(-0.15, 2.39, -1.37); g.add(rod);
-  g.add(box(2.7, 0.025, 1.85, M('#ffffff', { map: TEX.teppich, roughness: 1 }), 0.8, 0, -0.05, false));
+  g.add(box(2.7 - dx * 0.4, 0.025, 1.85, M('#ffffff', { map: TEX.teppich, roughness: 1 }), 0.8 - dx * 0.7, 0, -0.05, false));
   /* Sofa, Blick zum Fernseher an der Rückwand, Rücken zur Theke */
-  const so = sub(0.95, 0);
+  const so = sub(0.95 - dx * 0.55, 0); if (dx) so.scale.x = 1 - dx * 0.36;   // schmaler: aus dem Dreisitzer wird ein Zweieinhalbsitzer
   so.add(rbox(2.0, 0.22, 0.86, cord, 0, 0.1, 0.85, 0.06), rbox(2.0, 0.52, 0.24, cord, 0, 0.3, 1.16, 0.09), rbox(0.22, 0.5, 0.86, cord, -1.1, 0.1, 0.85, 0.09), rbox(0.22, 0.5, 0.86, cord, 1.1, 0.1, 0.85, 0.09));
   so.add(rbox(0.97, 0.16, 0.62, cord2, -0.495, 0.3, 0.74, 0.06), rbox(0.97, 0.16, 0.62, cord2, 0.495, 0.3, 0.74, 0.06));
   for (const [x, col, rz] of [[-0.66, C.orange, 0.12], [0.62, C.lila, -0.1], [0.28, C.gelb, 0.06]]) { const p = rbox(0.36, 0.34, 0.13, M(col, { roughness: 1 }), x, 0.46, 0.99, 0.06); p.rotation.set(0.28, 0, rz); so.add(p); }
@@ -2332,12 +2938,12 @@ function buildWohnzimmer() {
   const se = sub(-1.05, 0.3, -0.98);
   se.add(rbox(0.66, 0.2, 0.7, cordO, 0, 0.1, 0, 0.06), rbox(0.8, 0.56, 0.22, cordO, 0, 0.26, 0.36, 0.09), rbox(0.17, 0.42, 0.74, cordO, -0.4, 0.1, 0.02, 0.07), rbox(0.17, 0.42, 0.74, cordO, 0.4, 0.1, 0.02, 0.07), rbox(0.6, 0.14, 0.56, M('#d9772b', { roughness: 1 }), 0, 0.28, -0.04, 0.05));
   /* Couchtisch: Rauchglas auf Chrom */
-  const ct = sub(0.9, -0.12);
+  const ct = sub(0.9 - dx * 0.6, -0.12);
   const top = cyl(0.42, 0.016, new THREE.MeshPhysicalMaterial({ color: '#5a4636', transparent: true, opacity: 0.55, roughness: 0.05 }), 0, 0.36, 0, 40); top.scale.z = 0.62; top.userData.noAO = true; ct.add(top);
   for (const [x, z] of [[-0.26, -0.14], [0.26, -0.14], [-0.26, 0.14], [0.26, 0.14]]) ct.add(cyl(0.012, 0.36, mChrome, x, 0, z, 8));
   ct.add(cyl(0.085, 0.045, M(C.orange, { roughness: 0.3 }), -0.12, 0.376, 0.02, 20, 0.11), box(0.2, 0.012, 0.27, M('#f3ead7'), 0.16, 0.376, -0.02));
   /* Sideboard mit Fernseher: Monitor in bedruckter Forex-Einhausung, das Programm läuft */
-  const tv = sub(1.6, 0);
+  const tv = sub(1.6 - dx, 0);
   tv.add(rbox(1.5, 0.4, 0.42, teak, -0.3, 0.14, -1.18, 0.015), box(0.48, 0.34, 0.01, M('#8d5c33', { roughness: 0.5 }), -0.78, 0.17, -0.966, false), box(0.48, 0.34, 0.01, M('#8d5c33', { roughness: 0.5 }), -0.27, 0.17, -0.966, false));
   for (const x of [-0.95, 0.35]) for (const z of [-1.33, -1.03]) tv.add(cyl(0.022, 0.14, mDark, x, 0, z, 8, 0.014));
   tv.add(rbox(0.76, 0.54, 0.4, M('#6e4a2c', { roughness: 0.45 }), -0.3, 0.54, -1.18, 0.05));
@@ -2860,6 +3466,36 @@ BUEHNE.haeuser = l => {
   return g;
 };
 
+/* =====================================================================
+   EMPFEHLUNG der Museumsleitung: kein neuer Stil, nur das, was im Betrieb fehlt –
+   Aufsichtsplatz, Programmfläche, Abstellfläche, Fotopunkt, freier Gang zur Hoftür.
+   ===================================================================== */
+BUEHNE.leitung = l => {
+  const g = new THREE.Group();
+  const feld = ([x0, z0, x1, z1], col, text, dreh = 0) => {   // Bodenmarkierung: dünner Rahmen mit Schrift
+    const m = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.85 }), f = new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.1, depthWrite: false }), b = 0.05, y = 0.012;
+    const fl = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, z1 - z0), f); fl.rotation.x = -PI / 2; fl.position.set((x0 + x1) / 2, y, (z0 + z1) / 2); fl.userData.noAO = true; g.add(fl);
+    for (const [w, d, x, z] of [[x1 - x0, b, (x0 + x1) / 2, z0], [x1 - x0, b, (x0 + x1) / 2, z1], [b, z1 - z0, x0, (z0 + z1) / 2], [b, z1 - z0, x1, (z0 + z1) / 2]]) { const k = box(w, 0.004, d, m, x, y, z, false); k.userData.noAO = true; g.add(k); }
+    if (text) { const t = flatText(text, { size: 0.2, color: col, weight: 700 }); t.position.set((x0 + x1) / 2, 0.02, (z0 + z1) / 2); t.rotation.y = dreh; g.add(t); }
+  };
+  /* Aufsichtsplatz: Stehpult mit Hocker zwischen zwei Ovalen, Blick zur Tür und in beide Raumhälften */
+  const pult = (l.niedrig || {})['Aufsichtspult'];
+  if (pult) { const [x, z] = mitte(pult);
+    g.add(rbox(0.66, 1.04, 0.4, M(C.orange, { roughness: 0.6 }), x, 0, z, 0.02), box(0.72, 0.03, 0.46, M(C.teak, { roughness: 0.5 }), x, 1.04, z));
+    g.add(cyl(0.17, 0.04, mDark, x + 0.05, 0.66, z + 0.48, 20), cyl(0.02, 0.66, mChrome, x + 0.05, 0, z + 0.48, 8), cyl(0.2, 0.015, mChrome, x + 0.05, 0, z + 0.48, 20));
+    const s = schild('Aufsicht · Info', 0.56, 0.16, '#ffffff', C.tinte); s.position.set(x, 0.86, z - 0.203); s.rotation.y = PI; g.add(s); }
+  feld([13.6, 1.5, 16.7, 4.7], C.lila, 'Programmfläche · 15 Stühle');
+  feld([14.7, 9.45, 16.4, 10.12], C.tinte, 'Kinderwagen · Ranzen');
+  feld([4.3, 0.12, 5.48, 3.0], '#c0392b', 'Gang zur Hoftür frei', PI / 2);
+  /* Fotopunkt vor der Selfie-Koje */
+  const p3 = poseIn(l, 's3'); if (p3) { const a = p3.r * PI / 180, x = p3.x + Math.sin(a) * 2.25, z = p3.z + Math.cos(a) * 2.25;
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.2, 0.26, 28), new THREE.MeshBasicMaterial({ color: C.orange })); ring.rotation.x = -PI / 2; ring.position.set(x, 0.014, z); ring.userData.noAO = true; g.add(ring);
+    const t = flatText('Foto', { size: 0.13, color: C.orange, weight: 700 }); t.position.set(x, 0.02, z); g.add(t); }
+  /* Wölbspiegel an der Lagerecke: die Aufsicht sieht in den Gang zur Hoftür */
+  const sp = new THREE.Mesh(new THREE.SphereGeometry(0.2, 24, 12, 0, PI * 2, 0, 0.9), new THREE.MeshStandardMaterial({ color: '#dfe6ea', metalness: 1, roughness: 0.08 })); sp.position.set(5.62, 2.02, 3.17); sp.rotation.set(PI / 2 + 0.5, 0, -0.7); sp.userData.noAO = true; g.add(sp);
+  return g;
+};
+
 // ---- 04-data.js ----
 /* =====================================================================
    DATEN aus Protokoll 1 (10.11.2026) und Protokoll 2 (17.11.2026)
@@ -2981,8 +3617,8 @@ const LS = 'popup3-plan-v2';
 const DEF_CALC = { litfass: { d: 100, h: 190, gap: 0 }, kreise: 11 };
 const state = { tab: 'ueber', view: 'iso', expo: true, dims: false, people: true, move: false, walk: false, tour: -1, sel: null, filter: 'alle', done: {}, layout: LAYOUTS[0].key, moves: {}, an: 'aus', radarFilter: 'alle', calc: JSON.parse(JSON.stringify(DEF_CALC)), open: new Set() };
 const mergeCalc = c => { state.calc = { kreise: clamp(Number(c.kreise) || DEF_CALC.kreise, 6, 16), litfass: { ...DEF_CALC.litfass, ...(c.litfass || {}) } }; };
-try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s) { state.done = s.done || {}; state.moves = s.moves || {}; if (LAYOUTS.some(l => l.key === s.layout)) state.layout = s.layout; if (s.calc) mergeCalc(s.calc); } } catch (e) { /* ohne Speicher weiter */ }
-const saveLocal = () => { try { localStorage.setItem(LS, JSON.stringify({ done: state.done, moves: state.moves, layout: state.layout, calc: state.calc })); } catch (e) { /* egal */ } };
+try { const s = JSON.parse(localStorage.getItem(LS) || 'null'); if (s) { state.done = s.done || {}; state.moves = s.moves || {}; if (LAYOUTS.some(l => l.key === s.layout) && (s.empf || !LAYOUT_EMPF)) state.layout = s.layout; /* wer die Empfehlung noch nicht kennt, sieht sie einmal zuerst */ if (s.calc) mergeCalc(s.calc); } } catch (e) { /* ohne Speicher weiter */ }
+const saveLocal = () => { try { localStorage.setItem(LS, JSON.stringify({ done: state.done, moves: state.moves, layout: state.layout, calc: state.calc, empf: 1 })); } catch (e) { /* egal */ } };
 
 function litfassParams() {
   const { d, h, gap } = state.calc.litfass, U = PI * d;
@@ -3002,7 +3638,8 @@ const defOf = id => items[id].def;
 const defPose = d => ({ x: d.pos[0], z: d.pos[1], r: d.rot });
 const curLayout = () => LAYOUTS.find(l => l.key === state.layout) || LAYOUTS[0];
 /* Stellung eines Teils in einem Layout: von Hand verschoben > Layout > Ausgangslage */
-const poseIn = (l, id) => (state.moves[l.key] || {})[id] || l.pos[id] || (DEFS[id].optional ? null : defPose(DEFS[id]));
+const wzDx = l => (l.stellwandX ? +(4.52 - l.stellwandX).toFixed(2) : 0);   // Empfehlung: Wohnzimmer schmaler, Gang zur Hoftür breiter
+const poseIn = (l, id) => (state.moves[l.key] || {})[id] || l.pos[id] || (id === 'wand' && l.stellwandX ? { x: l.stellwandX, z: 1.2, r: 90 } : DEFS[id].optional ? null : defPose(DEFS[id]));
 const fullPlan = () => ({ moves: state.moves, calc: state.calc });
 function mount(def) {
   const group = new THREE.Group(); let inner = def.make(); group.add(inner);
@@ -3022,13 +3659,14 @@ function place(id) {
   const p = poseIn(curLayout(), id); group.visible = !!p; if (!p) return;
   group.position.set(p.x, 0, p.z); group.rotation.y = (p.r || 0) * PI / 180;
 }
+WZ_DX = wzDx(curLayout());
 [...ST, ...EXTRA].forEach(mount);
 placeFiguren();
 /* Figuren ausblenden, die im gewählten Layout in einer Insel stünden */
 function placeFiguren() {
   const l = curLayout();
   figuren.children.forEach(f => {
-    const inFest = Object.values(l.fest || {}).some(([x0, z0, x1, z1]) => f.position.x > x0 - 0.3 && f.position.x < x1 + 0.3 && f.position.z > z0 - 0.3 && f.position.z < z1 + 0.3);
+    const inFest = [...Object.values(l.fest || {}), ...Object.values(l.niedrig || {})].some(([x0, z0, x1, z1]) => f.position.x > x0 - 0.3 && f.position.x < x1 + 0.3 && f.position.z > z0 - 0.3 && f.position.z < z1 + 0.3);
     f.visible = !inFest && !Object.keys(RECTS).some(id => { const p = poseIn(l, id); if (!p) return false; const r = RECTS[id], c = Math.cos(p.r * PI / 180), sn = Math.sin(p.r * PI / 180), dx = f.position.x - p.x, dz = f.position.z - p.z, lx = dx * c - dz * sn, lz = dx * sn + dz * c; return lx > r[0] - 0.35 && lx < r[2] + 0.35 && lz > r[1] - 0.35 && lz < r[3] + 0.35; });
   });
 }
@@ -3047,7 +3685,8 @@ function applyStil() {
     expo.remove(kissen); kissen = buildKissen(); expo.add(kissen);
   }
   if (buehne) expo.remove(buehne);
-  buehne = l.stil && BUEHNE[l.stil.buehne] ? BUEHNE[l.stil.buehne](l) : null; if (buehne) expo.add(buehne);
+  const bk = l.stil ? l.stil.buehne : l.buehne; buehne = BUEHNE[bk] ? BUEHNE[bk](l) : null; if (buehne) expo.add(buehne);
+  if (wzDx(l) !== WZ_DX) { WZ_DX = wzDx(l); items.s1.remake(); }
 }
 const applyLayout = () => { applyStil(); Object.keys(items).forEach(place); placeFiguren(); touch(); updateInspect(); analyseNeu(); };
 applyStil();   // falls ein Konzept mit eigenem Stil gemerkt war
@@ -3144,7 +3783,7 @@ function resetAll() {
 }
 function setLayout(key) {
   if (!LAYOUTS.some(l => l.key === key)) return;
-  state.layout = key; saveLocal(); stopTour(); select(null); applyLayout(); renderLayouts(); renderInseln();
+  state.layout = key; saveLocal(); stopTour(); select(null); applyLayout(); renderLayouts(); renderInseln(); renderUeber();
   $('#layout-sel').value = key; if (!state.walk && !state.move) setView(state.view || 'iso');
 }
 function updateInspect() {
@@ -3299,9 +3938,35 @@ function todoRow(t, pre) {
   ].join('');
   return `<div class="todo${isDone(t) ? ' done' : ''}"><input type="checkbox" id="${pre}-${t.id}" data-todo="${t.id}"${isDone(t) ? ' checked' : ''}><div><label for="${pre}-${t.id}">${esc(t.text)}</label><div class="meta">${pills}</div></div></div>`;
 }
+function empfBlock() {
+  const e = LAYOUT_EMPF; if (!e) return '';
+  const a = rechne(LAYOUT_A, false).kennzahlen, n = rechne(e, false).kennzahlen, pz = v => Math.round(v * 100) + ' %';
+  const zl = (t, v, w, gut) => `<tr><td>${esc(t)}</td><td>${esc(v)}</td><td class="${gut ? 'good' : ''}"><b>${esc(w)}</b></td></tr>`;
+  const offen = RADAR.filter(r => !state.done[r.id]), sofort = offen.filter(r => r.wann === 'sofort').length;
+  return `<div class="blk empf"><span class="eyebrow">★ Empfehlung der Museumsleitung</span>
+    <p class="lead">${esc(e.leitidee)}</p>
+    <div class="tw"><table class="cmp"><thead><tr><th></th><th>Erster Vorschlag</th><th>Empfehlung</th></tr></thead><tbody>
+      ${zl('Rundgang ab Tür und zurück', de(a.rundgang_m, 0) + ' m', de(n.rundgang_m, 0) + ' m', n.rundgang_m < a.rundgang_m)}
+      ${zl('Weg, der doppelt gelaufen wird', pz(a.doppelwegAnteil), pz(n.doppelwegAnteil), n.doppelwegAnteil < a.doppelwegAnteil)}
+      ${zl('Engstellen unter 1,20 m auf dem Rundgang', String(a.engstellen.length), String(n.engstellen.length), n.engstellen.length < a.engstellen.length)}
+      ${zl('Inseln, die man von der Tür aus sieht', a.inselnVomEingang + ' von 8', n.inselnVomEingang + ' von 8', n.inselnVomEingang > a.inselnVomEingang)}
+      ${(e.fest_vergleich || []).map(([t, v, w]) => zl(t, v, w, true)).join('')}
+      ${zl('Gesamtwert der Analyse', a.gesamtwert + ' von 100', n.gesamtwert + ' von 100', n.gesamtwert > a.gesamtwert)}
+    </tbody></table></div>
+    <div class="row">${state.layout === e.key ? '<span class="pill ok">wird gezeigt</span>' : `<button type="button" class="btn" data-layout="${e.key}">Empfehlung im Raum zeigen</button>`}<button type="button" class="btn ghost" data-an="lauf">Laufwege</button><button type="button" class="btn ghost" data-an="sicht">Sicht</button></div>
+    <h3 class="sub-h">Was sich ändert und warum</h3>
+    ${e.entscheidungen.map(x => `<div class="ent"><b>${esc(x.thema)}</b><span>${esc(x.entscheidung)} ${esc(x.grund)}</span></div>`).join('')}
+    <details class="more"><summary>Geprüft und nicht übernommen (${e.verworfen.length})</summary>${e.verworfen.map(x => `<div class="ent no"><b>${esc(x.thema)}</b><span>${esc(x.grund)}</span></div>`).join('')}</details>
+    <details class="more"><summary>Fragen ans Team für den 24.11. (${e.teamfragen.length})</summary><ol class="plain num">${e.teamfragen.map(t => `<li>${esc(t)}</li>`).join('')}</ol></details>
+    <details class="more"><summary>Wie die Empfehlung entstanden ist</summary>
+      <p class="sm">Fünf Fachrollen sollten das Konzept unabhängig prüfen, danach die Leitung entscheiden und eine externe Stelle gegenprüfen. Drei Gutachten sind fertig geworden und haben ihre Vorschläge selbst nachgemessen. Die Gutachten zu Betrieb und Technik sowie zu Recht und Geld und die externe Gegenprüfung sind nicht zustande gekommen. Diese Themen stammen aus der Durchsicht der Leitung und sind im Radar so gekennzeichnet.</p>
+      ${e.gutachten.map(x => `<div class="ent"><b>${esc(x.rolle)}</b><span>${esc(x.kern)}</span></div>`).join('')}
+      <p class="sm">${esc(e.pruefung)}</p></details>
+    <div class="row"><button type="button" class="btn ghost" data-jump="radar">Noch nicht auf dem Schirm: ${offen.length} Punkte, ${sofort} davon sofort</button></div></div>`;
+}
 function renderUeber() {
   const s = stats(), lp = litfassParams();
-  $('#tab-ueber').innerHTML = `
+  $('#tab-ueber').innerHTML = empfBlock() + `
   <div class="blk"><span class="eyebrow">Zusammenfassung · Protokoll 1 + 2</span>
     <p class="lead">Im Pop-up-Store entsteht die Ausstellung „50 Jahre Dreieich“ mit <b>acht Themeninseln</b>. Leitlinie: informativ, fröhlich, bunt, niederschwellig, mit Mitmachstationen. Ein Titel steht noch nicht fest.</p></div>
   <div class="tiles">
@@ -3382,7 +4047,7 @@ const heat = (() => {
   return { c, tex, mesh, weg };
 })();
 const RAMPE = { lauf: [[255, 224, 138], [255, 138, 31], [215, 38, 61]], sicht: [[185, 236, 255], [59, 155, 255], [58, 43, 214]] };
-const anLayout = l => { const pos = {}; for (const id of Object.keys(A_ITEMS)) { const p = poseIn(l, id); if (p) pos[id] = p; } return { rundgang: l.rundgang, pos, fest: l.fest }; };
+const anLayout = l => { const pos = {}; for (const id of Object.keys(A_ITEMS)) { const p = poseIn(l, id); if (p) pos[id] = p; } return { rundgang: l.rundgang, pos, fest: l.fest, niedrig: l.niedrig, stellwandX: l.stellwandX }; };
 const anCache = new Map();
 function rechne(l = curLayout(), voll = true) {
   const la = anLayout(l), key = (voll ? 'v' : 'k') + JSON.stringify(la);
@@ -3442,10 +4107,10 @@ function renderRadar() {
   if (!RADAR.length) { el.innerHTML = '<p class="empty">Die Liste entsteht gerade.</p>'; return; }
   const WANN = ['sofort', 'vor dem Aufbau', 'zur Eröffnung', 'im Betrieb', 'zum Abbau'], f = state.radarFilter, chip = (kk, t) => `<button type="button" data-rfilter="${kk}" aria-pressed="${f === kk}">${esc(t)}</button>`;
   const liste = RADAR.filter(r => f === 'alle' || r.wann === f), offen = liste.filter(r => !state.done[r.id]).length, bereiche = [...new Set(liste.map(r => r.bereich))];
-  el.innerHTML = `<div class="blk"><span class="eyebrow">Noch nicht auf dem Schirm</span><p class="lead">${RADAR.length} Punkte, die in den Protokollen nicht vorkommen und der Ausstellung später auf die Füße fallen können. Zusammengetragen von fünf Fachrollen, verdichtet von der Museumsleitung, gegengeprüft.</p></div>
+  el.innerHTML = `<div class="blk"><span class="eyebrow">Noch nicht auf dem Schirm</span><p class="lead">${RADAR.length} Punkte, die in den Protokollen nicht vorkommen und der Ausstellung später auf die Füße fallen können. Sie stammen aus drei Fachgutachten und der Durchsicht der Museumsleitung; bei jedem Punkt steht, woher er kommt.</p></div>
     <div class="filters" role="group" aria-label="Zeitpunkt">${chip('alle', 'Alle')}${WANN.map(w => chip(w, w)).join('')}</div>
     <p class="note">${offen} von ${liste.length} offen. Ein Haken gilt für alle, die diese Seite öffnen.</p>` +
-    bereiche.map(b => `<div class="grp"><h3>${esc(b)}</h3>${liste.filter(r => r.bereich === b).map(r => `<div class="radar${state.done[r.id] ? ' done' : ''}"><input type="checkbox" id="rd-${r.id}" data-todo="${r.id}"${state.done[r.id] ? ' checked' : ''}><div><label for="rd-${r.id}">${esc(r.titel)}</label><p>${esc(r.warum)}</p><div class="meta"><span class="pill ${r.wann === 'sofort' ? 'open' : 'warn'}">${esc(r.wann)}</span><span class="pill">Aufwand ${esc(r.aufwand)}</span></div></div></div>`).join('')}</div>`).join('');
+    bereiche.map(b => `<div class="grp"><h3>${esc(b)}</h3>${liste.filter(r => r.bereich === b).map(r => `<div class="radar${state.done[r.id] ? ' done' : ''}"><input type="checkbox" id="rd-${r.id}" data-todo="${r.id}"${state.done[r.id] ? ' checked' : ''}><div><label for="rd-${r.id}">${esc(r.titel)}</label><p>${esc(r.warum)}</p><div class="meta"><span class="pill ${r.wann === 'sofort' ? 'open' : 'warn'}">${esc(r.wann)}</span><span class="pill">Aufwand ${esc(r.aufwand)}</span>${r.quelle ? `<span class="pill src">${esc(r.quelle)}</span>` : ''}</div></div></div>`).join('')}</div>`).join('');
 }
 
 /* ---------- Layouts ---------- */
@@ -3457,9 +4122,9 @@ function miniPlan(l) {
   const ov = [1.9, 5.9, 9.8, 13.4].map(x => `<line x1="${x - 1.4}" y1="10.75" x2="${x + 1.4}" y2="10.75" class="ov"/>`).join('') + [5.3, 8.8].map(z => `<line x1="-0.55" y1="${z - 1.4}" x2="-0.55" y2="${z + 1.4}" class="ov"/>`).join('');
   return `<svg viewBox="-1 -0.7 21.2 12.6" role="img" aria-label="Grundriss Layout ${esc(l.name)}">
     <path d="M-0.5 0H19.45V9.35H16.55V10.7H-0.5Z" class="rm"/><path d="M5.55 0H11.4V5.2H8.15V3.1H5.55Z" class="blk"/>
-    <rect x="0.05" y="0.02" width="4.4" height="2.9" rx="0.1" fill="${col('s1')}"/><text x="2.25" y="1.8" class="mn">1</text>
+    <rect x="0.05" y="0.02" width="${f2(4.4 - wzDx(l))}" height="2.9" rx="0.1" fill="${col('s1')}"/><text x="${f2(2.25 - wzDx(l) / 2)}" y="1.8" class="mn">1</text>
     <rect x="1" y="3.12" width="3.2" height="0.66" class="th"/><rect x="19.05" y="0.1" width="0.4" height="9.1" fill="${col('s6')}"/><text x="18.55" y="4.95" class="mn dk">6</text>
-    <line x1="4.52" y1="0.1" x2="4.52" y2="2.3" class="sw"/>${ov}${Object.values(l.fest || {}).map(([x0, z0, x1, z1]) => `<rect x="${x0}" y="${z0}" width="${Math.max(x1 - x0, 0.16)}" height="${Math.max(z1 - z0, 0.16)}" class="fx"/>`).join('')}${['s2', 's3', 's4', 's5', 's7', 's8', 'wand2', 'wand3', 'fahne'].map(item).join('')}
+    <line x1="${f2(4.52 - wzDx(l))}" y1="0.1" x2="${f2(4.52 - wzDx(l))}" y2="2.3" class="sw"/>${ov}${[...Object.values(l.fest || {}), ...Object.values(l.niedrig || {})].map(([x0, z0, x1, z1]) => `<rect x="${x0}" y="${z0}" width="${Math.max(x1 - x0, 0.16)}" height="${Math.max(z1 - z0, 0.16)}" class="fx"/>`).join('')}${['s2', 's3', 's4', 's5', 's7', 's8', 'wand2', 'wand3', 'fahne'].map(item).join('')}
     <path d="M17.72 10.1l0.55 1h-1.1z" class="in"/></svg>`;
 }
 function renderLayouts() {
@@ -3479,13 +4144,14 @@ function renderLayouts() {
         <p>${esc(l.weg)}</p>
         <ul class="pm">${l.staerken.map(t => `<li class="plus">${esc(t)}</li>`).join('')}${l.schwaechen.map(t => `<li class="minus">${esc(t)}</li>`).join('')}</ul>
         <p class="sm"><b>Frei begehbar:</b> ${de(l.freieFlaeche, 0)} m² bei 90 cm Durchgang (nachgemessen mit dem Prüfwerkzeug, 0 Fehler).</p>
-        ${l.pruefung ? `<p class="sm"><b>Was die Prüfung geändert hat:</b> ${esc(l.pruefung)}</p>` : ''}
+        ${l.empf ? `<p class="sm"><b>Stellung je Insel:</b></p><ul class="plain sm">${l.rundgang.map(id => `<li><b>${DEFS[id].n} ${esc(DEFS[id].name)}:</b> ${esc(l.gruende[id] || '')}</li>`).join('')}<li><b>Banner:</b> ${esc(l.gruende.fahne)}</li></ul>` : ''}
+        ${l.pruefung ? `<p class="sm"><b>${l.empf ? 'Wie sie entstanden ist' : 'Was die Prüfung geändert hat'}:</b> ${esc(l.pruefung)}</p>` : ''}
         ${l.warnungen && l.warnungen.length ? `<p class="sm"><b>Bewusst in Kauf genommen:</b></p><ul class="plain sm">${l.warnungen.map(w => `<li>${esc(w)}</li>`).join('')}</ul>` : ''}
       </details>
       <div class="row">${act ? '<span class="pill ok">wird gezeigt</span>' : `<button type="button" class="btn" data-layout="${l.key}">Dieses Layout zeigen</button>`}${moved ? '<span class="pill warn">von Hand verändert</span>' : ''}</div>
     </article>`; });
   const exp = LAYOUTS.map((l, i) => (l.stil ? karten[i] : '')).join(''), offen = !!curLayout().stil;
-  el.innerHTML = `<p class="note">${LAYOUT_EMPF ? '★ ist die Empfehlung: das Originalkonzept, mit Messwerkzeug optimiert und gegengeprüft. ' : ''}A ist die Ausgangslage, B bis E stellen dieselben Inseln anders. Fest sind überall das Wohnzimmer in der Ecke, die Theke und die orange Wand. Welches Layout du ansiehst, gilt nur für dich; verschobene Inseln gelten für alle.</p>` + LAYOUTS.map((l, i) => (l.stil ? '' : karten[i])).join('') +
+  el.innerHTML = `<p class="note">${LAYOUT_EMPF ? '★ ist die Empfehlung: das Konzept des Teams, nach drei Fachgutachten überarbeitet und nachgemessen. ' : ''}A ist die Ausgangslage, B bis E stellen dieselben Inseln anders. Fest sind überall das Wohnzimmer in der Ecke, die Theke und die orange Wand. Welches Layout du ansiehst, gilt nur für dich; verschobene Inseln gelten für alle.</p>` + LAYOUTS.map((l, i) => (l.stil ? '' : karten[i])).join('') +
     `<details class="archiv"${offen ? ' open' : ''}><summary>Experimente: andere Stile und Bühnenbilder (F bis M)</summary>${exp}</details>`;
 }
 function renderTodoViews() { renderUeber(); renderInseln(); renderTodos(); renderRadar(); renderCounts(); }

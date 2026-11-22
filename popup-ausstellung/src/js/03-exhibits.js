@@ -111,20 +111,21 @@ const TV = (() => {
 })();
 
 /* ---- 1 · Wohnzimmer um 1977 (4,4 × 2,9 m): in der Ecke an der Natursteinwand, Tapete an der Rückwand ---- */
+let WZ_DX = 0;   // um so viel ist das Wohnzimmer schmaler als im ersten Vorschlag (Stellwand weiter links)
 function buildWohnzimmer() {
-  const g = new THREE.Group(), sub = (x, z, ry = 0) => { const s = new THREE.Group(); s.position.set(x, 0, z); s.rotation.y = ry; g.add(s); return s; };
+  const dx = WZ_DX, g = new THREE.Group(), sub = (x, z, ry = 0) => { const s = new THREE.Group(); s.position.set(x, 0, z); s.rotation.y = ry; g.add(s); return s; };
   const cord = M('#8a5a33', { roughness: 1 }), cord2 = M('#a06c40', { roughness: 1 }), cordO = M('#c4611c', { roughness: 1 }), teak = M(C.teak, { roughness: 0.5 }), brass = new THREE.MeshStandardMaterial({ color: '#c9a24a', metalness: 0.9, roughness: 0.3 });
   /* Tapete an der Rückwand, um das Glasbaustein-Fenster herum; die Natursteinwand links bleibt, wie sie ist */
   const rueck = M('#eceae6', { roughness: 0.95 });   // von hinten ist die Wand weiß, nicht tapeziert
   const tap = (w, h, x, y) => g.add(box(w, h, 0.02, [rueck, rueck, rueck, rueck, M('#ffffff', { map: repTex(TEX.tapeteA, w / 0.53, h / 0.53) }), rueck], x, y, -1.44, false));
-  tap(1.45, 2.46, -1.475, 0); tap(1.75, 2.46, 1.325, 0); tap(1.2, 1.0, -0.15, 0); tap(1.2, 0.26, -0.15, 2.2);
+  tap(1.45, 2.46, -1.475, 0); tap(1.75 - dx, 2.46, 1.325 - dx / 2, 0); tap(1.2, 1.0, -0.15, 0); tap(1.2, 0.26, -0.15, 2.2);
   /* Vorhänge und Stange */
   const stoff = M('#ffffff', { roughness: 1, map: ctex(64, 64, (c, w) => { ['#b8531a', '#e9861f', '#f3ead7', '#7a3f17'].forEach((col, i) => { c.fillStyle = col; c.fillRect(i * w / 4, 0, w / 4, w); }); }, [3, 1]) });
   g.add(rbox(0.36, 1.55, 0.06, stoff, -0.9, 0.82, -1.38, 0.025), rbox(0.36, 1.55, 0.06, stoff, 0.6, 0.82, -1.38, 0.025));
   const rod = cyl(0.012, 1.95, brass, 0, 0, 0, 8); rod.rotation.z = PI / 2; rod.position.set(-0.15, 2.39, -1.37); g.add(rod);
-  g.add(box(2.7, 0.025, 1.85, M('#ffffff', { map: TEX.teppich, roughness: 1 }), 0.8, 0, -0.05, false));
+  g.add(box(2.7 - dx * 0.4, 0.025, 1.85, M('#ffffff', { map: TEX.teppich, roughness: 1 }), 0.8 - dx * 0.7, 0, -0.05, false));
   /* Sofa, Blick zum Fernseher an der Rückwand, Rücken zur Theke */
-  const so = sub(0.95, 0);
+  const so = sub(0.95 - dx * 0.55, 0); if (dx) so.scale.x = 1 - dx * 0.36;   // schmaler: aus dem Dreisitzer wird ein Zweieinhalbsitzer
   so.add(rbox(2.0, 0.22, 0.86, cord, 0, 0.1, 0.85, 0.06), rbox(2.0, 0.52, 0.24, cord, 0, 0.3, 1.16, 0.09), rbox(0.22, 0.5, 0.86, cord, -1.1, 0.1, 0.85, 0.09), rbox(0.22, 0.5, 0.86, cord, 1.1, 0.1, 0.85, 0.09));
   so.add(rbox(0.97, 0.16, 0.62, cord2, -0.495, 0.3, 0.74, 0.06), rbox(0.97, 0.16, 0.62, cord2, 0.495, 0.3, 0.74, 0.06));
   for (const [x, col, rz] of [[-0.66, C.orange, 0.12], [0.62, C.lila, -0.1], [0.28, C.gelb, 0.06]]) { const p = rbox(0.36, 0.34, 0.13, M(col, { roughness: 1 }), x, 0.46, 0.99, 0.06); p.rotation.set(0.28, 0, rz); so.add(p); }
@@ -133,12 +134,12 @@ function buildWohnzimmer() {
   const se = sub(-1.05, 0.3, -0.98);
   se.add(rbox(0.66, 0.2, 0.7, cordO, 0, 0.1, 0, 0.06), rbox(0.8, 0.56, 0.22, cordO, 0, 0.26, 0.36, 0.09), rbox(0.17, 0.42, 0.74, cordO, -0.4, 0.1, 0.02, 0.07), rbox(0.17, 0.42, 0.74, cordO, 0.4, 0.1, 0.02, 0.07), rbox(0.6, 0.14, 0.56, M('#d9772b', { roughness: 1 }), 0, 0.28, -0.04, 0.05));
   /* Couchtisch: Rauchglas auf Chrom */
-  const ct = sub(0.9, -0.12);
+  const ct = sub(0.9 - dx * 0.6, -0.12);
   const top = cyl(0.42, 0.016, new THREE.MeshPhysicalMaterial({ color: '#5a4636', transparent: true, opacity: 0.55, roughness: 0.05 }), 0, 0.36, 0, 40); top.scale.z = 0.62; top.userData.noAO = true; ct.add(top);
   for (const [x, z] of [[-0.26, -0.14], [0.26, -0.14], [-0.26, 0.14], [0.26, 0.14]]) ct.add(cyl(0.012, 0.36, mChrome, x, 0, z, 8));
   ct.add(cyl(0.085, 0.045, M(C.orange, { roughness: 0.3 }), -0.12, 0.376, 0.02, 20, 0.11), box(0.2, 0.012, 0.27, M('#f3ead7'), 0.16, 0.376, -0.02));
   /* Sideboard mit Fernseher: Monitor in bedruckter Forex-Einhausung, das Programm läuft */
-  const tv = sub(1.6, 0);
+  const tv = sub(1.6 - dx, 0);
   tv.add(rbox(1.5, 0.4, 0.42, teak, -0.3, 0.14, -1.18, 0.015), box(0.48, 0.34, 0.01, M('#8d5c33', { roughness: 0.5 }), -0.78, 0.17, -0.966, false), box(0.48, 0.34, 0.01, M('#8d5c33', { roughness: 0.5 }), -0.27, 0.17, -0.966, false));
   for (const x of [-0.95, 0.35]) for (const z of [-1.33, -1.03]) tv.add(cyl(0.022, 0.14, mDark, x, 0, z, 8, 0.014));
   tv.add(rbox(0.76, 0.54, 0.4, M('#6e4a2c', { roughness: 0.45 }), -0.3, 0.54, -1.18, 0.05));

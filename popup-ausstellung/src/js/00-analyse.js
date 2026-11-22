@@ -47,8 +47,10 @@ export function analyse(layout, opt = {}) {
       if (lx >= x0 - pad && lx <= x1 + pad && lz >= z0 - pad && lz <= z1 + pad) g[j * W + i] = 1;
     }
   };
-  for (const [, r, w, d] of A_FEST) { if (w) fillRect(wand, r); if (d) fillRect(dicht, r); }
+  const sw = layout.stellwandX;   // Wohnzimmer schmaler: Stellwand weiter links
+  for (const [n, r0, w, d] of A_FEST) { const r = !sw ? r0 : n === 'Wohnzimmer' ? [0.05, 0.02, sw - 0.07, 2.92] : n === 'Stellwand am Wohnzimmer' ? [sw - 0.06, 0.1, sw + 0.06, 2.3] : r0; if (w) fillRect(wand, r); if (d) fillRect(dicht, r); }
   for (const r of Object.values(layout.fest || {})) { fillRect(wand, r); fillRect(dicht, r); }
+  for (const r of Object.values(layout.niedrig || {})) fillRect(wand, r);   // niedrige Einbauten: Weg versperrt, Sicht frei
   for (const [id, it] of Object.entries(A_ITEMS)) { const p = pos[id]; if (!p) continue; fillRot(wand, p, it.rect); for (const r of it.sicht) fillRot(dicht, p, r, 0.03); }
 
   /* Abstand zur nächsten Kante (für Engstellen und angenehme Wegführung) */
