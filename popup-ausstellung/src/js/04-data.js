@@ -5,22 +5,22 @@ const WHO = { CM: 'Corinna Molitor', KL: 'Kim Lehnert', CS: 'Claudia Scheibel', 
 
 /* pos = [x, z] Mittelpunkt, rot in Grad, size = [Breite, Tiefe, Höhe], eye/look = Blickpunkt der Führung (lokal) */
 const ST = [
-  { id: 's1', n: 1, name: 'Wohnzimmer', color: '#d9540a', make: buildWohnzimmer, pos: [9.78, 6.75], rot: 0, size: [3.2, 3.0, 2.4], eye: [-2.9, 1.6, 2.9], look: [0.2, 0.8, -0.4],
-    kurz: 'Ein 70er-Wohnzimmer zum Reinsetzen: Sofa, Teppich und ein Fernseher, auf dem Tagesschau oder eine Kindersendung in Dauerschleife läuft.',
-    ort: 'Vor der Stirnwand des Treppenhauses. Das Sofa steht mit dem Rücken zur Fensterfront, der Fernseher an der Wand: Das Bild wird weniger überstrahlt, und von der Straße schaut man ins Wohnzimmer.',
-    punkte: ['Fernseher: ein Monitor, eingehaust mit bedruckten Forexplatten, damit er wie ein Gerät aus den 1970ern aussieht (Protokoll 2).', 'Sofa und Teppich als Neukauf über XXL Lutz, Sponsoring wird angefragt.', 'Die übrige Einrichtung kommt über Anjali Göbel. Wo sie bis März steht, ist offen.'] },
+  { id: 's1', n: 1, name: 'Wohnzimmer', color: '#d9540a', make: buildWohnzimmer, pos: [2.25, 1.47], rot: 0, size: [4.4, 2.9, 2.45], eye: [2.5, 2.05, 4.3], look: [0.3, 0.75, -1.0],
+    kurz: 'Ein Wohnzimmer wie 1977 zum Reinsetzen: Tapete, Cordsofa, Sessel, Teppich und ein Fernseher, auf dem das Programm läuft.',
+    ort: 'In der Ecke hinten links. Die Rückwand wird tapeziert, die Natursteinwand bleibt, wie sie ist. Der Fernseher steht an der Rückwand, das Sofa mit dem Rücken zur Theke – so sieht man das Bild auch vom Raum aus.',
+    punkte: ['Fernseher: ein Monitor, eingehaust mit bedruckten Forexplatten (Protokoll 2). Im Modell läuft eine Simulation: Nachrichten, Kinderstunde, Testbild. Für echte Tagesschau- oder Kinderbilder müssen erst die Rechte geklärt sein.', 'Die Theke schließt das Wohnzimmer nach vorn ab. Dazu passt die Frage aus Protokoll 2, ob sich ihre Rückseite schließen lässt.', 'Sofa und Teppich als Neukauf über XXL Lutz, Sponsoring wird angefragt. Die übrige Einrichtung kommt über Anjali Göbel.', 'Tapezierte Fläche im Modell: rund 9 m². Ob tapeziert werden darf, ist noch offen.'] },
   { id: 's2', n: 2, name: 'Mero-System', color: '#74399a', make: buildMero, pos: [3.4, 7.5], rot: 0, size: [3.1, 2.35, 2.4], eye: [2.5, 1.62, 2.75], look: [0.1, 1.05, -0.2],
     kurz: 'Das Ausstellungssystem aus Knoten und Stäben trägt Texte und Exponate. Seine Farbwelt gibt die Linie für alle Grafiken vor.',
     ort: 'Frei im linken Raumteil, von beiden Fensterfronten aus zu sehen. Die Rückseite ist geschlossen, vorn öffnet sich ein Feld zum Hineingehen.',
     punkte: ['Im Modell ein Raumfachwerk im 75-cm-Raster: Kugelknoten, Stäbe, Farbtafeln, Texte, Fotos und Vitrinen. Grundfläche 3,0 × 2,25 m, bis 2,3 m hoch – eine Annahme, bis Maße und Bestand des echten Systems vorliegen.', 'Farben und Schriftart schickt Corinna Molitor ans Team. Bis dahin steht im Modell Orange und Lila aus dem Protokoll.'] },
   { id: 's3', n: 3, name: 'Selfie-Station', color: '#c2255c', make: buildSelfie, pos: [6.85, 4.15], rot: 0, size: [2.5, 2.1, 2.4], eye: [-1.5, 1.6, 3.5], look: [0.2, 1.1, -0.4],
     kurz: 'Eine Koje mit typischer 70er-Jahre-Tapete, Perücken, Kleidern und Accessoires für das Foto im Look von 1977.',
-    ort: 'In der Nische zwischen Lager und Treppenhaus. Dort stehen schon zwei Wände, die gestrichen oder tapeziert werden können. Eine Stellwand trennt die Koje vom Wohnzimmer.',
+    ort: 'In der Nische zwischen Lager und Treppenhaus, gleich neben dem Wohnzimmer. Dort stehen schon zwei Wände, die gestrichen oder tapeziert werden können.',
     punkte: ['Idee aus Protokoll 2: Eine Dreieicher Firma streicht oder tapeziert die Koje als Sponsoring. Wer anfragt, ist offen.', 'Perücken, Kleider, Accessoires über Faschingsbedarf.', 'Tapezierte Fläche im Modell: rund 11 m².'] },
-  { id: 's4', n: 4, name: 'Statistik', color: '#1c6fc4', make: buildStatistik, pos: [4.13, 4.93], rot: 0, size: [2.3, 0.5, 1.95], eye: [2.4, 1.65, 3.2], look: [0, 1.1, 0],
+  { id: 's4', n: 4, name: 'Statistik', color: '#1c6fc4', make: buildStatistik, pos: [9.78, 5.72], rot: 0, size: [2.7, 1.2, 2.3], eye: [-2.3, 1.62, 3.9], look: [0, 1.2, -0.3],
     kurz: 'Mitmachstation „Wie gut kennen wir Dreieich?“ mit Zahlen von 1970 und heute zum Raten und Umdrehen.',
-    ort: 'Als Reihe zwischen den beiden Vierkantstützen. Die Stützenlinie trennt so den Thekenbereich vom vorderen Raum.',
-    punkte: ['Im Modell als Drehwürfel auf Stelen gedacht (Frage, 1970, heute) – ein Gestaltungsvorschlag, nicht beschlossen.', 'Erst klären, ob und wie man an die Statistiken kommt.'] },
+    ort: 'An der Stirnwand des Treppenhauses, mitten im Raum und von der Fensterfront aus zu sehen.',
+    punkte: ['Im Modell: eine Vergleichstafel an der Wand und davor Drehwürfel auf Stelen (Frage, 1970, heute) – ein Gestaltungsvorschlag, nicht beschlossen.', 'Die Zahlen auf der Tafel fehlen absichtlich. Erst klären, ob und wie man an die Statistiken kommt.'] },
   { id: 's5', n: 5, name: 'Litfaß-Säule', color: '#2b8a3e', make: () => buildLitfass(litfassParams()), pos: [13.5, 7.7], rot: 0, size: [1.2, 1.2, 2.4], eye: [2.7, 1.6, 1.7], look: [0, 1.2, 0],
     kurz: 'Eine Litfaß-Säule mit Plakaten aus den 1970ern und Texten des Frauen- und Gleichstellungsreferats.',
     ort: 'Frei im rechten Raumteil, vom Eingang und von der Straße aus sofort zu sehen.',
@@ -39,11 +39,11 @@ const ST = [
     punkte: ['Möglich, dass die Stadtbibliothek diese Idee schon selbst zeigt. Claudia Scheibel hakt nach.', 'Im Modell: Pinnwand mit Stadtteilen und Kartentisch – ein Vorschlag.', 'Ausweichthema für diesen Platz: Hessentag.'] },
 ];
 const EXTRA = [
-  { id: 'theke', name: 'Theke (Lage geschätzt)', color: '#5a5266', make: () => buildTheke(state.expo), pos: [2.9, 3.2], rot: 0, size: [3.3, 2.6, 0.9], off: [0, -0.95], bestand: true },
-  { id: 'wand', name: 'Stellwand', color: '#5a5266', make: buildStellwand, pos: [8.12, 6.3], rot: 90, size: [2.2, 0.5, 2.05] },
+  { id: 'theke', name: 'Theke (Lage geschätzt)', color: '#5a5266', make: () => buildTheke(state.expo), pos: [2.6, 3.45], rot: 0, size: [3.3, 0.75, 0.92], bestand: true },
+  { id: 'wand', name: 'Stellwand', color: '#5a5266', make: buildStellwand, pos: [4.52, 1.2], rot: 90, size: [2.2, 0.5, 2.05] },
   { id: 'fahne', name: 'Willkommens-Fahne', color: '#5a5266', make: buildFahne, pos: [15.3, 5.9], rot: 35, size: [1.3, 0.4, 2.4] },
 ];
-const FIGUREN = [[18.55, 2.3, 0.9, '#8f879c'], [13.0, 3.9, -1.2, '#a59bb3'], [6.9, 4.6, 0.3, '#8f879c'], [2.3, 9.2, 2.2, '#a59bb3']];
+const FIGUREN = [[18.55, 2.3, 0.9, '#8f879c'], [13.0, 3.9, -1.2, '#a59bb3'], [6.9, 4.6, 0.3, '#8f879c'], [1.5, 9.1, 2.2, '#a59bb3'], [10.9, 7.3, -2.6, '#8f879c']];
 
 const GRUPPEN = [...ST.map(s => ({ id: s.id, name: `${s.n} · ${s.name}`, color: s.color })), { id: 'raum', name: 'Raum & Ausstattung', color: '#5a5266' }, { id: 'prog', name: 'Programm & Titel', color: '#5a5266' }];
 

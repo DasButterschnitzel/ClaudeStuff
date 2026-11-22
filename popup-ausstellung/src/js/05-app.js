@@ -321,8 +321,8 @@ function renderUeber() {
     </tbody></table>
     <p class="note">Quelle: <a href="https://www.dreieich.de/zukunft-leben/wirtschaft/citymanagement/pop-up-dreieich/" target="_blank" rel="noopener">Exposé der Stadt Dreieich</a> mit Bestandsplan M 1:100 (Planstand 15.04.2025). Das Modell ist aus dem gescannten Plan abgegriffen, Genauigkeit etwa ±15 cm. Vor dem Bestellen nachmessen.</p></div>
   <div class="blk"><h2>Was im Modell Annahme ist</h2><ul class="plain">
-    <li>Die Stellung der Inseln ist ein Vorschlag. Aus den Protokollen stammen nur: Insel 6 an der langen Wand am Eingang, die Stellwand zwischen 1 und 3, Insel 7/8 in der Nähe von 6, Fahne im Eingang, Kissen an der Fensterfront.</li>
-    <li>Die Lage der Theke ist nach einem Foto aus dem Exposé geschätzt.</li>
+    <li>Fest vorgegeben sind: das Wohnzimmer in der Ecke an der Natursteinwand, Insel 6 an der langen Wand am Eingang, eine Stellwand zwischen 1 und 3, Insel 7/8 in der Nähe von 6, Fahne im Eingang, Kissen an der Fensterfront. Die Stellung aller übrigen Inseln ist ein Vorschlag.</li>
+    <li>Die Lage der Theke ist nach einem Foto aus dem Exposé geschätzt, im Modell steht sie vor dem Wohnzimmer. Die Stellwand schirmt das Wohnzimmer zum Gang mit Hoftür und Lager ab.</li>
     <li>Größen von Mero-System, Medienstelen und Litfaß-Säule (im Modell Ø ${de(lp.d, 2)} m) sind angenommen.</li>
     <li>Orange und Lila stammen aus dem Protokoll. Die Farbwelt des Mero-Systems fehlt noch.</li>
     <li>Im Modell gibt es keine Prilblume, solange die Freigabe von Henkel offen ist.</li></ul>
@@ -410,6 +410,7 @@ function syncCalc(remake) {
     ['Monitor mit Forex-Einhausung', '1', 'Sascha Becker'],
     ['Stellwand', '1 · im Modell 2,2 m breit', 'Bürgerhäuser (Molitor)'],
     ['70er-Tapete und Malerarbeit Koje', '≈ 11 m² im Modell', 'Malergeschäft aus Dreieich, Sponsoring – Anfrage offen'],
+    ['70er-Tapete Wohnzimmer, Rückwand', '≈ 9 m² im Modell', 'erst klären, ob tapeziert werden darf'],
     ['Perücken, Kleider, Accessoires', '–', 'Faschingsbedarf; Bestellweg offen'],
     ['Mero-System mit Exponaten', 'im Modell 3,0 × 2,25 m', 'Corinna Molitor'],
     ['Litfaß-Säule', `im Modell Ø ${c.litfass.d} cm`, 'stellt Corinna Molitor'],
@@ -438,7 +439,7 @@ new ResizeObserver(resize).observe(stageEl);
 resize();
 renderTodoViews(); renderRechner(); setTab('ueber');
 if (controls) { const [p, t] = POSES.iso(); camera.position.copy(p); controls.target.copy(t); controls.update(); }
-let last = performance.now();
+let last = performance.now(), tvNext = 0; const tvPos = new V3();
 function frame(now) {
   requestAnimationFrame(frame);
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
@@ -449,6 +450,11 @@ function frame(now) {
     if (k >= 1) tween = null; invalidate();
   }
   if (state.walk) stepWalk(dt); else if (controls) controls.update();
+  /* Fernsehprogramm: nur weiterzeichnen, solange der Bildschirm im Bild ist; aus der Ferne seltener */
+  if (!REDUCED && state.expo && TV.mesh && now > tvNext) {
+    TV.mesh.getWorldPosition(tvPos); const dist = tvPos.distanceTo(camera.position); tvPos.project(camera);
+    if (tvPos.z < 1 && Math.abs(tvPos.x) < 1.1 && Math.abs(tvPos.y) < 1.1) { TV.draw(now / 1000); tvNext = now + (dist < 10 ? 100 : 240); invalidate(1); } else tvNext = now + 500;
+  }
   if (dirty > 0 && renderer) {
     dirty--; if (shadowDirty) { renderer.shadowMap.needsUpdate = true; shadowDirty = false; }
     if (composer) composer.render(); else renderer.render(scene, camera);
