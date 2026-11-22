@@ -5,8 +5,10 @@
    ===================================================================== */
 export const A_ROOM = [[0, 0], [5.55, 0], [5.55, 3.1], [8.15, 3.1], [8.15, 5.2], [11.4, 5.2], [11.4, 0], [19.45, 0], [19.45, 9.35], [16.55, 9.35], [16.55, 10.2], [0, 10.2]];
 /* Fest: [Name, Rechteck, versperrt den Weg, versperrt die Sicht in Augenhöhe] */
+/* Theke: fest eingebaut, als L um die linke Stütze der rechten Halle. Lage aus dem Foto im Exposé abgeleitet (Fenster, Tür und Stütze passen), nicht eingemessen. */
+export const A_THEKE = [[13.15, 2.7, 13.8, 5.4], [13.8, 4.75, 15.7, 5.4]];
 export const A_FEST = [
-  ['Wohnzimmer', [0.05, 0.02, 4.45, 2.92], 1, 0], ['Theke', [1.0, 3.12, 4.2, 3.78], 1, 0],
+  ['Wohnzimmer', [0.05, 0.02, 4.45, 2.92], 1, 0], ['Theke', A_THEKE[0], 1, 0], ['Theke', A_THEKE[1], 1, 0],
   ['Stütze', [2.59, 4.78, 2.89, 5.08], 1, 1], ['Stütze', [5.37, 4.78, 5.67, 5.08], 1, 1], ['Stütze', [13.79, 4.94, 14.05, 5.2], 1, 1], ['Stütze', [16.6, 4.9, 16.86, 5.16], 1, 1],
   ['Stellwand am Wohnzimmer', [4.46, 0.1, 4.58, 2.3], 1, 1],
 ];
@@ -14,21 +16,27 @@ export const A_FEST = [
 export const A_ITEMS = {
   s2: { rect: [-1.55, -1.18, 1.55, 1.18], sicht: [[-1.55, -1.18, 1.55, -1.0], [-1.55, -1.18, -1.45, 0.4], [1.45, -1.18, 1.55, 0.4]], gesicht: [[0, 1.22, 1], [-0.9, 1.22, 1], [0.9, 1.22, 1], [0, -1.22, -1]], halt: [0, 1.9] },
   s3: { rect: [-1.15, -1.05, 1.27, 1.05], sicht: [[-1.27, -1.05, 1.27, -0.98], [1.2, -1.05, 1.27, 1.05]], gesicht: [[0, 0.5, 0], [-0.5, -0.2, 0]], halt: [0, 1.7] },
-  s4: { rect: [-1.35, -0.47, 1.35, 0.6], sicht: [[-1.35, -0.47, 1.35, -0.38]], gesicht: [[0, -0.34, 1], [-0.8, -0.34, 1], [0.8, -0.34, 1]], halt: [0, 1.5] },
+  s4: { rect: [-1.35, -0.47, 1.35, 0.6], sicht: [[-1.35, -0.47, 1.35, -0.38]], gesicht: [[0, -0.34, 1], [-0.8, -0.34, 1], [0.8, -0.34, 1]], halt: [0, 1.5], blickRect: [-1.35, -0.47, 1.35, -0.34] },
   s5: { rect: [-0.6, -0.6, 0.6, 0.6], sicht: [[-0.5, -0.5, 0.5, 0.5]], gesicht: [[0, 0.68, 0], [0.68, 0, 0], [-0.68, 0, 0], [0, -0.68, 0]], halt: 'rund' },
-  s7: { rect: [-1.4, -0.3, 1.4, 1.6], sicht: [[-1.3, -0.3, 1.3, 0.06]], gesicht: [[0, 0.1, 1], [-0.95, 0.1, 1], [0.95, 0.1, 1]], halt: [0, 2.1] },
-  s8: { rect: [-1.3, -0.62, 1.3, 0.85], sicht: [[-1.25, -0.62, 1.25, -0.55]], gesicht: [[0, -0.5, 1], [-0.8, -0.5, 1], [0.8, -0.5, 1]], halt: [0, 1.45] },
+  s7: { rect: [-1.4, -0.3, 1.4, 1.6], sicht: [[-1.3, -0.3, 1.3, 0.06]], gesicht: [[0, 0.1, 1], [-0.95, 0.1, 1], [0.95, 0.1, 1]], halt: [0, 2.1], blickRect: [-1.3, -0.3, 1.3, 0.1] },
+  s8: { rect: [-1.3, -0.62, 1.3, 0.85], sicht: [[-1.25, -0.62, 1.25, -0.55]], gesicht: [[0, -0.5, 1], [-0.8, -0.5, 1], [0.8, -0.5, 1]], halt: [0, 1.45], blickRect: [-1.25, -0.62, 1.25, -0.5] },
   fahne: { rect: [-0.65, -0.1, 0.65, 0.1], sicht: [[-0.6, -0.04, 0.6, 0.04]] },
   wand2: { rect: [-1.1, -0.06, 1.1, 0.06], sicht: [[-1.1, -0.06, 1.1, 0.06]] },
   wand3: { rect: [-1.1, -0.06, 1.1, 0.06], sicht: [[-1.1, -0.06, 1.1, 0.06]] },
 };
 /* Feste Inseln: Gesichter und Halte in Raumkoordinaten */
 export const A_FIX = {
-  s1: { gesicht: [[3.4, 1.5], [2.2, 1.6], [1.2, 1.4]], halt: [[0.55, 3.45]] },
+  s1: { gesicht: [[3.4, 1.5], [2.2, 1.6], [1.2, 1.4]], halt: [[2.2, 3.75]] },
   s6: { gesicht: [[19.4, 1.5], [19.4, 3.5], [19.4, 5.5], [19.4, 7.5]], halt: [[18.75, 7.0], [18.75, 4.6], [18.75, 2.2]] },
 };
 export const A_EINGANG = [17.7, 8.6];
 export const A_OVALE = [['lang', 1.9], ['lang', 5.9], ['lang', 9.8], ['lang', 13.4], ['kurz', 5.3], ['kurz', 8.8]];   // Mitte der klaren Ovale in der Folierung
+/* Wände des Raums, an denen etwas hängen kann: [Name, x0, z0, x1, z1, gehört zu Insel] – Fensterfronten und Eingang fehlen hier absichtlich */
+export const A_WAENDE = [
+  ['Rückwand im Wohnzimmer', 0.05, 0, 4.45, 0, 's1'], ['Natursteinwand', 0, 0.05, 0, 3.65, 's1'], ['Rückwand am Gang zur Hoftür', 4.6, 0, 5.55, 0],
+  ['Lager, Westwand', 5.55, 0.1, 5.55, 3.1], ['Lager, Vorderseite', 5.55, 3.1, 8.15, 3.1], ['Treppenhaus, Westwand', 8.15, 3.1, 8.15, 5.2],
+  ['Treppenhaus, Stirnwand', 8.15, 5.2, 11.4, 5.2], ['Treppenhaus, Ostwand', 11.4, 5.2, 11.4, 0.05], ['Rückwand rechts', 11.4, 0, 19.4, 0], ['Brandmauer', 19.45, 0.1, 19.45, 9.3, 's6'],
+];
 export const A_NAMEN = { s1: 'Wohnzimmer', s2: 'Mero-System', s3: 'Selfie-Station', s4: 'Statistik', s5: 'Litfaß-Säule', s6: 'Gebietsreform', s7: 'Slide-Show', s8: 'Zukunft & Lieblingsplatz' };
 
 export function analyse(layout, opt = {}) {
@@ -115,11 +123,44 @@ export function analyse(layout, opt = {}) {
     for (let d = S; d < 14; d += S) { const x = p.x + dx * d, z = p.z + dz * d; if (x < 0 || z < 0 || x >= 19.6 || z >= 10.4) break; const k = idx(x, z); sicht[k] += g / (1 + d / 5); if (dicht[k]) { sicht[k] += g * 1.5 / (1 + d / 5); break; } } }
   weich(sicht, 1, 1); norm(sicht);
 
+  /* Blickflächen: wie oft fällt der Blick auf Wände und auf die Seiten der Exponate?
+     Jede Fläche wird in Stücke von rund 25 cm geteilt. Für jedes Stück zählt, von wie vielen Stand- und Laufpunkten man es frei sieht,
+     gewichtet mit dem Aufenthalt dort (Lauf-Heatmap), mit dem Blickwinkel (frontal zählt voll, streifend kaum) und mit der Entfernung. */
+  const flaechen = [];
+  if (!opt.ohneSichtkarte || opt.blick) {
+    const stueck = (id, art, name, seite, x0, z0, x1, z1) => { const L = Math.hypot(x1 - x0, z1 - z0), n = Math.max(1, Math.round(L / 0.25)), nx = (z1 - z0) / L, nz = -(x1 - x0) / L;   // Normale zeigt nach rechts der Laufrichtung
+      for (let i = 0; i < n; i++) flaechen.push({ id, art, name, seite, x0: x0 + (x1 - x0) * i / n, z0: z0 + (z1 - z0) * i / n, x1: x0 + (x1 - x0) * (i + 1) / n, z1: z0 + (z1 - z0) * (i + 1) / n, nx, nz, v: 0 }); };
+    const frei2 = (x, z) => x > 0 && z > 0 && x < 19.6 && z < 10.4 && !dicht[idx(x, z)];
+    /* Wände: Normale so drehen, dass sie in den Raum zeigt */
+    for (const [name, x0, z0, x1, z1, insel] of A_WAENDE) { const L = Math.hypot(x1 - x0, z1 - z0), nx = (z1 - z0) / L, nz = -(x1 - x0) / L, mx = (x0 + x1) / 2, mz = (z0 + z1) / 2, innen = inPoly(mx + nx * 0.3, mz + nz * 0.3); if (innen) stueck(insel || 'wand', 'wand', name, 'innen', x0, z0, x1, z1); else stueck(insel || 'wand', 'wand', name, 'innen', x1, z1, x0, z0); }
+    /* Rechtecke: vier Seiten, Normale nach außen (Ecken im Uhrzeigersinn in x/z, damit „rechts der Laufrichtung“ außen ist) */
+    const viereck = (id, art, name, ecken, seiten) => { for (let i = 0; i < 4; i++) { const a = ecken[i], b = ecken[(i + 1) % 4]; stueck(id, art, name, seiten[i], a[0], a[1], b[0], b[1]); } };
+    const SEITEN = ['hinten', 'rechts', 'vorn', 'links'];
+    for (const [id, it] of Object.entries(A_ITEMS)) { const p = pos[id]; if (!p) continue; const [a, b, c, d] = it.blickRect || it.rect;   // blickRect: die Tafel selbst, nicht die Standfläche davor
+      if (id === 's5') { for (let i = 0; i < 12; i++) { const w0 = i * Math.PI / 6, w1 = (i + 1) * Math.PI / 6; stueck(id, 'insel', A_NAMEN[id], 'rund', p.x + 0.56 * Math.cos(w0), p.z + 0.56 * Math.sin(w0), p.x + 0.56 * Math.cos(w1), p.z + 0.56 * Math.sin(w1)); } continue; }
+      viereck(id, A_NAMEN[id] ? 'insel' : 'einbau', A_NAMEN[id] || (id === 'fahne' ? 'Fahne' : 'Stellwand'), [[a, b], [c, b], [c, d], [a, d]].map(q => toWorld(p, q[0], q[1])), SEITEN); }
+    const rechteck = (id, art, name, [x0, z0, x1, z1]) => viereck(id, art, name, [[x0, z0], [x1, z0], [x1, z1], [x0, z1]], ['nord', 'ost', 'süd', 'west']);
+    A_THEKE.forEach(r => rechteck('theke', 'einbau', 'Theke', r));
+    rechteck('wand', 'einbau', 'Stellwand am Wohnzimmer', sw ? [sw - 0.06, 0.1, sw + 0.06, 2.3] : [4.46, 0.1, 4.58, 2.3]);
+    for (const [n, r] of Object.entries(layout.fest || {})) rechteck('fest', 'einbau', n, r);
+    /* Betrachter: Raster von 30 cm über die Lauf-Heatmap */
+    const seher = []; for (let j = 1; j < H; j += 3) for (let i = 1; i < W; i += 3) { const g = lauf[j * W + i]; if (g > 0.04 && !wand[j * W + i]) seher.push([(i + 0.5) * S, (j + 0.5) * S, g]); }
+    const los2 = (x0, z0, x1, z1) => { const d = Math.hypot(x1 - x0, z1 - z0), n = Math.ceil(d / S); for (let i = 1; i < n; i++) { const t = i / n; if (dicht[idx(x0 + (x1 - x0) * t, z0 + (z1 - z0) * t)]) return false; } return true; };
+    for (const f of flaechen) { const cx = (f.x0 + f.x1) / 2 + f.nx * 0.12, cz = (f.z0 + f.z1) / 2 + f.nz * 0.12; if (!frei2(cx + f.nx * 0.2, cz + f.nz * 0.2) && f.art !== 'wand') continue;   // Seite steht an einer Wand: niemand sieht sie
+      let s = 0; for (const [x, z, g] of seher) { const dx = x - cx, dz = z - cz, d = Math.hypot(dx, dz); if (d < 0.35 || d > 11) continue; const c = (dx * f.nx + dz * f.nz) / d; if (c < 0.17) continue; if (los2(x, z, cx, cz)) s += g * c / (1 + (d / 4.5) * (d / 4.5)); } f.v = s; }
+    const vs = flaechen.map(f => f.v).filter(v => v > 0).sort((a, b) => a - b), m = vs.length ? vs[Math.floor(vs.length * 0.97)] || vs[vs.length - 1] : 1;
+    for (const f of flaechen) { f.v = +Math.min(1, f.v / (m || 1)).toFixed(3); for (const k of ['x0', 'z0', 'x1', 'z1']) f[k] = +f[k].toFixed(3); f.nx = +f.nx.toFixed(3); f.nz = +f.nz.toFixed(3); }
+  }
+  const mittel = a => a.length ? a.reduce((s, f) => s + f.v, 0) / a.length : 0;
+  /* je Wand: mittlerer Blick; „frei“ heißt: gehört zu keiner Insel und ist nicht von einer Insel verdeckt */
+  const waende = [...new Set(flaechen.filter(f => f.art === 'wand').map(f => f.name))].map(name => { const fs = flaechen.filter(f => f.art === 'wand' && f.name === name); return { name, insel: fs[0].id === 'wand' ? null : fs[0].id, blick: +mittel(fs).toFixed(2), laenge_m: +(fs.length * 0.25).toFixed(1) }; }).sort((a, b) => b.blick - a.blick);
+
   /* Kennzahlen je Insel */
   const unterwegs = proben.filter(p => p.m >= 0), inseln = {};
   for (const id of Object.keys(A_NAMEN)) { if (!gesichter[id]) continue; const ges = unterwegs.filter(p => sieht(id, p.x, p.z)), erst = ges.length ? Math.min(...ges.map(p => p.m)) : null;
     let ovale = 0; for (const [front, c] of A_OVALE) { let ok = false; for (let t = -1.3; t <= 1.3 && !ok; t += 0.26) { const [x, z] = front === 'lang' ? [c + t, 10.15] : [0.05, c + t]; if (sieht(id, x, z, 8)) ok = true; } if (ok) ovale++; }   // durch ein Oval zählt nur, was höchstens 8 m entfernt ist
-    inseln[id] = { name: A_NAMEN[id], sichtAnteil: +(ges.length / Math.max(1, unterwegs.length)).toFixed(2), erstkontakt_m: erst === null ? null : +erst.toFixed(1), vomEingang: sieht(id, A_EINGANG[0], A_EINGANG[1]), ovale }; }
+    inseln[id] = { name: A_NAMEN[id], sichtAnteil: +(ges.length / Math.max(1, unterwegs.length)).toFixed(2), erstkontakt_m: erst === null ? null : +erst.toFixed(1), vomEingang: sieht(id, A_EINGANG[0], A_EINGANG[1]), ovale };
+    if (flaechen.length) { const fs = flaechen.filter(f => f.id === id), vorn = fs.filter(f => f.seite === 'vorn' || f.seite === 'rund' || f.art === 'wand'); inseln[id].blick = +mittel(vorn.length ? vorn : fs).toFixed(2); } }
 
   /* Kennzahlen zum Weg */
   const routeLen = beine.reduce((a, b) => a + laenge(b.w), 0), zaehl = new Uint8Array(N), nahHalt = new Uint8Array(N);
@@ -135,7 +176,7 @@ export function analyse(layout, opt = {}) {
   const wert = unerreichbar.length ? 0 : Math.round(100 * (0.32 * Math.min(1, mSicht / 0.45) + 0.2 * (1 - doppelAnteil) + 0.13 * (1 - Math.min(1, abseitsAnteil * 3)) + 0.15 * strasse + 0.1 * (1 - Math.min(1, engstellen.length / 6)) + 0.1 * (ins.filter(i => i.vomEingang).length >= 3 ? 1 : ins.filter(i => i.vomEingang).length / 3)));
   const pfad = beine.map(b => ({ nach: b.nach, punkte: b.w.filter((_, i) => i % 2 === 0 || i === b.w.length - 1).map(k => [+((k % W + 0.5) * S).toFixed(2), +((Math.floor(k / W) + 0.5) * S).toFixed(2)]) }));
   return {
-    W, H, S, lauf, sicht, pfad, halte: reihenfolge.map(h => ({ id: h.id, x: +h.x.toFixed(2), z: +h.z.toFixed(2) })),
+    W, H, S, lauf, sicht, flaechen, waende, pfad, halte: reihenfolge.map(h => ({ id: h.id, x: +h.x.toFixed(2), z: +h.z.toFixed(2) })),
     kennzahlen: { gesamtwert: wert, rundgang_m: +routeLen.toFixed(1), doppelwegAnteil: +doppelAnteil.toFixed(2), abseitsAnteil: +abseitsAnteil.toFixed(2), mittlereSicht: +mSicht.toFixed(2), inselnVonDerStrasse: ins.filter(i => i.ovale > 0).length, inselnVomEingang: ins.filter(i => i.vomEingang).length, engstellen, unerreichbar },
     inseln,
   };

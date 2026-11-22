@@ -391,10 +391,18 @@ function buildZukunft() {
 }
 
 /* ---- Bestand & Ausstattung ---- */
+/* Theke: fest eingebaut, L um die Stütze (Nullpunkt = Stütze). Langer Schenkel zur Rückwand, kurzer Richtung Brandmauer.
+   Kundenseiten: West (langer Schenkel) und Süd (kurzer Schenkel); dahinter steht das Personal vor der Tür zu den Nebenräumen. */
 function buildTheke(orange) {
-  const g = new THREE.Group(), front = M(orange ? C.orange : '#2f3b4f', { roughness: 0.4 }), top = M('#f4f2ee', { roughness: 0.3 });
-  g.add(box(3.1, 0.08, 0.55, mDark, 0, 0, 0), rbox(3.2, 0.78, 0.65, front, 0, 0.08, 0, 0.012), rbox(3.28, 0.04, 0.73, top, 0, 0.86, 0, 0.012));
-  if (orange) { const s = sign(1.7, 0.36, (c, w, h) => { c.fillStyle = C.orange; c.fillRect(0, 0, w, h); c.fillStyle = '#fff'; wrapText(c, '50 Jahre Dreieich', w / 2, h / 2, w, h * 0.42, FD, 700); }); s.position.set(0, 0.48, 0.327); g.add(s); }
+  const g = new THREE.Group(), front = M(orange ? C.orange : '#2f3b4f', { roughness: 0.4 }), top = M('#f4f2ee', { roughness: 0.3 }), innen = M('#3a3340', { roughness: 0.7 });
+  const leg = (cx, cz, w, d) => g.add(box(w - 0.08, 0.08, d - 0.08, mDark, cx, 0, cz), rbox(w, 0.86, d, front, cx, 0.08, cz, 0.012), rbox(w + 0.06, 0.04, d + 0.06, top, cx, 0.94, cz, 0.012));
+  leg(-0.445, -1.02, 0.65, 2.7); leg(0.955, 0.005, 1.65, 0.65);
+  /* offene Fächer auf der Personalseite */
+  g.add(box(0.012, 0.7, 2.3, innen, -0.114, 0.14, -1.2, false), box(1.5, 0.7, 0.012, innen, 0.95, 0.14, -0.326, false));
+  if (orange) {
+    const s = sign(1.4, 0.34, (c, w, h) => { c.fillStyle = C.orange; c.fillRect(0, 0, w, h); c.fillStyle = '#fff'; wrapText(c, '50 Jahre Dreieich', w / 2, h / 2, w, h * 0.42, FD, 700); }); s.position.set(0.955, 0.52, 0.337); g.add(s);
+    const i = sign(1.5, 0.34, (c, w, h) => { c.fillStyle = C.orange; c.fillRect(0, 0, w, h); c.fillStyle = '#fff'; wrapText(c, 'Info · Aufsicht', w / 2, h / 2, w, h * 0.42, FD, 700); }); i.position.set(-0.777, 0.52, -1.02); i.rotation.y = -PI / 2; g.add(i);
+  }
   return g;
 }
 function buildFahne() {

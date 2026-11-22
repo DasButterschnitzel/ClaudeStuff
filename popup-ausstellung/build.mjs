@@ -5,7 +5,8 @@ const layouts = `// ---- Layouts aus dem Gestalter-Workflow ----\nconst LAYOUT_D
 const radikal = `const RADIKAL_DATA = ${readFileSync('src/radikal.json', 'utf8').trim()};\n`;
 const ideen = `const IDEEN_DATA = ${readFileSync('src/ideen.json', 'utf8').trim()};\n`;
 const empf = `const EMPF_DATA = ${readFileSync('src/empfehlung.json', 'utf8').trim()};\n`;
-const js = foil + layouts + radikal + ideen + empf + readdirSync('src/js').filter(f => f.endsWith('.js')).sort().map(f => `// ---- ${f} ----\n` + readFileSync('src/js/' + f, 'utf8')).join('\n');
+const aData = `const A_DATA = ${readFileSync('src/a.json', 'utf8').trim()};\n`;
+const js = foil + layouts + radikal + ideen + empf + aData + readdirSync('src/js').filter(f => f.endsWith('.js')).sort().map(f => `// ---- ${f} ----\n` + readFileSync('src/js/' + f, 'utf8')).join('\n');
 const page = readFileSync('src/page.html', 'utf8').replace('<!--APP-->', () => `<script type="module">\n${js}\n</script>`);
 mkdirSync('dist', { recursive: true });
 writeFileSync('dist/index.html', page.replace('window.__popup = {', 'void {'));

@@ -7,8 +7,8 @@ const WHO = { CM: 'Corinna Molitor', KL: 'Kim Lehnert', CS: 'Claudia Scheibel', 
 const ST = [
   { id: 's1', n: 1, name: 'Wohnzimmer', color: '#d9540a', make: buildWohnzimmer, pos: [2.25, 1.47], rot: 0, size: [4.4, 2.9, 2.45], eye: [2.5, 2.05, 4.3], look: [0.3, 0.75, -1.0],
     kurz: 'Ein Wohnzimmer wie 1977 zum Reinsetzen: Tapete, Cordsofa, Sessel, Teppich und ein Fernseher, auf dem das Programm läuft.',
-    ort: 'In der Ecke hinten links. Die Rückwand wird tapeziert, die Natursteinwand bleibt, wie sie ist. Der Fernseher steht an der Rückwand, das Sofa mit dem Rücken zur Theke – so sieht man das Bild auch vom Raum aus.',
-    punkte: ['Fernseher: ein Monitor, eingehaust mit bedruckten Forexplatten (Protokoll 2). Im Modell läuft eine Simulation: Nachrichten, Kinderstunde, Testbild. Für echte Tagesschau- oder Kinderbilder müssen erst die Rechte geklärt sein.', 'Die Theke schließt das Wohnzimmer nach vorn ab. Dazu passt die Frage aus Protokoll 2, ob sich ihre Rückseite schließen lässt.', 'Sofa und Teppich als Neukauf über XXL Lutz, Sponsoring wird angefragt. Die übrige Einrichtung kommt über Anjali Göbel.', 'Tapezierte Fläche im Modell: rund 9 m². Ob tapeziert werden darf, ist noch offen.'] },
+    ort: 'In der Ecke hinten links. Die Rückwand wird tapeziert, die Natursteinwand bleibt, wie sie ist. Der Fernseher steht an der Rückwand, das Sofa mit dem Rücken zum Raum – so sieht man das Bild auch von außen. Nach vorn ist das Wohnzimmer offen.',
+    punkte: ['Fernseher: ein Monitor, eingehaust mit bedruckten Forexplatten (Protokoll 2). Im Modell läuft eine Simulation: Nachrichten, Kinderstunde, Testbild. Für echte Tagesschau- oder Kinderbilder müssen erst die Rechte geklärt sein.', 'Sofa und Teppich als Neukauf über XXL Lutz, Sponsoring wird angefragt. Die übrige Einrichtung kommt über Anjali Göbel.', 'Tapezierte Fläche im Modell: rund 9 m². Ob tapeziert werden darf, ist noch offen.'] },
   { id: 's2', n: 2, name: 'Mero-System', color: '#74399a', make: buildMero, pos: [3.4, 7.5], rot: 0, size: [3.1, 2.35, 2.4], eye: [2.5, 1.62, 2.75], look: [0.1, 1.05, -0.2],
     kurz: 'Das Ausstellungssystem aus Knoten und Stäben trägt Texte und Exponate. Seine Farbwelt gibt die Linie für alle Grafiken vor.',
     ort: 'Frei im linken Raumteil, von beiden Fensterfronten aus zu sehen. Die Rückseite ist geschlossen, vorn öffnet sich ein Feld zum Hineingehen.',
@@ -39,13 +39,13 @@ const ST = [
     punkte: ['Möglich, dass die Stadtbibliothek diese Idee schon selbst zeigt. Claudia Scheibel hakt nach.', 'Im Modell: Pinnwand mit Stadtteilen und Kartentisch – ein Vorschlag.', 'Ausweichthema für diesen Platz: Hessentag.'] },
 ];
 const EXTRA = [
-  { id: 'theke', name: 'Theke (Lage geschätzt)', color: '#5a5266', make: () => buildTheke(state.expo), pos: [2.6, 3.45], rot: 0, size: [3.3, 0.75, 0.92], bestand: true },
+  { id: 'theke', name: 'Theke (fest eingebaut)', color: '#5a5266', make: () => buildTheke(state.expo), pos: [13.92, 5.07], rot: 0, size: [2.55, 2.7, 1.0], off: [0.505, -1.02], bestand: true },
   { id: 'wand', name: 'Stellwand', color: '#5a5266', make: buildStellwand, pos: [4.52, 1.2], rot: 90, size: [2.2, 0.5, 2.05] },
   { id: 'wand2', name: 'Stellwand 2', color: '#5a5266', make: buildStellwand, pos: [0, 0], rot: 0, size: [2.2, 0.5, 2.05], optional: true },
   { id: 'wand3', name: 'Stellwand 3', color: '#5a5266', make: buildStellwand, pos: [0, 0], rot: 0, size: [2.2, 0.5, 2.05], optional: true },
   { id: 'fahne', name: 'Willkommens-Fahne', color: '#5a5266', make: buildFahne, pos: [15.3, 5.9], rot: 35, size: [1.3, 0.4, 2.4] },
 ];
-const FIGUREN = [[18.55, 2.3, 0.9, '#8f879c'], [13.0, 3.9, -1.2, '#a59bb3'], [6.9, 4.6, 0.3, '#8f879c'], [1.5, 9.1, 2.2, '#a59bb3'], [10.9, 7.3, -2.6, '#8f879c']];
+const FIGUREN = [[18.55, 2.3, 0.9, '#8f879c'], [12.3, 6.4, -1.2, '#a59bb3'], [6.9, 4.6, 0.3, '#8f879c'], [1.5, 9.1, 2.2, '#a59bb3'], [10.9, 7.3, -2.6, '#8f879c']];
 
 const GRUPPEN = [...ST.map(s => ({ id: s.id, name: `${s.n} · ${s.name}`, color: s.color })), { id: 'raum', name: 'Raum & Ausstattung', color: '#5a5266' }, { id: 'prog', name: 'Programm & Titel', color: '#5a5266' }];
 

@@ -27,7 +27,7 @@ const defPose = d => ({ x: d.pos[0], z: d.pos[1], r: d.rot });
 const curLayout = () => LAYOUTS.find(l => l.key === state.layout) || LAYOUTS[0];
 /* Stellung eines Teils in einem Layout: von Hand verschoben > Layout > Ausgangslage */
 const wzDx = l => (l.stellwandX ? +(4.52 - l.stellwandX).toFixed(2) : 0);   // Empfehlung: Wohnzimmer schmaler, Gang zur Hoftür breiter
-const poseIn = (l, id) => (state.moves[l.key] || {})[id] || l.pos[id] || (id === 'wand' && l.stellwandX ? { x: l.stellwandX, z: 1.2, r: 90 } : DEFS[id].optional ? null : defPose(DEFS[id]));
+const poseIn = (l, id) => (DEFS[id].bestand ? defPose(DEFS[id]) : null) || (state.moves[l.key] || {})[id] || l.pos[id] || (id === 'wand' && l.stellwandX ? { x: l.stellwandX, z: 1.2, r: 90 } : DEFS[id].optional ? null : defPose(DEFS[id]));
 const fullPlan = () => ({ moves: state.moves, calc: state.calc });
 function mount(def) {
   const group = new THREE.Group(); let inner = def.make(); group.add(inner);
@@ -162,11 +162,11 @@ function setMove(on) {
 const curPose = id => { const g = items[id].group; return { x: +g.position.x.toFixed(2), z: +g.position.z.toFixed(2), r: Math.round(g.rotation.y * 180 / PI) }; };
 function moveSet(id, p) { (state.moves[state.layout] = state.moves[state.layout] || {})[id] = p; write('plan', { moves: { [state.layout]: { [id]: p } } }, fullPlan); }
 function commitPose(id) { moveSet(id, curPose(id)); applyStil(); updateInspect(); renderLayouts(); analyseNeu(); }
-function rotateSel(deg) { const id = state.sel; if (!id || defOf(id).fixed) return; const g = items[id].group; g.rotation.y = ((Math.round(g.rotation.y * 180 / PI) + deg + 360) % 360) * PI / 180; commitPose(id); touch(); }
+function rotateSel(deg) { const id = state.sel; if (!id || defOf(id).fixed || defOf(id).bestand) return; const g = items[id].group; g.rotation.y = ((Math.round(g.rotation.y * 180 / PI) + deg + 360) % 360) * PI / 180; commitPose(id); touch(); }
 function resetPose(id) { delete (state.moves[state.layout] || {})[id]; const p = poseIn(curLayout(), id); if (p) moveSet(id, p); place(id); updateInspect(); touch(); renderLayouts(); }
 function resetAll() {
   const l = curLayout(), m = {}; state.moves[l.key] = {};
-  for (const id of Object.keys(items)) { if (defOf(id).fixed) continue; const p = poseIn(l, id); if (p) m[id] = p; }
+  for (const id of Object.keys(items)) { if (defOf(id).fixed || defOf(id).bestand) continue; const p = poseIn(l, id); if (p) m[id] = p; }
   state.moves[l.key] = m; applyLayout(); write('plan', { moves: { [l.key]: m } }, fullPlan); renderLayouts();
 }
 function setLayout(key) {
@@ -232,7 +232,7 @@ canvas.addEventListener('pointerdown', e => {
   if (state.move) {
     const id = pick(e), p = id && floorPoint(e);
     if (id) select(id);
-    if (id && p && !defOf(id).fixed) { const g = items[id].group; drag = { id, ox: g.position.x - p.x, oz: g.position.z - p.z }; controls.enabled = false; canvas.setPointerCapture(e.pointerId); }
+    if (id && p && !defOf(id).fixed && !defOf(id).bestand) { const g = items[id].group; drag = { id, ox: g.position.x - p.x, oz: g.position.z - p.z }; controls.enabled = false; canvas.setPointerCapture(e.pointerId); }
   }
 });
 canvas.addEventListener('pointermove', e => {
@@ -396,7 +396,8 @@ function renderUeber() {
     <p class="note">Quelle: <a href="https://www.dreieich.de/zukunft-leben/wirtschaft/citymanagement/pop-up-dreieich/" target="_blank" rel="noopener">Exposé der Stadt Dreieich</a> mit Bestandsplan M 1:100 (Planstand 15.04.2025). Das Modell ist aus dem gescannten Plan abgegriffen, Genauigkeit etwa ±15 cm. Vor dem Bestellen nachmessen.</p></div>
   <div class="blk"><h2>Was im Modell Annahme ist</h2><ul class="plain">
     <li>Fest vorgegeben sind: das Wohnzimmer in der Ecke an der Natursteinwand, Insel 6 an der langen Wand am Eingang, eine Stellwand zwischen 1 und 3, Insel 7/8 in der Nähe von 6, Fahne im Eingang, Kissen an der Fensterfront. Die Stellung aller übrigen Inseln ist ein Vorschlag.</li>
-    <li>Die Lage der Theke ist nach einem Foto aus dem Exposé geschätzt, im Modell steht sie vor dem Wohnzimmer. Die Stellwand schirmt das Wohnzimmer zum Gang mit Hoftür und Lager ab.</li>
+    <li><b>Die Theke ist fest eingebaut.</b> Sie steht als L um die linke Stütze der rechten Halle, gut 4 m hinter der Eingangstür, mit der Tür zu den Nebenräumen im Rücken. Lage und Länge der beiden Schenkel (2,7 m und 1,9 m) sind aus dem Foto im Exposé abgeleitet und nicht eingemessen.</li>
+    <li>Die Stellwand schirmt das Wohnzimmer zum Gang mit Hoftür und Lager ab. Nach vorn ist das Wohnzimmer offen.</li>
     <li>Größen von Mero-System, Medienstelen und Litfaß-Säule (im Modell Ø ${de(lp.d, 2)} m) sind angenommen.</li>
     <li>Die Schaufensterfolierung stammt aus deiner Vorlage. Wie sie auf die einzelnen Scheiben verteilt ist, habe ich angenommen: je ein Motiv auf den vier Scheiben der langen und den zwei Scheiben der kurzen Front.</li>
     <li>Orange und Lila stammen aus dem Protokoll. Die Farbwelt des Mero-Systems fehlt noch.</li>
@@ -431,8 +432,8 @@ const heat = (() => {
   const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
   const geo = new THREE.PlaneGeometry(19.6, 10.4); geo.rotateX(-PI / 2);
   const mesh = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false })); mesh.position.set(9.8, 0.035, 5.2); mesh.renderOrder = 1; mesh.userData.noAO = true; mesh.visible = false;
-  const weg = new THREE.Group(); weg.visible = false; scene.add(mesh, weg);
-  return { c, tex, mesh, weg };
+  const weg = new THREE.Group(); weg.visible = false; const fl = new THREE.Group(); fl.visible = false; scene.add(mesh, weg, fl);
+  return { c, tex, mesh, weg, fl };
 })();
 const RAMPE = { lauf: [[255, 224, 138], [255, 138, 31], [215, 38, 61]], sicht: [[185, 236, 255], [59, 155, 255], [58, 43, 214]] };
 const anLayout = l => { const pos = {}; for (const id of Object.keys(A_ITEMS)) { const p = poseIn(l, id); if (p) pos[id] = p; } return { rundgang: l.rundgang, pos, fest: l.fest, niedrig: l.niedrig, stellwandX: l.stellwandX }; };
@@ -443,12 +444,24 @@ function rechne(l = curLayout(), voll = true) {
   return anCache.get(key);
 }
 function zeichneAnalyse() {
-  const on = state.an !== 'aus'; heat.mesh.visible = on; heat.weg.visible = on; $('#legende').hidden = !on;
+  const on = state.an !== 'aus'; heat.mesh.visible = on; heat.weg.visible = on; heat.fl.visible = state.an === 'sicht'; $('#legende').hidden = !on;
+  heat.fl.children.forEach(m => { m.geometry.dispose(); m.material.dispose(); }); heat.fl.clear();
   $$('#an button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.an === state.an)));
   if (!on) { invalidate(); return; }
   const erg = rechne(), g = erg[state.an], ctx = heat.c.getContext('2d'), img = ctx.createImageData(erg.W, erg.H), r = RAMPE[state.an];
   for (let k = 0; k < g.length; k++) { const v = g[k]; if (v < 0.035) continue; const t = v < 0.5 ? v * 2 : (v - 0.5) * 2, a = v < 0.5 ? r[0] : r[1], b = v < 0.5 ? r[1] : r[2]; img.data[k * 4] = a[0] + (b[0] - a[0]) * t; img.data[k * 4 + 1] = a[1] + (b[1] - a[1]) * t; img.data[k * 4 + 2] = a[2] + (b[2] - a[2]) * t; img.data[k * 4 + 3] = 70 + 170 * v; }
   ctx.putImageData(img, 0, 0); heat.tex.needsUpdate = true;
+  /* Sicht auf Wänden und Exponaten: farbige Fläche auf jeder Seite, dazu ein Streifen am Boden, damit man es auch im Grundriss sieht */
+  if (state.an === 'sicht' && erg.flaechen.length) {
+    const P = [], Cc = [], tmpC = new THREE.Color(), farbe = v => { const t = v < 0.5 ? v * 2 : (v - 0.5) * 2, a = v < 0.5 ? r[0] : r[1], b = v < 0.5 ? r[1] : r[2]; tmpC.setRGB((a[0] + (b[0] - a[0]) * t) / 255, (a[1] + (b[1] - a[1]) * t) / 255, (a[2] + (b[2] - a[2]) * t) / 255, THREE.SRGBColorSpace); return [tmpC.r, tmpC.g, tmpC.b]; };
+    const quad = (q, c, al) => { for (const i of [0, 1, 2, 0, 2, 3]) { P.push(q[i][0], q[i][1], q[i][2]); Cc.push(c[0], c[1], c[2], al); } };
+    const hoehe = f => f.art === 'wand' ? [0.06, 2.44] : f.id === 'theke' ? [0.08, 0.96] : f.id === 'fahne' ? [0.45, 2.35] : f.id === 'fest' ? [0.06, 2.2] : DEFS[f.id] ? [0.08, Math.min(2.4, DEFS[f.id].size[2])] : [0.06, 2.05];
+    for (const f of erg.flaechen) { if (f.v < 0.03) continue; const [y0, y1] = hoehe(f), o = f.art === 'wand' ? 0.02 : 0.045, ax = f.x0 + f.nx * o, az = f.z0 + f.nz * o, bx = f.x1 + f.nx * o, bz = f.z1 + f.nz * o, c = farbe(f.v), w = 0.16;
+      quad([[ax, y0, az], [bx, y0, bz], [bx, y1, bz], [ax, y1, az]], c, 0.3 + 0.58 * f.v);
+      quad([[ax, 0.05, az], [bx, 0.05, bz], [bx + f.nx * w, 0.05, bz + f.nz * w], [ax + f.nx * w, 0.05, az + f.nz * w]], c, 0.95); }
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); geo.setAttribute('color', new THREE.Float32BufferAttribute(Cc, 4));
+    const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, side: THREE.DoubleSide, depthWrite: false })); m.renderOrder = 2; m.userData.noAO = true; heat.fl.add(m);
+  }
   /* Rundgang als Linie mit Pfeilen und Halten */
   heat.weg.clear(); const dunkel = new THREE.MeshBasicMaterial({ color: '#1d1626' }), hell = new THREE.MeshBasicMaterial({ color: '#ffffff' });
   let rest = 0;
@@ -457,7 +470,7 @@ function zeichneAnalyse() {
     for (let i = 1; i < pts.length; i++) { rest += pts[i].distanceTo(pts[i - 1]); if (rest > 2.2) { rest = 0; const k = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.3, 3), dunkel); k.position.copy(pts[i]); k.rotation.set(PI / 2, 0, -Math.atan2(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z)); k.rotation.order = 'YXZ'; k.rotation.set(PI / 2, Math.atan2(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z), 0); k.scale.z = 0.25; k.userData.noAO = true; heat.weg.add(k); } } }
   for (const h of erg.halte) { const ring = new THREE.Mesh(new THREE.RingGeometry(0.15, 0.24, 24), hell); ring.rotation.x = -PI / 2; ring.position.set(h.x, 0.065, h.z); const kern = new THREE.Mesh(new THREE.CircleGeometry(0.15, 20), new THREE.MeshBasicMaterial({ color: DEFS[h.id].color })); kern.rotation.x = -PI / 2; kern.position.set(h.x, 0.066, h.z); ring.userData.noAO = kern.userData.noAO = true; heat.weg.add(ring, kern); }
   const k = erg.kennzahlen, rr = RAMPE[state.an].map(c => `rgb(${c.join(',')})`);
-  $('#legende').innerHTML = `<b>${state.an === 'lauf' ? 'Laufwege: wo Besucher gehen und stehen' : 'Sicht: was man auf dem Rundgang sieht'}</b><div class="ramp" style="background:linear-gradient(90deg,${rr.join(',')})"></div><div class="rl"><span>selten</span><span>oft</span></div><p>${state.an === 'lauf' ? `Rundgang ${de(k.rundgang_m, 0)} m · ${Math.round(k.doppelwegAnteil * 100)} % doppelt gelaufen · ${k.engstellen.length} Engstellen unter 1,20 m` : `Im Mittel ist eine Insel von ${Math.round(k.mittlereSicht * 100)} % des Wegs zu sehen · ${k.inselnVomEingang} von 8 schon an der Tür`}. Linie und Punkte zeigen den Rundgang.</p>`;
+  $('#legende').innerHTML = `<b>${state.an === 'lauf' ? 'Laufwege: wo Besucher gehen und stehen' : 'Sicht: was man auf dem Rundgang sieht'}</b><div class="ramp" style="background:linear-gradient(90deg,${rr.join(',')})"></div><div class="rl"><span>selten</span><span>oft</span></div><p>${state.an === 'lauf' ? `Rundgang ${de(k.rundgang_m, 0)} m · ${Math.round(k.doppelwegAnteil * 100)} % doppelt gelaufen · ${k.engstellen.length} Engstellen unter 1,20 m` : `Boden: was im Blickfeld liegt. Wände und Exponate: je kräftiger, desto öfter fällt der Blick darauf. Im Mittel ist eine Insel von ${Math.round(k.mittlereSicht * 100)} % des Wegs zu sehen · ${k.inselnVomEingang} von 8 schon an der Tür`}. Linie und Punkte zeigen den Rundgang.</p>`;
   invalidate(3);
 }
 function setAn(m) { state.an = m; zeichneAnalyse(); }
@@ -465,7 +478,8 @@ function analyseNeu() { if (state.an !== 'aus') zeichneAnalyse(); if (state.tab 
 function renderAnalyse() {
   const el = $('#tab-analyse'); if (!el) return;
   const l = curLayout(), erg = rechne(), k = erg.kennzahlen, pz = v => Math.round(v * 100) + ' %';
-  const zeile = id => { const i = erg.inseln[id]; if (!i) return ''; return `<tr><td><b style="color:${DEFS[id].color}">${DEFS[id].n}</b> ${esc(DEFS[id].name)}</td><td class="${i.sichtAnteil < 0.35 ? 'bad' : ''}"><i class="bar-i" style="width:${Math.round(i.sichtAnteil * 44)}px"></i>${pz(i.sichtAnteil)}</td><td>${i.erstkontakt_m === null ? '–' : de(i.erstkontakt_m, 0) + ' m'}</td><td>${i.vomEingang ? 'ja' : '–'}</td><td class="${i.ovale ? '' : 'bad'}">${i.ovale}</td></tr>`; };
+  const zeile = id => { const i = erg.inseln[id]; if (!i) return ''; return `<tr><td><b style="color:${DEFS[id].color}">${DEFS[id].n}</b> ${esc(DEFS[id].name)}</td><td class="${i.sichtAnteil < 0.35 ? 'bad' : ''}"><i class="bar-i" style="width:${Math.round(i.sichtAnteil * 26)}px"></i>${pz(i.sichtAnteil)}</td><td>${i.erstkontakt_m === null ? '–' : de(i.erstkontakt_m, 0) + ' m'}</td><td>${i.vomEingang ? 'ja' : '–'}</td><td class="${i.ovale ? '' : 'bad'}">${i.ovale}</td><td class="${i.blick < 0.25 ? 'bad' : ''}"><i class="bar-i b2" style="width:${Math.round((i.blick || 0) * 26)}px"></i>${pz(i.blick || 0)}</td></tr>`; };
+  const frW = erg.waende.filter(w => !w.insel), wandZeile = w => `<tr><td>${esc(w.name)}</td><td>${de(w.laenge_m, 1)} m</td><td><i class="bar-i b2" style="width:${Math.round(w.blick * 44)}px"></i>${pz(w.blick)}</td></tr>`;
   const vergleich = LAYOUTS.filter(x => !x.stil).map(x => { const e = x === l ? erg : rechne(x, false), q = e.kennzahlen; return `<tr class="${x === l ? 'act' : ''}"><td>${LBL(x)} ${esc(x.name)}</td><td>${q.gesamtwert}</td><td>${de(q.rundgang_m, 0)}</td><td>${pz(q.doppelwegAnteil)}</td><td>${pz(q.mittlereSicht)}</td><td>${q.inselnVomEingang}</td><td>${q.inselnVonDerStrasse}</td><td class="${q.engstellen.length ? 'bad' : 'good'}">${q.engstellen.length}</td></tr>`; }).join('');
   el.innerHTML = `
   <div class="blk"><span class="eyebrow">Analyse · Layout ${LBL(l)} ${esc(l.name)}</span>
@@ -480,8 +494,11 @@ function renderAnalyse() {
     <div class="tile"><b>${k.inselnVonDerStrasse}/8</b><span>Inseln von der Straße zu sehen</span></div>
   </div>
   <div class="blk"><h2>Sichtbarkeit je Insel</h2>
-    <div class="tw"><table class="cmp"><thead><tr><th>Insel</th><th>unterwegs gesehen</th><th>ab</th><th>von der Tür</th><th>Ovale</th></tr></thead><tbody>${l.rundgang.map(zeile).join('')}</tbody></table></div>
-    <p class="note">„Unterwegs gesehen“: von wie viel Prozent des Rundgangs die Besucherseite der Insel frei im Blick liegt. „Ab“: nach wie vielen Metern man sie zum ersten Mal sieht. „Ovale“: durch wie viele der sechs klaren Schaufenster-Ovale sie von der Straße aus zu sehen ist (bis 8 m Entfernung).</p></div>
+    <div class="tw"><table class="cmp"><thead><tr><th>Insel</th><th>gesehen</th><th>ab</th><th>Tür</th><th>Ovale</th><th>Blick</th></tr></thead><tbody>${l.rundgang.map(zeile).join('')}</tbody></table></div>
+    <p class="note">„Gesehen“: von wie viel Prozent des Rundgangs die Besucherseite der Insel frei im Blick liegt. „Ab“: nach wie vielen Metern man sie zum ersten Mal sieht. „Ovale“: durch wie viele der sechs klaren Schaufenster-Ovale sie von der Straße aus zu sehen ist (bis 8 m Entfernung). „Blick“: wie stark die Besucherseite im Blick liegt, gewichtet danach, wo Besucher gehen und stehen, wie frontal sie darauf schauen und wie weit sie weg sind. 100 % ist die meistgesehene Fläche im Raum.</p></div>
+  <div class="blk"><h2>Freie Wände im Blick</h2>
+    <div class="tw"><table class="cmp"><thead><tr><th>Wand</th><th>Länge</th><th>Blick</th></tr></thead><tbody>${frW.map(wandZeile).join('')}</tbody></table></div>
+    <p class="note">Wände, die zu keiner Insel gehören. Viel Blick heißt: guter Platz für Titel, Auftakt, Wegweiser oder einen Vorboten der Inseln, die man von dort noch nicht sieht. Wenig Blick heißt: Hier liest niemand, die Wand taugt als Lager- oder Technikseite. Steht eine Insel vor der Wand, zählt nur der Teil, der frei bleibt. Im Raum zeigt „Sicht“ dieselbe Auswertung als Farbe auf jeder Wand und jeder Exponatseite.</p></div>
   ${k.engstellen.length ? `<div class="blk"><h2>Engstellen auf dem Rundgang</h2><ul class="plain">${k.engstellen.map(e => `<li>${de(e.breite_m)} m breit bei x ${de(e.x, 1)} / Tiefe ${de(e.z, 1)} m</li>`).join('')}</ul></div>` : ''}
   <div class="blk"><h2>Vergleich der Layouts</h2>
     <div class="tw"><table class="cmp"><thead><tr><th>Layout</th><th>Wert</th><th>Weg m</th><th>doppelt</th><th>Sicht</th><th>Tür</th><th>Straße</th><th>eng</th></tr></thead><tbody>${vergleich}</tbody></table></div>
@@ -511,7 +528,7 @@ function miniPlan(l) {
   return `<svg viewBox="-1 -0.7 21.2 12.6" role="img" aria-label="Grundriss Layout ${esc(l.name)}">
     <path d="M-0.5 0H19.45V9.35H16.55V10.7H-0.5Z" class="rm"/><path d="M5.55 0H11.4V5.2H8.15V3.1H5.55Z" class="blk"/>
     <rect x="0.05" y="0.02" width="${f2(4.4 - wzDx(l))}" height="2.9" rx="0.1" fill="${col('s1')}"/><text x="${f2(2.25 - wzDx(l) / 2)}" y="1.8" class="mn">1</text>
-    <rect x="1" y="3.12" width="3.2" height="0.66" class="th"/><rect x="19.05" y="0.1" width="0.4" height="9.1" fill="${col('s6')}"/><text x="18.55" y="4.95" class="mn dk">6</text>
+    <path d="M13.15 2.7H13.8V4.75H15.7V5.4H13.15Z" class="th"/><rect x="19.05" y="0.1" width="0.4" height="9.1" fill="${col('s6')}"/><text x="18.55" y="4.95" class="mn dk">6</text>
     <line x1="${f2(4.52 - wzDx(l))}" y1="0.1" x2="${f2(4.52 - wzDx(l))}" y2="2.3" class="sw"/>${ov}${[...Object.values(l.fest || {}), ...Object.values(l.niedrig || {})].map(([x0, z0, x1, z1]) => `<rect x="${x0}" y="${z0}" width="${Math.max(x1 - x0, 0.16)}" height="${Math.max(z1 - z0, 0.16)}" class="fx"/>`).join('')}${['s2', 's3', 's4', 's5', 's7', 's8', 'wand2', 'wand3', 'fahne'].map(item).join('')}
     <path d="M17.72 10.1l0.55 1h-1.1z" class="in"/></svg>`;
 }
@@ -554,7 +571,7 @@ $('#tabbody').addEventListener('click', e => {
   const s = e.target.closest('[data-show]'); if (s) { if (!state.expo) toggleExpo(true); select(s.dataset.show, { fly: true }); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
   const jp = e.target.closest('[data-jump]'); if (jp) { setTab(jp.dataset.jump); $('#tabbody').scrollTop = 0; return; }
   const rf = e.target.closest('[data-rfilter]'); if (rf) { state.radarFilter = rf.dataset.rfilter; renderRadar(); return; }
-  const ab = e.target.closest('[data-an]'); if (ab) { setAn(ab.dataset.an); if (!state.walk && !state.move) setView('plan'); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
+  const ab = e.target.closest('[data-an]'); if (ab) { setAn(ab.dataset.an); if (!state.walk && !state.move) setView(ab.dataset.an === 'sicht' ? 'iso' : 'plan'); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
   const lb = e.target.closest('[data-layout]'); if (lb) { setLayout(lb.dataset.layout); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); return; }
   const g = e.target.closest('[data-go]'); if (g) { setMove(true); if (!matchMedia('(min-width: 901px)').matches) stageEl.scrollIntoView({ behavior: REDUCED ? 'auto' : 'smooth' }); }
 });

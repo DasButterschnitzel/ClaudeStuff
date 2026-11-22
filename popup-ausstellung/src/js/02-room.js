@@ -13,8 +13,8 @@ const R = {
   core: { x0: 8.15, x1: 11.4, z1: 5.2 },      // Treppenhaus
   door: { x0: 16.6, x1: 18.85, z: 9.35 },      // Eingang, zurückgesetzt
   xRet: 16.55,
-  sq: [[2.74, 4.93], [5.52, 4.93]],            // Vierkantstützen
-  rd: [[13.92, 5.07], [16.73, 5.03]],          // Rundstützen
+  sq: [[2.74, 4.93], [5.52, 4.93], [13.92, 5.07], [16.73, 5.03]],   // Stützen, weiß verkleidet (im Plan rechts als Punkte gezeichnet, auf dem Foto an der Theke kantig)
+  rd: [],
   frontX: [3.9, 7.93, 11.58, 15.22], westZ: [6.97],
   fenster: { west: ['3,25', '3,61'], sued: ['4,33', '3,91', '3,57', '3,63'], eingang: '2,35' },
 };
@@ -113,7 +113,8 @@ function buildRoom() {
   const doorLeaf = (x0, x1) => g.add(box(x1 - x0, 2.05, 0.05, mDoor, (x0 + x1) / 2, 0, 0.03, false), box(0.03, 0.12, 0.05, mFrame, x1 - 0.12, 1.02, 0.07, false), box(x1 - x0, 2.05, 0.03, mDoor, (x0 + x1) / 2, 0, -0.305, false));
   doorLeaf(4.5, 5.5); doorLeaf(17.1, 17.95);
   g.add(box(0.05, 2.05, 0.9, mDoor, L.x0 - 0.03, 0, 1.05, false));                         // Tür zum Lager
-  g.add(box(0.85, 0.28, 0.2, mWhite, 3.6, 2.05, 0.1), box(0.1, 0.6, 0.8, mWhite, W - 0.06, 0.15, 8.75));   // Klimagerät, Heizkörper an der Brandmauer
+  g.add(box(0.85, 0.28, 0.2, mWhite, 15.2, 2.05, 0.1), box(0.1, 0.6, 0.8, mWhite, W - 0.06, 0.15, 8.75));   // Klimagerät (laut Foto hinter der Theke), Heizkörper an der Brandmauer
+  g.add(cyl(0.06, 0.42, M('#c8102e', { roughness: 0.4 }), 16.9, 0.75, 0.1, 14), box(0.03, 0.1, 0.03, M('#26222c'), 16.9, 1.17, 0.1, false));   // Feuerlöscher neben der Tür zu den Nebenräumen
   /* Pendelleuchten an der Fensterfront */
   const mLamp = M('#eeeae2', { roughness: 0.4 });
   for (const x of [2.1, 9.9, 13.3]) {

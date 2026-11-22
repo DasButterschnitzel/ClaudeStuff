@@ -8,21 +8,22 @@
 // x = Breite ab Natursteinwand (0 … 19,45), z = Tiefe ab Rückwand (0 … 10,2), r = Drehung in Grad.
 // r = 0: Besucherseite zeigt zur langen Fensterfront (+z) · 90: zur Brandmauer (+x) · 180: zur Rückwand · 270: zur Natursteinwand.
 import { readFileSync, existsSync } from 'node:fs';
+import { A_THEKE } from '../src/js/00-analyse.js';
 
 export const ROOM = [[0, 0], [5.55, 0], [5.55, 3.1], [8.15, 3.1], [8.15, 5.2], [11.4, 5.2], [11.4, 0], [19.45, 0], [19.45, 9.35], [16.55, 9.35], [16.55, 10.2], [0, 10.2]];
 // Feste Dinge als Rechtecke [x0, z0, x1, z1]
 export const FIXED = {
   'Wohnzimmer (Insel 1)': [0.05, 0.02, 4.45, 2.92],
-  'Theke': [1.0, 3.12, 4.2, 3.78],
-  'Vierkantstütze links': [2.59, 4.78, 2.89, 5.08], 'Vierkantstütze rechts': [5.37, 4.78, 5.67, 5.08],
-  'Rundstütze links': [13.79, 4.94, 14.05, 5.2], 'Rundstütze rechts': [16.6, 4.9, 16.86, 5.16],
+  'Theke (langer Schenkel)': A_THEKE[0], 'Theke (kurzer Schenkel)': A_THEKE[1],   // fest eingebaut, L um die linke Stütze der rechten Halle
+  'Stütze 1 (links)': [2.59, 4.78, 2.89, 5.08], 'Stütze 2': [5.37, 4.78, 5.67, 5.08],
+  'Stütze 3 (an der Theke)': [13.79, 4.94, 14.05, 5.2], 'Stütze 4 (am Eingang)': [16.6, 4.9, 16.86, 5.16],
   'Gebietsreform-Wand (Insel 6)': [19.4, 0, 19.45, 9.35],
   'Stellwand am Wohnzimmer': [4.46, 0.1, 4.58, 2.3],
 };
 // Flächen, die frei bleiben müssen
 export const KEEP_STD = {
   'Eingang': [16.5, 7.7, 19.0, 9.35], 'Gang zu Hoftür und Lager': [4.6, 0, 5.55, 3.1], 'Tür zu den Nebenräumen': [16.9, 0, 18.15, 1.2],
-  'Zugang Wohnzimmer': [0, 2.92, 1.0, 4.1], 'Betrachtungsstreifen vor der Gebietsreform-Wand': [18.2, 0.3, 19.4, 7.6],
+  'Zugang Wohnzimmer': [0.4, 2.92, 4.1, 3.9], 'Kundenseite der Theke': [13.9, 5.4, 15.6, 6.2], 'Personalplatz hinter der Theke': [13.8, 3.7, 15.7, 4.75], 'Betrachtungsstreifen vor der Gebietsreform-Wand': [18.2, 0.3, 19.4, 7.6],
 };
 // Bewegliche Dinge: Rechteck lokal [x0, z0, x1, z1] um den Mittelpunkt, vorn = +z; view = freie Tiefe vor der Besucherseite
 export const ITEMS = {
@@ -37,7 +38,7 @@ export const ITEMS = {
   wand3: { name: 'Zusätzliche Stellwand 3', rect: [-1.1, -0.06, 1.1, 0.06], view: 0, optional: true },
 };
 const ENTRY = [17.7, 8.5];
-const ACCESS = { 'Hoftür': [5.05, 0.7], 'Lagertür': [5.1, 1.2], 'Nebenraum-Tür': [17.5, 0.7], 'Wohnzimmer': [0.5, 3.4], 'Theke (Vorderseite)': [3.6, 4.45], 'Gebietsreform-Wand': [18.7, 4.5] };
+const ACCESS = { 'Hoftür': [5.05, 0.7], 'Lagertür': [5.1, 1.2], 'Nebenraum-Tür': [17.5, 0.7], 'Wohnzimmer': [2.2, 3.6], 'Theke (Kundenseite)': [14.75, 6.0], 'Theke (Personalseite)': [14.8, 4.2], 'Gebietsreform-Wand': [18.7, 4.5] };
 
 const rad = d => d * Math.PI / 180;
 const toWorld = (p, [x, z]) => { const c = Math.cos(rad(p.r || 0)), s = Math.sin(rad(p.r || 0)); return [p.x + x * c + z * s, p.z - x * s + z * c]; };

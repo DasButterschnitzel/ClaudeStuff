@@ -1,0 +1,68 @@
+{
+ "key": "a",
+ "name": "Erster Vorschlag",
+ "leitidee": "Die Ausgangslage aus den bisherigen Runden: Jede Insel steht an der nächstliegenden Wand, die Mitte bleibt Durchgang.",
+ "rundgang": [
+  "s6",
+  "s5",
+  "s7",
+  "s8",
+  "s4",
+  "s3",
+  "s1",
+  "s2"
+ ],
+ "weg": "Rechts an der orangen Wand entlang nach hinten, dann an Treppenhaus und Selfie-Koje vorbei zum Wohnzimmer und über das Mero-System an der Fensterfront zurück.",
+ "pos": {
+  "s2": {
+   "x": 3.4,
+   "z": 7.5,
+   "r": 0
+  },
+  "s3": {
+   "x": 6.85,
+   "z": 4.15,
+   "r": 0
+  },
+  "s4": {
+   "x": 9.78,
+   "z": 5.72,
+   "r": 0
+  },
+  "s5": {
+   "x": 13.5,
+   "z": 7.7,
+   "r": 0
+  },
+  "s7": {
+   "x": 11.85,
+   "z": 2.6,
+   "r": 90
+  },
+  "s8": {
+   "x": 15.0,
+   "z": 0.78,
+   "r": 0
+  },
+  "fahne": {
+   "x": 15.3,
+   "z": 5.9,
+   "r": 35
+  }
+ },
+ "gruende": {
+  "theke": "Die Theke schließt das Wohnzimmer nach vorn ab und dient als Infotheke."
+ },
+ "staerken": [
+  "Jede Insel hat eine Wand im Rücken, der Aufbau ist einfach.",
+  "Statistik und Mero-System sind durch die Ovale von der Straße zu sehen."
+ ],
+ "schwaechen": [
+  "Kein eindeutiger Rundweg, die Reihenfolge ergibt sich zufällig.",
+  "Die Zukunftsinsel steht im Betrachtungsraum der Medienstelen.",
+  "Wohnzimmer und Hoftür sind nur über Durchgänge unter 1,20 m erreichbar."
+ ],
+ "freieFlaeche": 86.1,
+ "warnungen": [],
+ "pruefung": ""
+}
