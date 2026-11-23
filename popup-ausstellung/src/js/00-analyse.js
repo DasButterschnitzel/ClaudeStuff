@@ -127,7 +127,7 @@ export function analyse(layout, opt = {}) {
      Jede Fläche wird in Stücke von rund 25 cm geteilt. Für jedes Stück zählt, von wie vielen Stand- und Laufpunkten man es frei sieht,
      gewichtet mit dem Aufenthalt dort (Lauf-Heatmap), mit dem Blickwinkel (frontal zählt voll, streifend kaum) und mit der Entfernung. */
   const flaechen = [];
-  if (!opt.ohneSichtkarte || opt.blick) {
+  {
     const stueck = (id, art, name, seite, x0, z0, x1, z1) => { const L = Math.hypot(x1 - x0, z1 - z0), n = Math.max(1, Math.round(L / 0.25)), nx = (z1 - z0) / L, nz = -(x1 - x0) / L;   // Normale zeigt nach rechts der Laufrichtung
       for (let i = 0; i < n; i++) flaechen.push({ id, art, name, seite, x0: x0 + (x1 - x0) * i / n, z0: z0 + (z1 - z0) * i / n, x1: x0 + (x1 - x0) * (i + 1) / n, z1: z0 + (z1 - z0) * (i + 1) / n, nx, nz, v: 0 }); };
     const frei2 = (x, z) => x > 0 && z > 0 && x < 19.6 && z < 10.4 && !dicht[idx(x, z)];
@@ -167,17 +167,19 @@ export function analyse(layout, opt = {}) {
   for (const h of [...reihenfolge, { k: start }]) { const i0 = h.k % W, j0 = Math.floor(h.k / W); for (let dj = -9; dj <= 9; dj++) for (let di = -9; di <= 9; di++) { const a = i0 + di, b = j0 + dj; if (a >= 0 && b >= 0 && a < W && b < H) nahHalt[b * W + a] = 1; } }
   let zellen = 0, doppelt = 0; for (const b of beine) { const set = new Set(); for (const k of b.w) for (const [di, dj] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) { const n = k + di + dj * W; if (n >= 0 && n < N) set.add(n); } for (const k of set) zaehl[k]++; }
   for (let k = 0; k < N; k++) if (zaehl[k] && !nahHalt[k]) { zellen++; if (zaehl[k] > 1) doppelt++; }
-  const fern = new Float32Array(N).fill(1e9); qh = qt = 0; for (const b of beine) for (const k of b.w) if (fern[k] > 0) { fern[k] = 0; q[qt++] = k; }
+  const fern = new Float64Array(N).fill(1e9); qh = qt = 0;   /* Float64: mit Float32 schlug der Vergleich unten fehl, Zellen kamen mehrfach in die Warteschlange und sie lief voll */ for (const b of beine) for (const k of b.w) if (fern[k] > 0) { fern[k] = 0; q[qt++] = k; }
   while (qh < qt) { const k = q[qh++], i = k % W, j = (k - i) / W; for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const a = i + di, b = j + dj; if (a < 0 || b < 0 || a >= W || b >= H) continue; const n = b * W + a; if (wand[n] || fern[n] <= fern[k] + S) continue; fern[n] = fern[k] + S; if (qt < N) q[qt++] = n; } }
   let freiZ = 0, abseits = 0; for (let k = 0; k < N; k++) if (!wand[k]) { freiZ++; if (fern[k] > 3) abseits++; }
   const eng = new Map(); for (const b of beine) for (const k of b.w) if (frei[k] < 0.6 && !nahHalt[k]) { const key = Math.round((k % W) * S) + ',' + Math.round(Math.floor(k / W) * S); const e = eng.get(key); if (!e || frei[k] < e.f) eng.set(key, { x: +((k % W + 0.5) * S).toFixed(1), z: +((Math.floor(k / W) + 0.5) * S).toFixed(1), f: frei[k] }); }
   const engstellen = [...eng.values()].sort((a, b) => a.f - b.f).slice(0, 6).map(e => ({ x: e.x, z: e.z, breite_m: +(e.f * 2).toFixed(2) }));
   const ins = Object.values(inseln), mSicht = ins.reduce((a, i) => a + i.sichtAnteil, 0) / Math.max(1, ins.length), strasse = ins.filter(i => i.ovale > 0).length / Math.max(1, ins.length), doppelAnteil = zellen ? doppelt / zellen : 0, abseitsAnteil = freiZ ? abseits / freiZ : 0;
-  const wert = unerreichbar.length ? 0 : Math.round(100 * (0.32 * Math.min(1, mSicht / 0.45) + 0.2 * (1 - doppelAnteil) + 0.13 * (1 - Math.min(1, abseitsAnteil * 3)) + 0.15 * strasse + 0.1 * (1 - Math.min(1, engstellen.length / 6)) + 0.1 * (ins.filter(i => i.vomEingang).length >= 3 ? 1 : ins.filter(i => i.vomEingang).length / 3)));
+  const mBlick = ins.reduce((a, i) => a + (i.blick || 0), 0) / Math.max(1, ins.length), nTuer = ins.filter(i => i.vomEingang).length;
+  /* Gesamtwert: Sicht 22 · Blick auf die Schauseiten 15 · wenig Doppelwege 18 · Straße 13 · keine Engstellen 12 · Tür 12 · wenig abseits 8 */
+  const wert = unerreichbar.length ? 0 : Math.round(100 * (0.22 * Math.min(1, mSicht / 0.6) + 0.15 * Math.min(1, mBlick / 0.5) + 0.18 * (1 - doppelAnteil) + 0.13 * strasse + 0.12 * (1 - Math.min(1, engstellen.length / 3)) + 0.12 * Math.min(1, nTuer / 4) + 0.08 * (1 - Math.min(1, abseitsAnteil * 3))));
   const pfad = beine.map(b => ({ nach: b.nach, punkte: b.w.filter((_, i) => i % 2 === 0 || i === b.w.length - 1).map(k => [+((k % W + 0.5) * S).toFixed(2), +((Math.floor(k / W) + 0.5) * S).toFixed(2)]) }));
   return {
     W, H, S, lauf, sicht, flaechen, waende, pfad, halte: reihenfolge.map(h => ({ id: h.id, x: +h.x.toFixed(2), z: +h.z.toFixed(2) })),
-    kennzahlen: { gesamtwert: wert, rundgang_m: +routeLen.toFixed(1), doppelwegAnteil: +doppelAnteil.toFixed(2), abseitsAnteil: +abseitsAnteil.toFixed(2), mittlereSicht: +mSicht.toFixed(2), inselnVonDerStrasse: ins.filter(i => i.ovale > 0).length, inselnVomEingang: ins.filter(i => i.vomEingang).length, engstellen, unerreichbar },
+    kennzahlen: { gesamtwert: wert, rundgang_m: +routeLen.toFixed(1), doppelwegAnteil: +doppelAnteil.toFixed(2), abseitsAnteil: +abseitsAnteil.toFixed(2), mittlereSicht: +mSicht.toFixed(2), mittlererBlick: +mBlick.toFixed(2), inselnVonDerStrasse: ins.filter(i => i.ovale > 0).length, inselnVomEingang: ins.filter(i => i.vomEingang).length, engstellen, unerreichbar },
     inseln,
   };
 }

@@ -2291,15 +2291,15 @@ const A_DATA = {
  "leitidee": "Die Ausgangslage aus den bisherigen Runden: Jede Insel steht an der nächstliegenden Wand, die Mitte bleibt Durchgang.",
  "rundgang": [
   "s6",
-  "s5",
-  "s7",
   "s8",
+  "s7",
   "s4",
   "s3",
   "s1",
-  "s2"
+  "s2",
+  "s5"
  ],
- "weg": "Rechts an der orangen Wand entlang nach hinten, dann an Treppenhaus und Selfie-Koje vorbei zum Wohnzimmer und über das Mero-System an der Fensterfront zurück.",
+ "weg": "Rechts an der orangen Wand entlang nach hinten, an der Rückwand an Zukunftsinsel und Medienstelen vorbei und durch die Gasse zwischen Treppenhaus und Theke wieder nach vorn. Dann an Statistik und Selfie-Koje vorbei zum Wohnzimmer und über das Mero-System an der Fensterfront zurück zur Litfaß-Säule und zur Tür. Zwischen der Bank der Medienstelen und dem Ende der Theke ist der Weg nur 0,8 m breit.",
  "pos": {
   "s2": {
    "x": 3.4,
@@ -2322,36 +2322,46 @@ const A_DATA = {
    "r": 0
   },
   "s7": {
-   "x": 11.85,
-   "z": 2.6,
-   "r": 90
+   "x": 12.8,
+   "z": 0.33,
+   "r": 0
   },
   "s8": {
-   "x": 15.0,
+   "x": 15.55,
    "z": 0.78,
    "r": 0
   },
   "fahne": {
    "x": 15.3,
-   "z": 5.9,
+   "z": 6.65,
    "r": 35
   }
  },
  "gruende": {
-  "theke": "Die Theke schließt das Wohnzimmer nach vorn ab und dient als Infotheke."
+  "s7": "Die Medienstelen können nicht an der Treppenhaus-Ostwand bleiben: Dort steht der lange Schenkel der Theke, die Gasse davor ist nur 1,75 m breit. Sie stehen jetzt an der nächsten freien Wand, der Rückwand am Ende der Gasse (x 11,4 bis 14,2). Das ist nicht fein abgestimmt: Sie verdecken das Glasbaustein-Fenster und den Heizkörper, und die Bildschirme zeigen zur Fensterfront.",
+  "s8": "Die Zukunftsinsel bleibt an der Rückwand und rückt nur 55 cm nach rechts, damit die Medienstelen daneben passen. Sie steht damit im Rücken der Aufsicht, 5 cm vor der Freihaltezone der Tür zu Nebenräumen und WC.",
+  "fahne": "Die Fahne stand in der Kundenseite der Theke. Sie rückt 75 cm Richtung Fensterfront und steht jetzt knapp 1 m vor der Theke. Vom Eingang aus verdeckt sie einen Teil der Theke.",
+  "theke": "Die Theke ist fest eingebaut und steht in der rechten Halle beim Eingang. In diesem Layout ist sie nur Infotheke und Aufsicht, keine Insel ist auf sie abgestimmt. Zukunftsinsel und Medienstelen liegen in ihrem Rücken. Wohnzimmer und Selfie-Koje sind von ihr aus nicht einsehbar, das Treppenhaus steht dazwischen."
  },
  "staerken": [
-  "Jede Insel hat eine Wand im Rücken, der Aufbau ist einfach.",
-  "Statistik und Mero-System sind durch die Ovale von der Straße zu sehen."
+  "Sechs der acht Inseln stehen an einer Wand, der Aufbau ist einfach und braucht keine zusätzlichen Stellwände.",
+  "Vom Eingang aus sind fünf Inseln zu sehen, darunter Litfaß-Säule und Statistik (Messung).",
+  "Statistik und Mero-System sind durch die Ovale von der Straße zu sehen; insgesamt sind es sechs von acht Inseln.",
+  "Die Fläche vor dem Wohnzimmer ist frei, der Zugang ist auch mit 1,20 m Durchgang erreichbar."
  ],
  "schwaechen": [
-  "Kein eindeutiger Rundweg, die Reihenfolge ergibt sich zufällig.",
-  "Die Zukunftsinsel steht im Betrachtungsraum der Medienstelen.",
-  "Wohnzimmer und Hoftür sind nur über Durchgänge unter 1,20 m erreichbar."
+  "Kein geplanter Rundweg: Die Reihenfolge ergibt sich aus den Wänden, nicht aus dem Inhalt.",
+  "Zwischen der Bank der Medienstelen und dem Ende der Theke bleiben 0,8 m. Das ist eine Engstelle auf dem Rundgang, für Rollstuhl und Kinderwagen zu schmal.",
+  "Die Medienstelen stehen vor Glasbaustein-Fenster und Heizkörper, ihre Bildschirme zeigen zur langen Fensterfront. Medienstelen und Zukunftsinsel sind von der Straße nicht zu sehen.",
+  "Mero-System (Blick-Wert 0,26) und Wohnzimmer (0,36) liegen am schwächsten im Blick. Wohnzimmer und Selfie-Koje sieht die Aufsicht von der Theke aus nicht."
  ],
- "freieFlaeche": 86.1,
- "warnungen": [],
- "pruefung": ""
+ "freieFlaeche": 85.7,
+ "warnungen": [
+  "Medienstelen: Die Bildschirme zeigen zur langen Fensterfront. Wer davor sitzt oder steht, hat mit Spiegelung und Gegenlicht zu tun.",
+  "Hoftür: nur über eine Engstelle unter 1,20 m erreichbar. Der Gang zwischen der Stellwand am Wohnzimmer und dem Lager ist 0,97 m breit. Ob die Hoftür Rettungsweg ist, ist noch zu klären.",
+  "Lagertür: nur über denselben 0,97 m breiten Gang erreichbar."
+ ],
+ "pruefung": "In dieser Runde wurde nur korrigiert, was wegen der fest eingebauten Theke nicht mehr ging: Die Medienstelen stehen statt an der Treppenhaus-Ostwand an der Rückwand, die Zukunftsinsel rückt dafür 55 cm nach rechts, die Fahne 75 cm aus der Kundenseite der Theke. Die Reihenfolge des Rundgangs folgt jetzt den Wänden (Litfaß-Säule am Schluss); sonst wurde bewusst nichts verbessert, die Messung ergibt 0 Fehler und den Gesamtwert 85."
 };
 // ---- 00-analyse.js ----
 /* =====================================================================
@@ -2483,7 +2493,7 @@ export function analyse(layout, opt = {}) {
      Jede Fläche wird in Stücke von rund 25 cm geteilt. Für jedes Stück zählt, von wie vielen Stand- und Laufpunkten man es frei sieht,
      gewichtet mit dem Aufenthalt dort (Lauf-Heatmap), mit dem Blickwinkel (frontal zählt voll, streifend kaum) und mit der Entfernung. */
   const flaechen = [];
-  if (!opt.ohneSichtkarte || opt.blick) {
+  {
     const stueck = (id, art, name, seite, x0, z0, x1, z1) => { const L = Math.hypot(x1 - x0, z1 - z0), n = Math.max(1, Math.round(L / 0.25)), nx = (z1 - z0) / L, nz = -(x1 - x0) / L;   // Normale zeigt nach rechts der Laufrichtung
       for (let i = 0; i < n; i++) flaechen.push({ id, art, name, seite, x0: x0 + (x1 - x0) * i / n, z0: z0 + (z1 - z0) * i / n, x1: x0 + (x1 - x0) * (i + 1) / n, z1: z0 + (z1 - z0) * (i + 1) / n, nx, nz, v: 0 }); };
     const frei2 = (x, z) => x > 0 && z > 0 && x < 19.6 && z < 10.4 && !dicht[idx(x, z)];
@@ -2523,17 +2533,19 @@ export function analyse(layout, opt = {}) {
   for (const h of [...reihenfolge, { k: start }]) { const i0 = h.k % W, j0 = Math.floor(h.k / W); for (let dj = -9; dj <= 9; dj++) for (let di = -9; di <= 9; di++) { const a = i0 + di, b = j0 + dj; if (a >= 0 && b >= 0 && a < W && b < H) nahHalt[b * W + a] = 1; } }
   let zellen = 0, doppelt = 0; for (const b of beine) { const set = new Set(); for (const k of b.w) for (const [di, dj] of [[0, 0], [1, 0], [-1, 0], [0, 1], [0, -1]]) { const n = k + di + dj * W; if (n >= 0 && n < N) set.add(n); } for (const k of set) zaehl[k]++; }
   for (let k = 0; k < N; k++) if (zaehl[k] && !nahHalt[k]) { zellen++; if (zaehl[k] > 1) doppelt++; }
-  const fern = new Float32Array(N).fill(1e9); qh = qt = 0; for (const b of beine) for (const k of b.w) if (fern[k] > 0) { fern[k] = 0; q[qt++] = k; }
+  const fern = new Float64Array(N).fill(1e9); qh = qt = 0;   /* Float64: mit Float32 schlug der Vergleich unten fehl, Zellen kamen mehrfach in die Warteschlange und sie lief voll */ for (const b of beine) for (const k of b.w) if (fern[k] > 0) { fern[k] = 0; q[qt++] = k; }
   while (qh < qt) { const k = q[qh++], i = k % W, j = (k - i) / W; for (const [di, dj] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const a = i + di, b = j + dj; if (a < 0 || b < 0 || a >= W || b >= H) continue; const n = b * W + a; if (wand[n] || fern[n] <= fern[k] + S) continue; fern[n] = fern[k] + S; if (qt < N) q[qt++] = n; } }
   let freiZ = 0, abseits = 0; for (let k = 0; k < N; k++) if (!wand[k]) { freiZ++; if (fern[k] > 3) abseits++; }
   const eng = new Map(); for (const b of beine) for (const k of b.w) if (frei[k] < 0.6 && !nahHalt[k]) { const key = Math.round((k % W) * S) + ',' + Math.round(Math.floor(k / W) * S); const e = eng.get(key); if (!e || frei[k] < e.f) eng.set(key, { x: +((k % W + 0.5) * S).toFixed(1), z: +((Math.floor(k / W) + 0.5) * S).toFixed(1), f: frei[k] }); }
   const engstellen = [...eng.values()].sort((a, b) => a.f - b.f).slice(0, 6).map(e => ({ x: e.x, z: e.z, breite_m: +(e.f * 2).toFixed(2) }));
   const ins = Object.values(inseln), mSicht = ins.reduce((a, i) => a + i.sichtAnteil, 0) / Math.max(1, ins.length), strasse = ins.filter(i => i.ovale > 0).length / Math.max(1, ins.length), doppelAnteil = zellen ? doppelt / zellen : 0, abseitsAnteil = freiZ ? abseits / freiZ : 0;
-  const wert = unerreichbar.length ? 0 : Math.round(100 * (0.32 * Math.min(1, mSicht / 0.45) + 0.2 * (1 - doppelAnteil) + 0.13 * (1 - Math.min(1, abseitsAnteil * 3)) + 0.15 * strasse + 0.1 * (1 - Math.min(1, engstellen.length / 6)) + 0.1 * (ins.filter(i => i.vomEingang).length >= 3 ? 1 : ins.filter(i => i.vomEingang).length / 3)));
+  const mBlick = ins.reduce((a, i) => a + (i.blick || 0), 0) / Math.max(1, ins.length), nTuer = ins.filter(i => i.vomEingang).length;
+  /* Gesamtwert: Sicht 22 · Blick auf die Schauseiten 15 · wenig Doppelwege 18 · Straße 13 · keine Engstellen 12 · Tür 12 · wenig abseits 8 */
+  const wert = unerreichbar.length ? 0 : Math.round(100 * (0.22 * Math.min(1, mSicht / 0.6) + 0.15 * Math.min(1, mBlick / 0.5) + 0.18 * (1 - doppelAnteil) + 0.13 * strasse + 0.12 * (1 - Math.min(1, engstellen.length / 3)) + 0.12 * Math.min(1, nTuer / 4) + 0.08 * (1 - Math.min(1, abseitsAnteil * 3))));
   const pfad = beine.map(b => ({ nach: b.nach, punkte: b.w.filter((_, i) => i % 2 === 0 || i === b.w.length - 1).map(k => [+((k % W + 0.5) * S).toFixed(2), +((Math.floor(k / W) + 0.5) * S).toFixed(2)]) }));
   return {
     W, H, S, lauf, sicht, flaechen, waende, pfad, halte: reihenfolge.map(h => ({ id: h.id, x: +h.x.toFixed(2), z: +h.z.toFixed(2) })),
-    kennzahlen: { gesamtwert: wert, rundgang_m: +routeLen.toFixed(1), doppelwegAnteil: +doppelAnteil.toFixed(2), abseitsAnteil: +abseitsAnteil.toFixed(2), mittlereSicht: +mSicht.toFixed(2), inselnVonDerStrasse: ins.filter(i => i.ovale > 0).length, inselnVomEingang: ins.filter(i => i.vomEingang).length, engstellen, unerreichbar },
+    kennzahlen: { gesamtwert: wert, rundgang_m: +routeLen.toFixed(1), doppelwegAnteil: +doppelAnteil.toFixed(2), abseitsAnteil: +abseitsAnteil.toFixed(2), mittlereSicht: +mSicht.toFixed(2), mittlererBlick: +mBlick.toFixed(2), inselnVonDerStrasse: ins.filter(i => i.ovale > 0).length, inselnVomEingang: ins.filter(i => i.vomEingang).length, engstellen, unerreichbar },
     inseln,
   };
 }
@@ -4216,7 +4228,7 @@ function renderAnalyse() {
   ${k.engstellen.length ? `<div class="blk"><h2>Engstellen auf dem Rundgang</h2><ul class="plain">${k.engstellen.map(e => `<li>${de(e.breite_m)} m breit bei x ${de(e.x, 1)} / Tiefe ${de(e.z, 1)} m</li>`).join('')}</ul></div>` : ''}
   <div class="blk"><h2>Vergleich der Layouts</h2>
     <div class="tw"><table class="cmp"><thead><tr><th>Layout</th><th>Wert</th><th>Weg m</th><th>doppelt</th><th>Sicht</th><th>Tür</th><th>Straße</th><th>eng</th></tr></thead><tbody>${vergleich}</tbody></table></div>
-    <p class="note">So wird gerechnet: 60 % der Besucher folgen dem Rundgang, 25 % gehen immer zur nächsten Insel, 15 % sehen nur drei Inseln und gehen wieder. Sicht zählt in Augenhöhe; Mero-System, Koje, Tafeln, Stelen, Säule, Fahne und Stellwände versperren den Blick, Theke und Fensterbank nicht. Der Gesamtwert fasst Sicht (32 %), wenig Doppelwege (20 %), Sicht von der Straße (15 %), wenig abseits liegende Fläche (13 %), Engstellen (10 %) und Sicht von der Tür (10 %) zusammen. Das ist ein Modell, keine Besucherzählung.</p></div>`;
+    <p class="note">So wird gerechnet: 60 % der Besucher folgen dem Rundgang, 25 % gehen immer zur nächsten Insel, 15 % sehen nur drei Inseln und gehen wieder. Sicht zählt in Augenhöhe; Mero-System, Koje, Tafeln, Stelen, Säule, Fahne und Stellwände versperren den Blick, Theke und Fensterbank nicht. Der Gesamtwert fasst Sicht unterwegs (22 %), Blick auf die Schauseiten (15 %), wenig Doppelwege (18 %), Sicht von der Straße (13 %), keine Engstellen (12 %), Sicht von der Tür (12 %) und wenig abseits liegende Fläche (8 %) zusammen. Das ist ein Modell, keine Besucherzählung.</p></div>`;
 }
 
 /* ---------- Radar: was noch niemand auf dem Schirm hat ---------- */

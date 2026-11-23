@@ -3,7 +3,7 @@
 // Aufruf: node layout-score.mjs layout.json     (oder JSON direkt als Argument)
 // Eingabe: { "rundgang": ["s6", …alle acht…], "pos": { "s2": {"x":…,"z":…,"r":…}, "s3": …, "s4": …, "s5": …, "s7": …, "s8": …, "fahne": … } }
 // Ausgabe: Fehler und Warnungen der Prüfung, dazu Kennzahlen:
-//   gesamtwert        0–100, grobe Sammelzahl (Sicht 32 %, wenig Doppelwege 20 %, Straße 15 %, wenig tote Fläche 13 %, Engstellen 10 %, Eingang 10 %)
+//   gesamtwert        0–100, grobe Sammelzahl (Sicht 22 %, Blick auf die Schauseiten 15 %, wenig Doppelwege 18 %, Straße 13 %, keine Engstellen 12 %, Tür 12 %, wenig abseits 8 %)
 //   rundgang_m        Länge des Rundgangs ab Tür und zurück
 //   doppelwegAnteil   Anteil des Wegs, der zweimal gelaufen wird (Gegenverkehr, Sackgassen)
 //   abseitsAnteil     Anteil der freien Fläche, die mehr als 3 m vom Rundgang entfernt liegt

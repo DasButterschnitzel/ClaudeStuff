@@ -502,7 +502,7 @@ function renderAnalyse() {
   ${k.engstellen.length ? `<div class="blk"><h2>Engstellen auf dem Rundgang</h2><ul class="plain">${k.engstellen.map(e => `<li>${de(e.breite_m)} m breit bei x ${de(e.x, 1)} / Tiefe ${de(e.z, 1)} m</li>`).join('')}</ul></div>` : ''}
   <div class="blk"><h2>Vergleich der Layouts</h2>
     <div class="tw"><table class="cmp"><thead><tr><th>Layout</th><th>Wert</th><th>Weg m</th><th>doppelt</th><th>Sicht</th><th>Tür</th><th>Straße</th><th>eng</th></tr></thead><tbody>${vergleich}</tbody></table></div>
-    <p class="note">So wird gerechnet: 60 % der Besucher folgen dem Rundgang, 25 % gehen immer zur nächsten Insel, 15 % sehen nur drei Inseln und gehen wieder. Sicht zählt in Augenhöhe; Mero-System, Koje, Tafeln, Stelen, Säule, Fahne und Stellwände versperren den Blick, Theke und Fensterbank nicht. Der Gesamtwert fasst Sicht (32 %), wenig Doppelwege (20 %), Sicht von der Straße (15 %), wenig abseits liegende Fläche (13 %), Engstellen (10 %) und Sicht von der Tür (10 %) zusammen. Das ist ein Modell, keine Besucherzählung.</p></div>`;
+    <p class="note">So wird gerechnet: 60 % der Besucher folgen dem Rundgang, 25 % gehen immer zur nächsten Insel, 15 % sehen nur drei Inseln und gehen wieder. Sicht zählt in Augenhöhe; Mero-System, Koje, Tafeln, Stelen, Säule, Fahne und Stellwände versperren den Blick, Theke und Fensterbank nicht. Der Gesamtwert fasst Sicht unterwegs (22 %), Blick auf die Schauseiten (15 %), wenig Doppelwege (18 %), Sicht von der Straße (13 %), keine Engstellen (12 %), Sicht von der Tür (12 %) und wenig abseits liegende Fläche (8 %) zusammen. Das ist ein Modell, keine Besucherzählung.</p></div>`;
 }
 
 /* ---------- Radar: was noch niemand auf dem Schirm hat ---------- */
