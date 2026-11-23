@@ -16,7 +16,7 @@ Genauigkeit etwa ±15 cm. Vor Bestellungen vor Ort nachmessen.
 | Fensterfront | 24,65 lfd. m, rund 2,08 m hoch |
 | Fensterbreiten | 3,25 · 3,61 · 4,33 · 3,91 · 3,57 · 3,63 · 2,35 m |
 
-Die Lage der Theke ist nach einem Foto aus dem Exposé geschätzt.
+Die Theke ist fest eingebaut. Sie steht in der rechten Halle beim Eingang als L um die dritte Stütze (langer Schenkel x 13,15–13,80 / z 2,70–5,40, kurzer Schenkel x 13,80–15,70 / z 4,75–5,40). Lage und Schenkellängen sind aus einem Foto im Exposé abgeleitet, nicht eingemessen (±30 cm). Alle Layouts sind darauf ausgelegt; die Theke lässt sich im Modell nicht verschieben.
 
 ## Was die Seite kann
 
@@ -27,9 +27,9 @@ Die Lage der Theke ist nach einem Foto aus dem Exposé geschätzt.
 - Wohnzimmer um 1977 in der Ecke an der Natursteinwand: tapezierte Rückwand, Cordsofa, Sessel, Fernseher mit laufender Simulation (Nachrichten, Kinderstunde, Testbild)
 - Dauerhafte Schaufensterfolierung (Skyline-Band, POP-UP, klares Oval) als Textur aus der Vorlage, `src/foil.webp`; von oben blendet sie aus, damit man in den Raum sieht
 - **14 Layouts** zum Umschalten und Vergleichen: ★ Empfehlung, A Ausgangslage, B–E aus dem Gestalter-Workflow, F–I radikale Konzepte mit eigenem Stil (Begehbarer Stadtplan, Tag und Nacht, Alles Orange, Baustelle Dreieich), J–M neue Ideen zum Jubiläum (Drei Eichen, Endstation 1977, Geburtstagstafel, Fünf Häuser). F–M bauen Boden, Wände, Licht, Farbwelt und Bühnenelemente um
-- **★ Empfehlung der Museumsleitung**: das Konzept des Teams, nach drei Fachgutachten (Besucherforschung, Barrierefreiheit und Sicherheit, Vermittlung) überarbeitet und nachgemessen. Zukunft ans Ende des Rundgangs, Statistik neben die Gebietsreform, Wohnzimmer 35 cm schmaler für einen 1,30 m breiten Gang zur Hoftür, Banner an der Stütze, Aufsichtspult, Programmfläche. Die Gutachten zu Betrieb/Technik und Recht/Geld sowie die externe Gegenprüfung sind nicht zustande gekommen; diese Themen stammen aus der Durchsicht der Leitung
-- **Analyse**: simulierte Besucher laufen den Rundgang ab. Heatmap der Laufwege, Heatmap der Sicht, Engstellen, Sichtbarkeit je Insel von der Tür und durch die Schaufenster-Ovale, Vergleich aller Layouts. Rechnet neu, sobald eine Insel verschoben wird
-- **Radar**: 49 Punkte, die in den Protokollen nicht vorkommen (Rettungsweg, Personenzahl, Brandlast, Personalplan, Leihverträge, GEMA, Rückbau, Zeitplan …), mit Zeitpunkt, Aufwand und Herkunft, zum Abhaken
+- **★ Empfehlung der Museumsleitung**: das Konzept des Teams, nach vier neuen Fachgutachten (Besucherforschung, Barrierefreiheit und Sicherheit, Betrieb und Technik, Recht und Geld) und dem weiter gültigen Vermittlungs-Gutachten überarbeitet und nachgemessen. Zukunftsinsel als Schlusspunkt neben der Tür, Statistik an die Rückwand hinter der Theke, Medienstelen an die Stirnwand des Treppenhauses, Mero-System quer, Wohnzimmer 37 cm schmaler für einen 1,30 m breiten Gang zur Hoftür, Gasse zwischen Treppenhaus und Theke bleibt frei
+- **Analyse**: simulierte Besucher laufen den Rundgang ab. Heatmap der Laufwege am Boden, Heatmap der Sicht am Boden **und auf Wänden, Theke und allen Seiten der Exponate** (wie oft und wie gut eine Fläche im Blick liegt), Engstellen, Sichtbarkeit je Insel von der Tür und durch die Schaufenster-Ovale, freie Wände im Blick, Vergleich aller Layouts. Rechnet neu, sobald eine Insel verschoben wird. Gesamtwert: Sicht unterwegs 22 %, Blick auf die Schauseiten 15 %, wenig Doppelwege 18 %, Sicht von der Straße 13 %, keine Engstellen 12 %, Sicht von der Tür 12 %, wenig abseits 8 %
+- **Radar**: 54 Punkte, die in den Protokollen nicht vorkommen (Rettungsweg, Personenzahl, Brandlast, Personalplan, Leihverträge, Nutzungsvereinbarung, Datenschutz, Rückbau, Zeitplan …), mit Zeitpunkt, Aufwand und Herkunft, zum Abhaken
 - Vergleich im Reiter „Layouts“ (Reiter „Layouts“ mit Mini-Grundriss, Rundgang, Stärken und Schwächen); verschobene Inseln werden je Layout gespeichert
 - Außenwände sind massiv und von außen sichtbar; in den Raum sieht man von oben und durch die Schaufenster
 - Weiche Kontaktschatten (Umgebungsverdeckung) auf Geräten mit Maus; Schatten werden nur neu gerechnet, wenn sich etwas bewegt

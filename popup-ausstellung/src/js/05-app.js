@@ -338,7 +338,7 @@ function empfBlock() {
       ${zl('Weg, der doppelt gelaufen wird', pz(a.doppelwegAnteil), pz(n.doppelwegAnteil), n.doppelwegAnteil < a.doppelwegAnteil)}
       ${zl('Engstellen unter 1,20 m auf dem Rundgang', String(a.engstellen.length), String(n.engstellen.length), n.engstellen.length < a.engstellen.length)}
       ${zl('Inseln, die man von der Tür aus sieht', a.inselnVomEingang + ' von 8', n.inselnVomEingang + ' von 8', n.inselnVomEingang > a.inselnVomEingang)}
-      ${(e.fest_vergleich || []).map(([t, v, w]) => zl(t, v, w, true)).join('')}
+      ${(e.fest_vergleich || []).map(([t, v, w, gut]) => zl(t, v, w, gut !== false)).join('')}
       ${zl('Gesamtwert der Analyse', a.gesamtwert + ' von 100', n.gesamtwert + ' von 100', n.gesamtwert > a.gesamtwert)}
     </tbody></table></div>
     <div class="row">${state.layout === e.key ? '<span class="pill ok">wird gezeigt</span>' : `<button type="button" class="btn" data-layout="${e.key}">Empfehlung im Raum zeigen</button>`}<button type="button" class="btn ghost" data-an="lauf">Laufwege</button><button type="button" class="btn ghost" data-an="sicht">Sicht</button></div>
@@ -347,9 +347,9 @@ function empfBlock() {
     <details class="more"><summary>Geprüft und nicht übernommen (${e.verworfen.length})</summary>${e.verworfen.map(x => `<div class="ent no"><b>${esc(x.thema)}</b><span>${esc(x.grund)}</span></div>`).join('')}</details>
     <details class="more"><summary>Fragen ans Team für den 24.11. (${e.teamfragen.length})</summary><ol class="plain num">${e.teamfragen.map(t => `<li>${esc(t)}</li>`).join('')}</ol></details>
     <details class="more"><summary>Wie die Empfehlung entstanden ist</summary>
-      <p class="sm">Fünf Fachrollen sollten das Konzept unabhängig prüfen, danach die Leitung entscheiden und eine externe Stelle gegenprüfen. Drei Gutachten sind fertig geworden und haben ihre Vorschläge selbst nachgemessen. Die Gutachten zu Betrieb und Technik sowie zu Recht und Geld und die externe Gegenprüfung sind nicht zustande gekommen. Diese Themen stammen aus der Durchsicht der Leitung und sind im Radar so gekennzeichnet.</p>
+      <p class="sm">Anlass dieser Runde: Die Theke ist fest eingebaut und steht in der rechten Halle beim Eingang, nicht vor dem Wohnzimmer. Der erste Vorschlag und alle zwölf Alternativen wurden darauf umgebaut und neu gemessen. Vier Fachrollen haben das Konzept unabhängig geprüft und ihre Vorschläge selbst nachgemessen, das Gutachten zur Vermittlung stammt aus der Runde davor. Danach hat die Leitung entschieden.</p>
       ${e.gutachten.map(x => `<div class="ent"><b>${esc(x.rolle)}</b><span>${esc(x.kern)}</span></div>`).join('')}
-      <p class="sm">${esc(e.pruefung)}</p></details>
+      <p class="sm">${esc(e.pruefung)}</p>${e.gegenpruefung ? `<p class="sm"><b>Gegenprüfung.</b> ${esc(e.gegenpruefung)}</p>` : ''}</details>
     <div class="row"><button type="button" class="btn ghost" data-jump="radar">Noch nicht auf dem Schirm: ${offen.length} Punkte, ${sofort} davon sofort</button></div></div>`;
 }
 function renderUeber() {
@@ -506,13 +506,14 @@ function renderAnalyse() {
 }
 
 /* ---------- Radar: was noch niemand auf dem Schirm hat ---------- */
-const RADAR = (EMPF_DATA && EMPF_DATA.radar || []).map((r, i) => ({ ...r, id: 'r' + String(i + 1).padStart(2, '0') }));
+const radarId = t => { let h = 5381; for (const ch of t) h = (h * 33 ^ ch.codePointAt(0)) >>> 0; return 'q' + h.toString(36); };   /* Haken hängen am Titel, nicht an der Reihenfolge */
+const RADAR = (EMPF_DATA && EMPF_DATA.radar || []).map(r => ({ ...r, id: radarId(r.titel) }));
 function renderRadar() {
   const el = $('#tab-radar'); if (!el) return;
   if (!RADAR.length) { el.innerHTML = '<p class="empty">Die Liste entsteht gerade.</p>'; return; }
   const WANN = ['sofort', 'vor dem Aufbau', 'zur Eröffnung', 'im Betrieb', 'zum Abbau'], f = state.radarFilter, chip = (kk, t) => `<button type="button" data-rfilter="${kk}" aria-pressed="${f === kk}">${esc(t)}</button>`;
   const liste = RADAR.filter(r => f === 'alle' || r.wann === f), offen = liste.filter(r => !state.done[r.id]).length, bereiche = [...new Set(liste.map(r => r.bereich))];
-  el.innerHTML = `<div class="blk"><span class="eyebrow">Noch nicht auf dem Schirm</span><p class="lead">${RADAR.length} Punkte, die in den Protokollen nicht vorkommen und der Ausstellung später auf die Füße fallen können. Sie stammen aus drei Fachgutachten und der Durchsicht der Museumsleitung; bei jedem Punkt steht, woher er kommt.</p></div>
+  el.innerHTML = `<div class="blk"><span class="eyebrow">Noch nicht auf dem Schirm</span><p class="lead">${RADAR.length} Punkte, die in den Protokollen nicht vorkommen und der Ausstellung später auf die Füße fallen können. Sie stammen aus den Fachgutachten und der Durchsicht der Museumsleitung; bei jedem Punkt steht, woher er kommt.</p></div>
     <div class="filters" role="group" aria-label="Zeitpunkt">${chip('alle', 'Alle')}${WANN.map(w => chip(w, w)).join('')}</div>
     <p class="note">${offen} von ${liste.length} offen. Ein Haken gilt für alle, die diese Seite öffnen.</p>` +
     bereiche.map(b => `<div class="grp"><h3>${esc(b)}</h3>${liste.filter(r => r.bereich === b).map(r => `<div class="radar${state.done[r.id] ? ' done' : ''}"><input type="checkbox" id="rd-${r.id}" data-todo="${r.id}"${state.done[r.id] ? ' checked' : ''}><div><label for="rd-${r.id}">${esc(r.titel)}</label><p>${esc(r.warum)}</p><div class="meta"><span class="pill ${r.wann === 'sofort' ? 'open' : 'warn'}">${esc(r.wann)}</span><span class="pill">Aufwand ${esc(r.aufwand)}</span>${r.quelle ? `<span class="pill src">${esc(r.quelle)}</span>` : ''}</div></div></div>`).join('')}</div>`).join('');

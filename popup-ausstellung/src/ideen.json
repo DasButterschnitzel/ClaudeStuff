@@ -4,21 +4,21 @@
   "gruppe": "idee",
   "name": "Drei Eichen",
   "leitidee": "Der Stadtname wörtlich genommen: Drei große Eichen aus Pappe und Holz stehen im Raum – eine für 1977, eine für heute, eine für 2077. In ihren Kronen hängen die Blätter der Besucher: Erinnerungen, Lieblingsorte, Wünsche.",
-  "weg": "Vom Eingang geht es an der orangen Wand nach hinten zur Eiche 2077 mit Zukunft und Slide-Show. Um das Treppenhaus herum steht die Eiche von heute bei Statistik und Litfaß-Säule, ganz links die Eiche 1977 zwischen Selfie-Koje, Wohnzimmer und Mero-System. Unter jeder Eiche läuft eine Rundbank.",
+  "weg": "Vom Eingang geht es an der orangen Wand nach hinten zur Eiche 2077 in der Ecke hinter der Theke, dort steht die Zukunftswand. Durch die Gasse zwischen Treppenhaus und Theke geht es nach vorn zur Statistik, dann links zur Eiche 1977 mit Selfie-Koje, Wohnzimmer, Slide-Show und Mero-System. Zurück führt der Weg am Schaufenster entlang zur Litfaß-Säule und zur Eiche von heute und endet an der Theke bei der Tür. Unter jeder Eiche läuft eine Rundbank.",
   "rundgang": [
    "s6",
    "s8",
-   "s7",
    "s4",
-   "s5",
    "s3",
    "s1",
-   "s2"
+   "s7",
+   "s2",
+   "s5"
   ],
   "pos": {
    "s2": {
     "x": 2.2,
-    "z": 8.95,
+    "z": 9.03,
     "r": 180
    },
    "s3": {
@@ -37,8 +37,8 @@
     "r": 0
    },
    "s7": {
-    "x": 11.73,
-    "z": 2.4,
+    "x": 0.35,
+    "z": 5.27,
     "r": 90
    },
    "s8": {
@@ -47,7 +47,7 @@
     "r": 0
    },
    "fahne": {
-    "x": 16.0,
+    "x": 16,
     "z": 6.6,
     "r": 35
    }
@@ -56,45 +56,47 @@
    "Eiche 1977": [
     5.4,
     6.6,
-    7.0,
+    7,
     8.2
    ],
    "Eiche heute": [
-    11.8,
-    6.8,
-    13.4,
-    8.4
+    12.2,
+    7,
+    13.8,
+    8.6
    ],
    "Eiche 2077": [
-    14.8,
-    2.8,
-    16.4,
-    4.4
+    16.5,
+    2,
+    18.1,
+    3.6
    ]
   },
   "gruende": {
-   "s2": "Unter der Eiche 1977 am Schaufenster: die Stadtgeschichte in Objekten.",
+   "s2": "Bleibt unter der Eiche 1977 am Schaufenster, rückt nur 8 cm zum Fenster, damit die Bank der Slide-Show nicht im Betrachtungsraum steht.",
    "s3": "In der Nische neben der Eiche 1977, mit Blick ins Wohnzimmer.",
-   "s4": "An der Stirnwand des Treppenhauses, bei der Eiche von heute.",
-   "s5": "Am Fenster bei der Eiche von heute, im Oval von der Straße zu sehen.",
-   "s7": "An der Treppenhauswand, quer zur Fensterfront.",
-   "s8": "Bei der Eiche 2077: Hier schreibt man das Blatt, das in die Krone gehängt wird.",
-   "fahne": "Hängt im Eingang vor der Eiche von heute.",
-   "theke": "Blätterausgabe: Karten in Blattform, Stifte, Schnur."
+   "s4": "An der Stirnwand des Treppenhauses. Sie ist die erste Station nach der Gasse und bekommt mit 0,85 einen hohen Blick-Wert.",
+   "s5": "Am Fenster bei der Eiche von heute, im Oval von der Straße zu sehen. Sie ist die letzte Station vor Theke und Tür.",
+   "s7": "Die Slide-Show musste aus der Gasse, sie stand im langen Schenkel der Theke. Sie steht jetzt an der kurzen Fensterfront im frei gewordenen Teil der linken Halle und zeigt bei der Eiche 1977 die alten Bilder. Die Bildschirme stehen mit dem Rücken zum Fenster. Ihr Blick-Wert steigt von 0,46 auf 0,86.",
+   "s8": "Bei der Eiche 2077 an der Rückwand hinter der Theke: Hier schreibt man das Blatt, das in die Krone gehängt wird.",
+   "fahne": "Hängt im Eingang neben der Stütze, vor der Eiche von heute.",
+   "theke": "Blätterausgabe, Info und Aufsicht am Eingang: Hier gibt es Karten in Blattform, Stifte und Schnur. Vom Platz hinter der Theke sieht man die Tür und die Eiche von heute."
   },
   "staerken": [
    "Ein Bild, das jeder sofort mit dem Namen Dreieich verbindet und das über die Laufzeit wächst.",
-   "Drei Zeiten, drei Orte: Die Gliederung erklärt sich ohne Text.",
-   "Die Rundbänke geben Sitzplätze mitten in der Ausstellung; die Bäume lassen sich aus Wabenpappe oder Sperrholz bauen."
+   "Drei Zeiten, drei Orte: 2077 hinter der Theke, 1977 in der linken Halle, heute am Fenster beim Ausgang. Die Gliederung erklärt sich ohne Text.",
+   "Der Rundgang ist 58,7 m lang, ohne Engstelle unter 1,20 m und ohne Warnung; Gesamtwert 90.",
+   "Slide-Show (0,86 statt 0,46) und Mero-System (0,72 statt 0,44) liegen deutlich besser im Blick als vorher."
   ],
   "schwaechen": [
-   "Die Stämme mit Bank nehmen Platz: frei begehbar bleiben rund 73 m².",
-   "Kronen an der Decke brauchen Deckenhaken oder standfeste Stämme – beides ist noch nicht geklärt.",
+   "Die Stämme mit Bank nehmen Platz: Bei 90 cm Durchgang bleiben 71,8 m², bei 1,20 m nur 47,2 m² frei begehbar.",
+   "Kronen an der Decke brauchen Deckenhaken oder standfeste Stämme; beides ist noch nicht geklärt.",
+   "Die Litfaß-Säule bleibt mit Blick-Wert 0,46 schwach, das Mero-System hat unterwegs nur einen Sichtanteil von 0,31. Die Slide-Show verdeckt das Oval der kurzen Fensterfront bei z 5,3.",
    "Ob der Name wirklich von drei Eichen kommt, ist eine Deutung; das sollte ein Text einordnen."
   ],
-  "freieFlaeche": 73.0,
+  "freieFlaeche": 71.8,
   "warnungen": [],
-  "pruefung": "Von mir entworfen und mit dem Prüfwerkzeug nachgemessen (0 Fehler). Keine zweite, unabhängige Prüfung.",
+  "pruefung": "Auf die richtige Theke umgebaut: Eiche 2077 vom Personalplatz in die Ecke an der Brandmauer, Eiche von heute etwas zum Fenster, Slide-Show aus der Gasse an die kurze Fensterfront, Stellwand am Wohnzimmer auf 4,15 m, Rundgang neu geordnet. Mit dem korrigierten Werkzeug gemessen: 0 Fehler, 0 Warnungen, Gesamtwert 90.",
   "stil": {
    "buehne": "eichen",
    "palette": {
@@ -133,27 +135,28 @@
    ],
    "text": "Waldgrün und Holz, dazu Orange und Gelb wie Herbstlaub. Moosgrüner Teppich statt Vinyl.",
    "material": "Drei Baumstämme mit Rundbank (Wabenpappe oder Sperrholz), Kronenscheiben, Blattkarten mit Schnur, grüner Teppichboden."
-  }
+  },
+  "stellwandX": 4.15
  },
  {
   "key": "bahn",
   "gruppe": "idee",
   "name": "Endstation 1977",
   "leitidee": "Die Dreieichbahn verbindet die Stadtteile – hier verbindet sie die Jahre. Gleise auf dem Boden führen von heute zurück bis 1977 ins Wohnzimmer. Jede Insel ist ein Haltepunkt, an jedem gibt es einen Stempel in die Fahrkarte.",
-  "weg": "An der Tür hängt die Abfahrtstafel mit allen Halten. Das Gleis führt an der orangen Wand nach hinten, biegt zum Zugabteil ab, in dem die Slide-Show als Blick aus dem Fenster läuft, und fährt um das Treppenhaus durch den ganzen Raum bis zur Endstation 1977, dem Wohnzimmer.",
+  "weg": "An der Tür stehen Abfahrtstafel und Bahnhofssäule, die Theke daneben gibt die Fahrkarte aus. Das Gleis führt an der orangen Wand nach hinten zum Fahrplan in die Zukunft und durch die 1,75 m breite Gasse zwischen Treppenhaus und Theke nach vorn zur Statistik. Über die Selfie-Koje geht es in die linke Halle zum Zugabteil an der kurzen Fensterfront, am Mero-System vorbei bis zur Endstation 1977, dem Wohnzimmer.",
   "rundgang": [
+   "s5",
    "s6",
    "s8",
-   "s7",
    "s4",
-   "s5",
    "s3",
+   "s7",
    "s2",
    "s1"
   ],
   "pos": {
    "s2": {
-    "x": 2.2,
+    "x": 3.6,
     "z": 8.95,
     "r": 180
    },
@@ -173,8 +176,8 @@
     "r": 0
    },
    "s7": {
-    "x": 11.73,
-    "z": 2.4,
+    "x": 0.35,
+    "z": 5.6,
     "r": 90
    },
    "s8": {
@@ -183,17 +186,18 @@
     "r": 0
    },
    "fahne": {
-    "x": 13.9,
-    "z": 6.3,
-    "r": 30
+    "x": 15.9,
+    "z": 7.6,
+    "r": 0
    }
   },
+  "stellwandX": 4.15,
   "fest": {
    "Abfahrtstafel": [
     14.9,
-    6.5,
+    6.9,
     16.7,
-    6.7
+    7.1
    ],
    "Haltepunkt Offenthal": [
     16.95,
@@ -202,16 +206,16 @@
     6.2
    ],
    "Haltepunkt Götzenhain": [
-    14.9,
-    3.5,
-    15.1,
-    3.7
+    13.7,
+    0.3,
+    13.9,
+    0.5
    ],
    "Haltepunkt Dreieichenhain": [
-    11.9,
-    5.5,
-    12.1,
-    5.7
+    11.2,
+    5.25,
+    11.4,
+    5.45
    ],
    "Haltepunkt Sprendlingen": [
     7.5,
@@ -227,28 +231,30 @@
    ]
   },
   "gruende": {
-   "s2": "Letzter Halt vor der Endstation: das Gepäck der Stadtgeschichte am Schaufenster.",
+   "s2": "Rückt 1,4 m nach rechts, damit das Zugabteil nicht in seinem Betrachtungsraum steht. Bleibt am Schaufenster als letzter Halt vor dem Wohnzimmer; Blick-Wert 0,76 statt 0,39.",
    "s3": "Haltepunkt mit Fotoautomat: die Koje in der Nische.",
    "s4": "An der Stirnwand des Treppenhauses, direkt am Gleis.",
-   "s5": "Bahnhofssäule mit Plakaten neben dem Gleis.",
-   "s7": "Wird zum Zugabteil: Man sitzt auf der Bank und schaut durch drei Fenster auf Dreieich von 1970 bis heute.",
+   "s5": "Bleibt an ihrem Platz vor der Theke, ist aber jetzt der erste Halt: die Bahnhofssäule neben der Abfahrtstafel, an der die Fahrt beginnt.",
+   "s7": "Das Zugabteil musste aus der Gasse, es stand im langen Schenkel der Theke. Es steht jetzt an der kurzen Fensterfront im frei gewordenen Teil der linken Halle: Bildschirme zum Raum, Rücken zum Fenster, die Bank davor. Als vorletzter Halt vor der Endstation liegt es deutlich besser im Blick (0,85 statt 0,52).",
    "s8": "An der Rückwand: der Fahrplan in die Zukunft.",
-   "fahne": "Hängt neben der Abfahrtstafel.",
-   "theke": "Fahrkartenschalter: Hier gibt es die Stempelkarte, am Ende einen Preis für die volle Karte."
+   "fahne": "Stand vor der Kundenseite der Theke. Hängt jetzt im Eingang vor der Abfahrtstafel und lässt den Weg zur Theke frei.",
+   "theke": "Fahrkartenschalter und Aufsicht direkt am Eingang: Hier gibt es die Stempelkarte, am Ende den Preis für die volle Karte. Die Abfahrtstafel steht 0,4 m weiter zum Fenster, damit vor der Kundenseite 1,5 m frei bleiben; vom Platz hinter der Theke sieht man die Tür. Der Haltepunkt Götzenhain stand am Personalplatz und steht jetzt an der Rückwand neben der Zukunftswand; Haltepunkt Dreieichenhain rückt an die Ecke des Treppenhauses, sonst wäre die Gasse vor der Statistik nur 1,0 m breit."
   },
   "staerken": [
-   "Die Dreieichbahn kennt in Dreieich jeder; das Bild holt alle Stadtteile in einen Raum.",
-   "Gleis und Abfahrtstafel führen von selbst durch die Ausstellung, die Stempelkarte zieht Kinder bis zum Ende.",
-   "Das Zugabteil macht aus den Medienstelen ein Erlebnis; Gleise sind nur Bodenfolie."
+   "Die Dreieichbahn kennt in Dreieich jeder; Gleis, Abfahrtstafel und Stempelkarte führen von selbst durch die Ausstellung und enden wie gedacht im Wohnzimmer.",
+   "Gemessen: Gesamtwert 93, keine Engstelle unter 1,20 m, 0 Warnungen; vier Inseln sind von der Tür aus zu sehen, sieben von der Straße.",
+   "Die bisher schwachen Inseln liegen besser im Blick: Zugabteil 0,85 statt 0,52, Mero-System 0,76 statt 0,39, Litfaß-Säule 0,66 statt 0,49, Wohnzimmer 0,44 statt 0,30.",
+   "Mit der Stellwand am Wohnzimmer bei 4,15 m ist der Gang zu Hoftür und Lager 1,30 m breit."
   ],
   "schwaechen": [
-   "Das Abteil ist der einzige echte Einbau und braucht einen Schreiner oder den Bauhof.",
-   "Man fährt rückwärts durch die Zeit – wer lieber 1977 beginnt, muss das Gleis umdrehen.",
+   "Der Rundgang ist mit 64,6 m lang, und 16 % des Weges läuft man doppelt, weil man vom Wohnzimmer quer durch den Raum zur Tür zurückgeht.",
+   "Das Zugabteil verdeckt das Oval der kurzen Fensterfront bei z 5,3; die Rückseite der Bildschirme braucht eine Verkleidung, weil man sie von der Straße sieht.",
+   "Das Abteil bleibt der einzige echte Einbau und braucht einen Schreiner oder den Bauhof. Das Wohnzimmer ist mit 0,44 weiter die am schwächsten gesehene Insel.",
    "Bahn-Gestaltung darf keinem echten Verkehrsunternehmen zu ähnlich sehen."
   ],
-  "freieFlaeche": 83.7,
+  "freieFlaeche": 83.1,
   "warnungen": [],
-  "pruefung": "Von mir entworfen und mit dem Prüfwerkzeug nachgemessen (0 Fehler). Keine zweite, unabhängige Prüfung.",
+  "pruefung": "Auf die richtige Theke umgebaut: Zugabteil aus der Gasse an die kurze Fensterfront, Mero-System 1,4 m nach rechts, Fahne, Abfahrtstafel und zwei Haltepunkte aus den Freihaltezonen der Theke, Stellwand am Wohnzimmer auf 4,15 m, Litfaß-Säule als erster Halt. Mit dem korrigierten Werkzeug gemessen: 0 Fehler, 0 Warnungen, Gesamtwert 93.",
   "stil": {
    "buehne": "bahn",
    "palette": {
@@ -293,16 +299,16 @@
   "gruppe": "idee",
   "name": "Geburtstagstafel",
   "leitidee": "Dreieich wird 50 und lädt an eine lange Tafel: 50 Gedecke, eines für jedes Jahr von 1977 bis 2026, an jedem Platz ein Foto, eine Schlagzeile, ein Gegenstand. Das Jahr 2027 ist die Torte mit 50 Kerzen.",
-  "weg": "Hinter der Tür steht die Torte. Die Tafel läuft knapp zwölf Meter an der Fensterfront entlang, von der Straße sieht man sie durch die Ovale. Man geht die Jahre ab, setzt sich dazu, und findet die Inseln im Rücken der Tafel: rechts hinten Gründung, Zukunft und Slide-Show, in der Mitte Statistik, links Selfie, Wohnzimmer und Mero-System.",
+  "weg": "Hinter der Tür steht die Torte am Fenster, rechts die orange Wand. Man geht an ihr entlang nach hinten zu Litfaß-Säule und Zukunftswand, durch die Gasse zwischen Treppenhaus und Theke nach vorn zur Statistik und über Selfie-Koje und Wohnzimmer zum Mero-System am Kopf der Tafel. Zurück zur Tür geht man die Tafel von 1977 bis 2026 ab und endet bei der Slide-Show neben der Torte.",
   "rundgang": [
    "s6",
-   "s8",
-   "s7",
    "s5",
+   "s8",
    "s4",
    "s3",
    "s1",
-   "s2"
+   "s2",
+   "s7"
   ],
   "pos": {
    "s2": {
@@ -321,14 +327,14 @@
     "r": 0
    },
    "s5": {
-    "x": 15.3,
-    "z": 3.4,
+    "x": 16.4,
+    "z": 3.2,
     "r": 0
    },
    "s7": {
-    "x": 11.73,
-    "z": 2.4,
-    "r": 90
+    "x": 13.3,
+    "z": 9.9,
+    "r": 180
    },
    "s8": {
     "x": 15.4,
@@ -341,43 +347,46 @@
     "r": 45
    }
   },
+  "stellwandX": 4.15,
   "fest": {
    "Geburtstagstafel": [
-    1.5,
+    0.1,
     8.7,
-    13.2,
+    11.8,
     9.9
    ],
    "Torte": [
-    14.0,
-    6.3,
-    15.8,
-    8.1
+    14.7,
+    8.2,
+    16.5,
+    10.0
    ]
   },
   "gruende": {
-   "s2": "Am Kopf der Tafel links, mit den Vitrinen zum Raum.",
+   "s2": "Bleibt am linken Kopf der Tafel mit den Vitrinen zum Raum; die Tafel beginnt jetzt direkt an der Natursteinseite.",
    "s3": "In der Nische: das Gruppenfoto zur Feier, in Kostümen von 1977.",
    "s4": "An der Stirnwand des Treppenhauses, gegenüber der Tafelmitte.",
-   "s5": "Im hinteren Raumteil als Einladungssäule mit den Plakaten.",
-   "s7": "An der Treppenhauswand, quer zur Fensterfront.",
+   "s5": "Stand am Personalplatz hinter der Theke. Steht jetzt 1,1 m weiter rechts in der Ecke neben der Zukunftswand, so bleibt der Weg vom Ende der Theke hinter den Tresen frei.",
+   "s7": "Stand im langen Schenkel der Theke. Steht jetzt am Ende der Tafel an der Fensterfront, mit dem Rücken der Bildschirme zum Fenster und der Bank zum Raum. Die Bildschirme zeigen nach hinten in die Halle, nicht zur Straße. Blick-Wert 0,75 statt 0,56.",
    "s8": "An der Rückwand: Hier schreibt man der Stadt eine Glückwunschkarte.",
    "fahne": "Hängt im Eingang neben der Torte.",
-   "theke": "Kuchenbuffet und Getränke bei Veranstaltungen, sonst Gabentisch."
+   "theke": "Infotheke und Aufsicht am Eingang; bei Veranstaltungen Ausgabe für Kaffee und Kuchen an die Tafel. Die Torte stand direkt vor der Kundenseite und machte den Weg dorthin 0,8 m schmal; sie steht jetzt gleich groß am Fenster links neben der Tür. Die Tafel rückt dafür 1,4 m nach links an die kurze Fensterfront und bleibt 11,7 m lang. Vor der Kundenseite bleiben 2,8 m frei, vom Platz hinter der Theke sieht man die Tür."
   },
   "staerken": [
-   "Jeder versteht eine Geburtstagsfeier, und die Tafel ist zugleich Zeitstrahl mit 50 festen Plätzen für 50 Jahre.",
-   "Die Tafel ist der Ort für das Begleitprogramm: Kaffeetafel, Erzählcafé, Pubquiz finden mitten in der Ausstellung statt.",
-   "Vereine, Schulen und Stadtteile können je ein Gedeck gestalten – so entsteht die Ausstellung mit der Stadt."
+   "Jeder versteht eine Geburtstagsfeier; die Tafel ist zugleich Zeitstrahl, und der Rückweg zur Tür führt einmal an allen 50 Jahren entlang.",
+   "Gemessen: Gesamtwert 85, Rundgang 51,4 m, nur 10 % Doppelwege, keine Engstelle unter 1,20 m, 0 Warnungen.",
+   "Die Slide-Show liegt am Tafelende besser im Blick (0,75 statt 0,56); das Mero-System erreicht 0,87, die Zukunftswand 0,85.",
+   "Die Tafel bleibt der Ort für Kaffeetafel, Erzählcafé und Pubquiz, die Theke daneben ist die Ausgabe."
   ],
   "schwaechen": [
-   "Die Tafel belegt die ganze Fensterfront; frei begehbar bleiben rund 64 m².",
-   "50 Gedecke zu füllen ist viel Recherche und braucht Mitmacher; lose Gegenstände müssen gesichert sein.",
-   "Wimpelketten und Ballons brauchen Deckenhaken, die noch nicht geklärt sind."
+   "Von der Straße sind nur noch drei Inseln zu sehen statt sieben, weil die Rückseite der Slide-Show das Oval bei x 13,4 verdeckt. Die Rückseite muss gestaltet werden, etwa als Plakat zur Tafel.",
+   "Die Litfaß-Säule steht in der Ecke hinter der Theke und liegt mit 0,43 schwach im Blick; das Wohnzimmer bleibt mit 0,36 die am schwächsten gesehene Insel.",
+   "Tafel und Torte belegen die ganze Fensterfront; frei begehbar bleiben 68,5 m² (bei 1,20 m Durchgang 49,7 m²).",
+   "50 Gedecke zu füllen ist viel Recherche und braucht Mitmacher; lose Gegenstände müssen gesichert sein."
   ],
-  "freieFlaeche": 63.9,
+  "freieFlaeche": 68.5,
   "warnungen": [],
-  "pruefung": "Von mir entworfen und mit dem Prüfwerkzeug nachgemessen (0 Fehler). Keine zweite, unabhängige Prüfung.",
+  "pruefung": "Auf die richtige Theke umgebaut: Slide-Show aus der Gasse ans rechte Ende der Tafel, Tafel 1,4 m nach links, Torte von der Kundenseite der Theke ans Fenster neben die Tür, Litfaß-Säule vom Personalplatz in die Ecke, Stellwand am Wohnzimmer auf 4,15 m, Rundgang neu geordnet. Mit dem korrigierten Werkzeug gemessen: 0 Fehler, 0 Warnungen, Gesamtwert 85.",
   "stil": {
    "buehne": "tafel",
    "palette": {},
@@ -416,15 +425,15 @@
   "gruppe": "idee",
   "name": "Fünf Häuser",
   "leitidee": "1977 zogen fünf Orte unter ein Dach. Fünf offene Hausgerüste in fünf Farben stehen für Buchschlag, Sprendlingen, Dreieichenhain, Götzenhain und Offenthal; jedes beherbergt eine Insel. Dazwischen liegt der Dorfplatz mit der Litfaß-Säule.",
-  "weg": "Rechts die Wand der Gebietsreform, links das Mero-System als Rohbau. Hinten steht das erste Haus mit der Slide-Show. Um das Treppenhaus herum öffnet sich links der Dorfplatz: Litfaß-Säule in der Mitte, ringsum die Häuser von Selfie, Statistik und Zukunft und ganz hinten das Wohnzimmer als fünftes Haus.",
+  "weg": "Rechts die Wand der Gebietsreform, links das Mero-System als Rohbau am Schaufenster, dazwischen die Theke. Man geht an der Fensterfront nach links zum Kino-Haus und auf den Dorfplatz mit der Litfaß-Säule. Ringsum stehen die Häuser von Zukunft, Statistik und Selfie, ganz hinten das Wohnzimmer als fünftes Haus.",
   "rundgang": [
    "s6",
-   "s7",
    "s2",
+   "s7",
    "s5",
-   "s3",
-   "s4",
    "s8",
+   "s4",
+   "s3",
    "s1"
   ],
   "pos": {
@@ -449,44 +458,47 @@
     "r": 0
    },
    "s7": {
-    "x": 11.73,
-    "z": 2.4,
-    "r": 90
+    "x": 8.4,
+    "z": 9.9,
+    "r": 180
    },
    "s2": {
-    "x": 13.4,
-    "z": 7.6,
+    "x": 12.6,
+    "z": 9.0,
     "r": 180
    },
    "fahne": {
-    "x": 16.6,
-    "z": 6.3,
-    "r": 40
+    "x": 15.9,
+    "z": 7.6,
+    "r": 0
    }
   },
+  "stellwandX": 4.15,
   "gruende": {
-   "s2": "Der Rohbau: steht im rechten Raumteil mit dem Rücken zum Schaufenster und zeigt 1977/2027 zur Straße.",
+   "s2": "Der Rohbau rückt 0,8 m nach links und 1,4 m ans Schaufenster. So liegt die Theke nicht mehr in seinem Betrachtungsraum, und zwischen Rohbau und Theke bleiben über 2 m frei. Die geschlossene Rückseite zeigt 1977/2027 zur Straße; Blick-Wert 0,60 statt 0,51.",
    "s3": "Haus in der Nische am Dorfplatz.",
    "s4": "Haus an der kurzen Fensterfront, blickt über den Dorfplatz; die geschlossene Rückwand zeigt Farbe und Ortsnamen zur Straße.",
    "s5": "Steht als Säule mitten auf dem Dorfplatz.",
-   "s7": "Haus an der Treppenhauswand, das Kino des Ortes.",
+   "s7": "Das Kino des Ortes stand im langen Schenkel der Theke. Es steht jetzt als Haus an der langen Fensterfront zwischen den Ovalen, Rücken zum Fenster, Bildschirme und Bank zum Dorfplatz. Blick-Wert 0,95 statt 0,66.",
    "s8": "Haus am Schaufenster, blickt über den Dorfplatz; die Rückwand ist von der Straße zu sehen.",
-   "fahne": "Hängt im Eingang zwischen Rohbau und Gebietsreform-Wand.",
-   "theke": "Rathaus-Tresen: Info und Anmeldung zum Begleitprogramm."
+   "fahne": "Stand neben der Stütze am Eingang und machte den Weg zur Theke 0,8 m schmal. Hängt jetzt im Eingang rechts neben dem Rohbau.",
+   "theke": "Rathaus-Tresen am Eingang: Info, Aufsicht und Anmeldung zum Begleitprogramm. Wer hereinkommt, hat links den Rohbau, rechts die Gebietsreform und vor sich die Theke; vom Platz dahinter sieht man die Tür."
   },
   "staerken": [
-   "Erklärt die Gebietsreform räumlich: fünf Häuser, eine Stadt.",
-   "Die geschlossenen Rückwände lösen das Problem der rohen Rückseiten – Statistik und Zukunft können frei stehen.",
+   "Erklärt die Gebietsreform räumlich: fünf Häuser, eine Stadt; der Dorfplatz bleibt in der linken Halle.",
+   "Gemessen: Gesamtwert 81, keine Engstelle unter 1,20 m, 0 Warnungen; sieben Inseln sind von der Straße zu sehen.",
+   "Das Kino-Haus am Fenster liegt jetzt sehr gut im Blick (0,95 statt 0,66), die Zukunft bleibt bei 0,98; frei begehbar sind 84,1 m².",
    "Hausgerüste aus Dachlatten sind günstig, schnell gebaut und zerlegbar; jeder Stadtteil könnte sein Haus selbst gestalten."
   ],
   "schwaechen": [
-   "Welche Insel in welchem Stadtteil-Haus sitzt, ist willkürlich und kann Diskussionen auslösen.",
-   "Die Firste liegen bei 2,45 m knapp unter der Decke; Strahler und Rauchmelder müssen frei bleiben.",
-   "Die Gerüste müssen gegen Kippen gesichert sein."
+   "Der Rundgang ist mit 61,6 m lang, 28 % des Weges läuft man doppelt, und 27 % der Zeit liegt abseits, weil man vom Wohnzimmer zur Tür zurückgeht und die Gasse hinter der Theke ungenutzt bleibt.",
+   "Von der Tür aus sieht man nur zwei Inseln; der 2,3 m hohe Rohbau verdeckt den Blick nach links. Das Wohnzimmer liegt mit 0,31 schwach im Blick, die Gebietsreform sinkt auf 0,62.",
+   "Das Kino-Haus verdeckt einen Teil des Ovals bei x 9,8; die Rückseite der Bildschirme braucht eine Verkleidung, etwa als Giebelwand mit Ortsnamen.",
+   "Die Firste liegen bei 2,45 m knapp unter der Decke, die Gerüste müssen gegen Kippen gesichert sein."
   ],
-  "freieFlaeche": 84.4,
+  "freieFlaeche": 84.1,
   "warnungen": [],
-  "pruefung": "Von mir entworfen und mit dem Prüfwerkzeug nachgemessen (0 Fehler). Keine zweite, unabhängige Prüfung.",
+  "pruefung": "Auf die richtige Theke umgebaut: Slide-Show aus der Gasse an die lange Fensterfront, Rohbau weg von der Theke ans Schaufenster, Fahne aus der Engstelle bei der Stütze am Eingang, Stellwand am Wohnzimmer auf 4,15 m, Rundgang neu geordnet. Mit dem korrigierten Werkzeug gemessen: 0 Fehler, 0 Warnungen, Gesamtwert 81.",
   "stil": {
    "buehne": "haeuser",
    "palette": {},
