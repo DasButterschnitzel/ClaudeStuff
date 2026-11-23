@@ -1,0 +1,517 @@
+[
+ {
+  "key": "karte",
+  "name": "Begehbarer Stadtplan",
+  "leitidee": "Der ganze Boden wird zum Stadtplan der fünf Stadtteile. Man läuft durch Dreieich, statt davor zu stehen, und klebt seinen Lieblingsplatz direkt auf den Boden.",
+  "weg": "Hinter der Tür liegt Offenthal zu Füßen, rechts steht die Theke mit dem Ortsschild Götzenhain an ihrem Ende. An der orangen Wand entlang geht es hinter die Theke zu Slide-Show und Statistik, durch die 1,75 m breite Gasse zwischen Treppenhaus und Theke nach vorn zum Kartentisch und zur Litfaß-Säule in der Stadtmitte. Dann quer durch Sprendlingen zu Koje und Wohnzimmer nach Buchschlag zum Mero-System und an der Fensterfront über Dreieichenhain zurück zur Tür.",
+  "rundgang": [
+   "s6",
+   "s7",
+   "s4",
+   "s8",
+   "s5",
+   "s3",
+   "s1",
+   "s2"
+  ],
+  "stellwandX": 4.15,
+  "pos": {
+   "s2": {
+    "x": 1.4,
+    "z": 7.5,
+    "r": 90
+   },
+   "s3": {
+    "x": 6.88,
+    "z": 4.15,
+    "r": 0
+   },
+   "s4": {
+    "x": 12.8,
+    "z": 0.52,
+    "r": 0
+   },
+   "s5": {
+    "x": 12.7,
+    "z": 7.8,
+    "r": 0
+   },
+   "s7": {
+    "x": 16.6,
+    "z": 1.75,
+    "r": 270
+   },
+   "s8": {
+    "x": 9.78,
+    "z": 5.85,
+    "r": 0
+   },
+   "fahne": {
+    "x": 15,
+    "z": 7.2,
+    "r": 35
+   }
+  },
+  "fest": {
+   "Ortsschild Buchschlag": [
+    4.2,
+    5.8,
+    4.4,
+    6
+   ],
+   "Ortsschild Sprendlingen": [
+    6.9,
+    7.2,
+    7.1,
+    7.4
+   ],
+   "Ortsschild Dreieichenhain": [
+    10.3,
+    9.2,
+    10.5,
+    9.4
+   ],
+   "Ortsschild Götzenhain": [
+    15.72,
+    4.95,
+    15.92,
+    5.15
+   ],
+   "Ortsschild Offenthal": [
+    15.4,
+    8.6,
+    15.6,
+    8.8
+   ]
+  },
+  "gruende": {
+   "s2": "Steht weiter in Buchschlag mit dem Rücken zur kurzen Fensterfront, ist aber 50 cm nach vorn gerückt. So bleibt vor dem Wohnzimmer mehr Platz, und die Farbtafeln füllen das Oval bei z 8,8.",
+   "s3": "Bleibt in der Nische an zwei echten Wänden, damit die Karte in der Raummitte frei liegt.",
+   "s4": "Steht jetzt an der Rückwand in der Ecke zum Treppenhaus, am Nordende der Gasse an der Theke. Weit weg von der Karte, damit niemand beim Raten auf dem Stadtplan steht, und gut im Blick (gemessen 0,77). Frei vor das Glasbaustein-Fenster stellen, nicht daran befestigen.",
+   "s5": "Markiert als Stadtmitte den Punkt, an dem sich die Wege treffen. Sie rückt 30 cm nach rechts und 20 cm nach vorn, damit zwischen Säule und Kartentisch kein Spalt unter 1,20 m bleibt.",
+   "s7": "Kann nicht mehr an der Treppenhaus-Ostwand stehen, dort steht jetzt die Theke. Die Stelen stehen frei in der Ecke hinter der Theke, die Bildschirme zeigen nach Westen zur Theke und nicht zum Fenster. Die Aufsicht sieht so, ob die Bildschirme laufen. Strom kommt von der Rückwand.",
+   "s8": "Wird zum Kartentisch: Hier gibt es die Klebepunkte, die Pinnwand zeigt die Legende. Die eigentliche Mitmachfläche ist der Boden. Er bleibt an der Stirnwand des Treppenhauses, am Ausgang der Gasse.",
+   "fahne": "Hängt im Eingang über Offenthal und trennt Foyer und Karte. Sie rückt nach links vor die Kundenseite der Theke: An der alten Stelle blieb zwischen Fahne und Theke nur ein Spalt von 0,77 m.",
+   "theke": "Die Theke ist Infotheke und Aufsicht am Eingang und steht in Götzenhain. Hier bekommt man Klebepunkte nach, beim Stadtteil-Quiz ist sie der Tresen. Das Ortsschild Götzenhain steht an ihrem Ostende und lässt zur Stütze nur 0,68 m: So kürzt niemand hinter der Theke ab. Bedient wird an der Südseite, die Westseite in der Gasse bleibt frei."
+  },
+  "staerken": [
+   "Ein Bild, das man sofort versteht und das die Gebietsreform räumlich erklärt: fünf Orte, eine Stadt. Die Theke liegt mitten im Plan in Götzenhain.",
+   "Der Rundgang ist ein Kreis von 61,2 m mit nur 5 % Doppelwegen. Gemessen: 0 Fehler, keine Warnung, keine Engstelle unter 1,20 m, Gesamtwert 91.",
+   "Die Inseln liegen gut im Blick: Kartentisch 0,91, Mero 0,86, Koje 0,85, Statistik 0,77. Die Litfaß-Säule ist von fast überall zu sehen (Sichtanteil 0,93).",
+   "Die Stellwand am Wohnzimmer rückt auf x 4,15. Der Gang zu Hoftür und Lager wird 1,30 m breit, beide Türen sind mit Rollstuhl erreichbar."
+  ],
+  "schwaechen": [
+   "Bodenfolie für rund 170 m² ist der größte Einzelposten; sie muss rutschfest sein und sich rückstandsfrei lösen. Der Plan ist stilisiert, nicht maßstäblich: Das muss dabeistehen.",
+   "Von der Tür aus sieht man nur drei Inseln. Die Slide-Show steht hinter der Theke und ist durch kein Oval zu sehen; sie liegt mäßig im Blick (0,57).",
+   "Das Wohnzimmer liegt schlecht im Blick (gemessen 0,35) und wird von der Theke aus nicht gesehen, das Treppenhaus steht dazwischen.",
+   "Wo Inseln stehen, ist die Karte verdeckt; die Wohnzimmer-Insel wird durch die versetzte Stellwand 37 cm schmaler."
+  ],
+  "freieFlaeche": 83.3,
+  "warnungen": [],
+  "pruefung": "In dieser Runde auf die fest eingebaute Theke in der rechten Halle umgebaut: Die Slide-Show zieht von der Treppenhaus-Ostwand in die Ecke hinter der Theke, die Statistik an die Rückwand neben das Treppenhaus, das Ortsschild Götzenhain aus dem Personalplatz an das Thekenende. Fahne, Litfaß-Säule und Mero sind leicht verschoben, damit keine Engstelle bleibt, die Stellwand am Wohnzimmer steht auf x 4,15, der Rundgang führt zuerst hinter die Theke.",
+  "stil": {
+   "buehne": "karte",
+   "palette": {},
+   "boden": {
+    "color": "#ffffff",
+    "tex": "karte"
+   },
+   "wand": "#fbfaf7",
+   "decke": "#f7f6f3",
+   "licht": {
+    "hemi": [
+     "#ffffff",
+     "#d9d4c8",
+     0.7
+    ],
+    "sonne": [
+     "#fff4e2",
+     2.3
+    ],
+    "exp": 1.08
+   },
+   "farben": [
+    "#cfe3b4",
+    "#f6c9a0",
+    "#d9c4ec",
+    "#f7e0a0",
+    "#bfe1e4",
+    "#f2690d"
+   ],
+   "text": "Pastellfläche je Stadtteil auf dem Boden, Wände weiß, Orange und Lila nur als Akzent.",
+   "material": "Bedruckte Bodenfolie über dem Vinylboden, fünf Ortsschilder auf Ständern, Klebepunkte."
+  }
+ },
+ {
+  "key": "nacht",
+  "name": "Tag und Nacht",
+  "leitidee": "Hinten rechts entsteht hinter einem Vorhang ein dunkler Raum. Dort leuchten Bildschirme und Discokugel, vorn bleibt der helle Laden. Das löst das Lichtproblem der Slide-Show und macht sogar einen Beamer möglich.",
+  "weg": "Vom Eingang an der orangen Wand entlang nach hinten. Neben der Tür zu den Nebenräumen geht es durch den Spalt am seitlichen Vorhang in die Nacht hinter der Theke: Bilder von 1970 bis heute auf den Medienstelen. Hinter dem Ende der Theke wieder hinaus durch die Gasse am Treppenhaus ins Helle, zu Statistik, Selfie-Koje, Zukunft, Wohnzimmer und Mero-System und an der Litfaß-Säule vorbei zur Tür. Kein Wegstück wird doppelt gegangen.",
+  "rundgang": [
+   "s6",
+   "s7",
+   "s4",
+   "s3",
+   "s8",
+   "s1",
+   "s2",
+   "s5"
+  ],
+  "stellwandX": 4.15,
+  "pos": {
+   "s7": {
+    "x": 15.23,
+    "z": 3.02,
+    "r": 180
+   },
+   "s3": {
+    "x": 6.88,
+    "z": 4.15,
+    "r": 0
+   },
+   "s4": {
+    "x": 9.78,
+    "z": 5.72,
+    "r": 0
+   },
+   "s8": {
+    "x": 0.65,
+    "z": 6.6,
+    "r": 90
+   },
+   "s2": {
+    "x": 3.3,
+    "z": 8.95,
+    "r": 180
+   },
+   "s5": {
+    "x": 13,
+    "z": 7.6,
+    "r": 0
+   },
+   "fahne": {
+    "x": 15.6,
+    "z": 6.6,
+    "r": 35
+   }
+  },
+  "fest": {
+   "Vorhang vorn": [
+    13.8,
+    3.33,
+    18.06,
+    3.45
+   ],
+   "Vorhang seitlich": [
+    17.94,
+    1.6,
+    18.06,
+    3.45
+   ]
+  },
+  "gruende": {
+   "s1": "Die Stellwand rückt auf x 4,15. Das Wohnzimmer wird 37 cm schmaler, dafür ist der Gang zur Hoftür 1,30 m breit statt rund 1,0 m.",
+   "s2": "Vorn links mit dem Rücken zum Schaufenster: von der Straße die Farbtafeln, von innen die Vitrinen.",
+   "s3": "Die Selfie-Koje passt nicht mehr in den dunklen Raum, weil die Theke dort die Hälfte der Fläche braucht. Sie steht jetzt in der Nische zwischen Lager und Treppenhaus, gut im Blick (Blick-Wert 0,99 statt 0,36). Die Discokugel hängt trotzdem in der Nacht über der Bank.",
+   "s4": "An der Stirnwand des Treppenhauses im Hellen, der erste Halt nach dem dunklen Raum.",
+   "s5": "Im hellen Teil vor der Theke als Landmarke, gut von der Straße und von der Tür zu sehen.",
+   "s7": "Im dunklen Raum hinter der Theke, Bildschirme mit dem Rücken zum Vorhang, Bank Richtung Rückwand. Die Treppenhauswand ist nicht mehr frei, dort steht jetzt der lange Schenkel der Theke. Hinter der Bank bleibt ein 1,40 m breiter Gang für den Weg durch die Nacht.",
+   "s8": "Rückt aus der Nische an die kurze Fensterfront vor das Wohnzimmer, auf die Fläche, die durch die richtige Theke frei geworden ist. Dort liegt sie viel besser im Blick (0,99 statt 0,56).",
+   "fahne": "Hängt zwischen Eingang und Theke und trennt den Eingangsbereich vom Laden. Sie steht außerhalb der Kundenseite der Theke.",
+   "theke": "Die Theke ist Infotheke und Aufsicht, abends Bar zum Pubquiz. Der vordere Vorhang hängt direkt hinter dem Personalplatz, die Theke ist damit die helle Vorderseite des dunklen Raums. Vom Personalplatz sieht man die Eingangstür und den Ausgang der Nacht in die Gasse."
+  },
+  "staerken": [
+   "Die Leitidee bleibt: hinten rechts ein dunkler Raum für die Medienstelen, vorn der helle Laden. Dafür reichen zwei Vorhänge von zusammen rund 6 m.",
+   "Der Weg ist eine Einbahnstraße ohne Doppelwege (Doppelweg-Anteil 0) und mit 54 m kurz. Gesamtwert 91, keine Engstelle unter 1,20 m auf dem Rundgang.",
+   "Selfie-Koje, Zukunft und Wohnzimmer liegen jetzt viel besser im Blick (0,99, 0,99 und 0,48 statt 0,36, 0,56 und 0,33). Sieben von acht Inseln sind von der Straße zu sehen.",
+   "Das Glasbaustein-Fenster liegt nicht mehr im dunklen Raum und muss nicht verdunkelt werden. Hoftür und Lagertür sind mit 1,20 m Durchgang erreichbar."
+  ],
+  "schwaechen": [
+   "Der dunkle Raum ist kleiner als bisher, rund 16 m². Die Selfie-Koje passt nicht mehr hinein. Im Feld Stil stehen noch 12 m Molton und 34 m² Boden, gebraucht werden etwa die Hälfte.",
+   "Zur Gasse hin ist der Raum auf 2,70 m Breite offen, und über das Ende der Theke fällt Licht. Es wird dämmrig, nicht schwarz. Für einen Beamer müsste ein dritter Vorhang quer in die Gasse; das ist nicht gemessen.",
+   "Die Medienstelen sieht man nur im dunklen Raum (Blick-Wert 0,43, von der Straße nicht sichtbar). Die Aufsicht hat den Vorhang im Rücken und sieht nicht hinein.",
+   "Die Zukunftsinsel steht vor dem Oval in der kurzen Fensterfront bei z 5,3. Von der Straße sieht man dort ihre Rückseite. Die Tür zu den Nebenräumen liegt weiter im dunklen Raum und muss frei und beleuchtet bleiben."
+  ],
+  "freieFlaeche": 81.2,
+  "warnungen": [],
+  "pruefung": "Auf die richtige Theke umgebaut: Der dunkle Raum liegt jetzt hinter der Theke, die Medienstelen stehen darin, Selfie-Koje und Zukunftsinsel ziehen in die Nische und vor das Wohnzimmer, die Stellwand am Wohnzimmer rückt auf x 4,15. Mit dem korrigierten Werkzeug nachgemessen: 0 Fehler, 0 Warnungen, Gesamtwert 91.",
+  "stil": {
+   "buehne": "nacht",
+   "palette": {},
+   "boden": {
+    "color": "#efe9de",
+    "tex": "holz"
+   },
+   "wand": "#f3f1ed",
+   "decke": "#f7f6f3",
+   "licht": {
+    "hemi": [
+     "#ffffff",
+     "#cfc6ba",
+     0.62
+    ],
+    "sonne": [
+     "#fff0d8",
+     2.5
+    ],
+    "exp": 1.08
+   },
+   "farben": [
+    "#15111b",
+    "#ff4fa3",
+    "#35d6e6",
+    "#f2690d",
+    "#f3f1ed"
+   ],
+   "text": "Vorn bleibt alles hell. Der Raum hinter dem Vorhang ist schwarz mit Neonlinien in Pink und Cyan.",
+   "material": "Rund 12 lfd. m Bühnenmolton, schwarzer Teppich oder Tanzboden für 34 m², Neonschlauch oder LED-Band, Verdunklung für ein Fenster."
+  }
+ },
+ {
+  "key": "orange",
+  "name": "Alles Orange",
+  "leitidee": "Ein einziger Farbraum wie aus einem Wohnmagazin von 1972: Boden, Wände und Möbel in Orangetönen, dazu Weiß und Braun. Die Farbe selbst ist die Ausstellung.",
+  "weg": "Die Litfaß-Säule steht gleich hinter der Tür im Blick, die orange Theke daneben. Rechts an der Wand der Gebietsreform nach hinten, hinter der Theke zur Slide-Show und durch die Gasse am Treppenhaus zur Statistik. Weiter zu Selfie-Koje und Wohnzimmer, über die Zukunftsinsel an der kurzen Fensterfront und das schräg gestellte Mero-System zurück zur Tür.",
+  "rundgang": [
+   "s5",
+   "s6",
+   "s7",
+   "s4",
+   "s3",
+   "s1",
+   "s8",
+   "s2"
+  ],
+  "stellwandX": 4.15,
+  "pos": {
+   "s2": {
+    "x": 3.6,
+    "z": 8.1,
+    "r": 195
+   },
+   "s3": {
+    "x": 6.88,
+    "z": 4.15,
+    "r": 0
+   },
+   "s4": {
+    "x": 9.78,
+    "z": 5.72,
+    "r": 0
+   },
+   "s5": {
+    "x": 16.25,
+    "z": 6.6,
+    "r": 0
+   },
+   "s7": {
+    "x": 15.3,
+    "z": 3.1,
+    "r": 180
+   },
+   "s8": {
+    "x": 0.65,
+    "z": 6,
+    "r": 90
+   },
+   "fahne": {
+    "x": 13.6,
+    "z": 7.4,
+    "r": 30
+   }
+  },
+  "gruende": {
+   "s1": "Die Stellwand rückt auf x 4,15. Das Wohnzimmer wird 37 cm schmaler, dafür ist der Gang zur Hoftür 1,30 m breit statt rund 1,0 m.",
+   "s2": "Leicht schräg im linken Raumteil auf einem runden Teppich, damit man es von der Tür aus diagonal sieht. Es rückt 20 cm nach rechts, damit vor der Zukunftsinsel genug Platz bleibt.",
+   "s3": "In der Nische an zwei Wänden; die Tapete darf hier als einziger Ort bunt bleiben.",
+   "s4": "An der Stirnwand des Treppenhauses, über den Farbstreifen.",
+   "s5": "Gleich hinter der Tür als erste Landmarke: Die bunten Plakate sind der Kontrast zum Orange. Sie rückt 25 cm nach rechts, weil sie sonst vor der Kundenseite der Theke stünde.",
+   "s7": "Die Treppenhauswand ist nicht mehr frei, dort steht jetzt der lange Schenkel der Theke. Die Medienstelen stehen deshalb hinter der Theke, Bildschirme zur Theke, Bank Richtung Rückwand. Dort fällt kein Licht von der Fensterfront direkt auf die Bildschirme.",
+   "s8": "Rückt von der Rückwand an die kurze Fensterfront vor das Wohnzimmer, auf die Fläche, die durch die richtige Theke frei geworden ist. An der Rückwand stehen jetzt die Medienstelen.",
+   "fahne": "Hängt zwischen Eingang und Raummitte.",
+   "theke": "Orange foliert, wie in Protokoll 2 vorgeschlagen: Die Theke gehört zum Farbraum und ist das erste große orange Stück, das man hinter der Tür sieht. Sie ist Infotheke und Aufsicht, vom Personalplatz sieht man die Eingangstür. Die Medienstelen stehen in ihrem Rücken."
+  },
+  "staerken": [
+   "Große Wirkung mit wenig Bau: Farbe, runde Teppiche und Kugelleuchten tragen das Konzept. Die orange Theke am Eingang macht die Idee sofort sichtbar.",
+   "Gesamtwert 91, keine Engstelle unter 1,20 m auf dem Rundgang, 0 Warnungen. Sieben von acht Inseln sind von der Straße zu sehen, vier vom Eingang.",
+   "Wohnzimmer und Mero-System liegen besser im Blick als bisher (0,42 und 0,52 statt 0,29 und 0,32), die Zukunftsinsel sehr gut (0,86).",
+   "Hoftür und Lagertür sind mit 1,20 m Durchgang erreichbar, weil die Stellwand am Wohnzimmer nach links rückt."
+  ],
+  "schwaechen": [
+   "Rund 100 m² Wand streichen muss erlaubt sein und am Ende zurückgebaut werden.",
+   "Die Medienstelen stehen hinter der Theke und liegen schlechter im Blick als vorher an der Treppenhauswand (0,40 statt 0,57). Von der Straße sind sie nicht zu sehen, und die Aufsicht hat sie im Rücken.",
+   "Die Zukunftsinsel steht vor dem Oval in der kurzen Fensterfront bei z 5,3; von der Straße sieht man dort ihre Rückseite. Rund 12 % des Wegs liegen abseits der Inseln.",
+   "Texte brauchen starken Kontrast; ein reiner Farbraum strengt manche Besucher an. Die Farbwelt des Mero-Systems müsste zu Orange passen."
+  ],
+  "freieFlaeche": 80.4,
+  "warnungen": [],
+  "pruefung": "Auf die richtige Theke umgebaut: Medienstelen hinter die Theke, Zukunftsinsel an die kurze Fensterfront, Litfaß-Säule und Mero-System leicht verschoben, Stellwand am Wohnzimmer auf x 4,15. Mit dem korrigierten Werkzeug nachgemessen: 0 Fehler, 0 Warnungen, Gesamtwert 91.",
+  "stil": {
+   "buehne": "orange",
+   "palette": {
+    "lila": "#fff1e0",
+    "gelb": "#ffc078",
+    "pink": "#c2410c",
+    "tuerkis": "#fff1e0",
+    "oliv": "#9a3412",
+    "tief": "#9a3412",
+    "tinte": "#5a1e05"
+   },
+   "boden": {
+    "color": "#d9540a",
+    "tex": null
+   },
+   "wand": "#ff8f33",
+   "decke": "#ffffff",
+   "licht": {
+    "hemi": [
+     "#fff6ea",
+     "#ffdcb8",
+     0.78
+    ],
+    "sonne": [
+     "#ffe9cc",
+     2.2
+    ],
+    "exp": 1.05
+   },
+   "farben": [
+    "#d9540a",
+    "#ff8f33",
+    "#ffc078",
+    "#fff1e0",
+    "#9a3412",
+    "#5a1e05"
+   ],
+   "text": "Boden, Wände und Möbel in Orangetönen, Texte und Tafeln in Weiß und Dunkelbraun. Bunt sind nur Tapeten und Plakate.",
+   "material": "Wandfarbe für rund 100 m², Teppichboden oder runde Teppiche, sieben Kugelleuchten, Farbstreifen als Folie."
+  }
+ },
+ {
+  "key": "baustelle",
+  "name": "Baustelle Dreieich",
+  "leitidee": "Die Stadt als Baustelle: 1977 wurde aus fünf Orten eine Stadt gebaut, und fertig ist sie nie. Bauzaun, OSB-Podeste und Flatterband statt Messebau.",
+  "weg": "Hinter der Tür lenken Theke und Bauzaun nach rechts: Ein Bauzaunfeld mit dem Bauschild „Hier entsteht Dreieich“ schließt die Lücke zwischen dem Ende der Theke und der Stütze am Eingang. Das gelb-schwarze Band am Boden führt an der orangen Wand nach hinten zur Zukunftswand, durch die 1,75 m breite Gasse zwischen Treppenhaus und Theke nach vorn zur Statistik, zur Selfie-Koje und ins Wohnzimmer. Von der Slide-Show an der kurzen Fensterfront geht es über das Mero-System am Fenster entlang an der Litfaß-Säule vorbei zurück zur Theke und zur Tür.",
+  "rundgang": [
+   "s6",
+   "s8",
+   "s4",
+   "s3",
+   "s1",
+   "s7",
+   "s2",
+   "s5"
+  ],
+  "pos": {
+   "s8": {
+    "x": 15.4,
+    "z": 0.65,
+    "r": 0
+   },
+   "s7": {
+    "x": 0.35,
+    "z": 5.6,
+    "r": 90
+   },
+   "s4": {
+    "x": 9.78,
+    "z": 5.72,
+    "r": 0
+   },
+   "s5": {
+    "x": 12.6,
+    "z": 7.9,
+    "r": 0
+   },
+   "s2": {
+    "x": 4,
+    "z": 8.6,
+    "r": 90
+   },
+   "s3": {
+    "x": 6.88,
+    "z": 4.15,
+    "r": 0
+   },
+   "fahne": {
+    "x": 14,
+    "z": 7.3,
+    "r": 30
+   }
+  },
+  "fest": {
+   "Bauzaun": [
+    15.75,
+    4.98,
+    16.6,
+    5.12
+   ]
+  },
+  "gruende": {
+   "s2": "Das Mero-System rückt 0,4 m nach rechts und 1,0 m nach vorn ans Schaufenster. So bleibt zwischen der Stütze und dem Gerüst genug Platz (vorher wären es nur 0,88 m gewesen), und daneben hat die Slide-Show Raum. Die Vitrinenseite blickt in die Halle (Blick-Wert 0,89).",
+   "s3": "In der Nische: Selfie mit Bauhelm und Warnweste neben den 70er-Kostümen.",
+   "s4": "Als Bauschild mit Zahlen an der Stirnwand des Treppenhauses.",
+   "s5": "Die Litfaß-Säule bleibt stehen. Sie ist jetzt die letzte Station auf dem Rückweg am Fenster, kurz vor Theke und Tür, und von der Tür aus zu sehen.",
+   "s7": "Die Slide-Show musste aus der Gasse, sie stand im langen Schenkel der Theke. Sie steht jetzt an der kurzen Fensterfront im frei gewordenen Teil der linken Halle, die Bildschirme mit dem Rücken zum Fenster, die Bank in die Halle. Ihr Blick-Wert steigt von 0,54 auf 0,77.",
+   "s8": "Als Planungsbüro an der Rückwand: Wünsche werden als Bauanträge eingereicht.",
+   "fahne": "Hängt vor der Theke an der Fensterseite. Sie steht nicht zwischen Tür und Bauschild, das Schild bleibt von der Tür aus lesbar.",
+   "theke": "Bauleitung am Eingang: Info, Aufsicht, Helme und Westen für das Selfie. Die orange Theke ist mit dem Bauzaunfeld zusammen die Absperrung, die hinter der Tür nach rechts lenkt; vom Platz dahinter sieht man die Tür."
+  },
+  "staerken": [
+   "Fast alles ist geliehen oder gebraucht zu haben: Bauzaun vom Bauhof, OSB aus dem Baumarkt. Statt eines ganzen Zauns reicht jetzt ein Feld, den Rest übernimmt die Theke.",
+   "Der Rundgang ist kurz und kreuzt sich kaum: 52,6 m, 5 % Doppelwege, Gesamtwert 95, keine Engstelle unter 1,20 m.",
+   "Die bisher schwachen Inseln liegen besser im Blick: Slide-Show 0,77 statt 0,54, Litfaß-Säule 0,59 statt 0,47, Wohnzimmer 0,43 statt 0,30.",
+   "Mit der nach links gerückten Stellwand ist der Gang zur Hoftür 1,30 m breit; Hoftür und Lager sind ohne Engstelle erreichbar."
+  ],
+  "schwaechen": [
+   "Bauzaun-Füße und Podestkanten sind Stolperstellen; mit 1,20 m Durchgang bleiben rund 63 m² frei begehbar.",
+   "Der raue Look reibt sich am gemütlichen Wohnzimmer und an der Leitlinie „fröhlich, bunt“.",
+   "Die Slide-Show verdeckt das klare Oval der kurzen Fensterfront bei z 5,3. Das Wohnzimmer bleibt mit Blick-Wert 0,43 die am schwächsten gesehene Insel.",
+   "Das Bauzaunfeld ist an der Lücke nur knapp 0,9 m lang und muss an Theke und Stütze sicher befestigt werden. Das Personal kommt östlich der Stütze hinter die Theke."
+  ],
+  "freieFlaeche": 86.8,
+  "warnungen": [],
+  "pruefung": "Auf die richtige Theke umgebaut: Slide-Show aus der Gasse an die kurze Fensterfront, Mero-System nach vorn ans Fenster, Bauzaun in die Lücke zwischen Theke und Stütze am Eingang, Stellwand am Wohnzimmer auf 4,15 m. Rundgang neu geordnet und mit dem korrigierten Werkzeug gemessen: 0 Fehler, 0 Warnungen, Gesamtwert 95.",
+  "stil": {
+   "buehne": "baustelle",
+   "palette": {
+    "orange": "#ff6a00",
+    "lila": "#2a2a2e",
+    "gelb": "#ffd400",
+    "pink": "#ff6a00",
+    "tuerkis": "#8d99a6",
+    "oliv": "#c8a26a",
+    "tief": "#2a2a2e",
+    "tinte": "#111111"
+   },
+   "boden": {
+    "color": "#d6d6d6",
+    "tex": "beton"
+   },
+   "wand": "#f4f4f2",
+   "decke": "#f1f1ef",
+   "licht": {
+    "hemi": [
+     "#ffffff",
+     "#c9c9c9",
+     0.68
+    ],
+    "sonne": [
+     "#ffffff",
+     2.3
+    ],
+    "exp": 1.05
+   },
+   "farben": [
+    "#ffd400",
+    "#111111",
+    "#ff6a00",
+    "#c8a26a",
+    "#d6d6d6"
+   ],
+   "text": "Signalgelb, Schwarz und Warnorange auf Betongrau und rohem Holz.",
+   "material": "Ein Bauzaunfeld mit Füßen, OSB-Platten für Podeste, Flatter- oder Bodenmarkierungsband, Bauschild, Leitkegel."
+  },
+  "stellwandX": 4.15
+ }
+]

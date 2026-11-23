@@ -1,0 +1,741 @@
+{
+ "name": "Empfehlung der Museumsleitung",
+ "leitidee": "Das Konzept des Teams bleibt: acht Inseln, Wohnzimmer in der Ecke, orange Wand am Eingang, die Theke als Infotheke und Aufsicht. Neu geordnet wird nur, was die fest eingebaute Theke erzwingt und was die Gutachten als Schwäche zeigen. Der Rundgang beginnt an der orangen Wand und endet an der Zukunftsinsel neben der Tür, vor den Augen der Aufsicht.",
+ "rundgang": [
+  "s6",
+  "s4",
+  "s7",
+  "s3",
+  "s1",
+  "s2",
+  "s5",
+  "s8"
+ ],
+ "weg": "Vier Kapitel. Gründung: rechts an der orangen Wand entlang nach hinten (6). Zahlen und Bilder: in der Ecke hinter der Theke die Statistik (4), dann durch die Gasse zwischen Treppenhaus und Theke nach vorn zu den Medienstelen an der Stirnwand des Treppenhauses (7). Alltag der 70er: links in die Nische zur Selfie-Koje (3), zum Wohnzimmer (1), um das Mero-System (2) und über die Litfaß-Säule (5) an der Fensterfront zurück. Und morgen: die Zukunftsinsel (8) links neben der Tür, von dort sind es wenige Schritte zum Ausgang. Gemessen sind das 53 m ohne Engstelle unter 1,20 m.",
+ "stellwandX": 4.15,
+ "buehne": "leitung",
+ "niedrig": {
+  "Abgesenkter Tisch an der Theke": [
+   13.2,
+   5.4,
+   14,
+   6
+  ],
+  "Prospektständer am Thekenende": [
+   15.7,
+   4.9,
+   16.6,
+   5.2
+  ]
+ },
+ "pos": {
+  "s2": {
+   "x": 2.7,
+   "z": 7.6,
+   "r": 90
+  },
+  "s3": {
+   "x": 6.85,
+   "z": 4.15,
+   "r": 0
+  },
+  "s4": {
+   "x": 15.4,
+   "z": 0.5,
+   "r": 0
+  },
+  "s5": {
+   "x": 5.9,
+   "z": 8,
+   "r": 0
+  },
+  "s7": {
+   "x": 9.78,
+   "z": 5.5,
+   "r": 0
+  },
+  "s8": {
+   "x": 15.2,
+   "z": 9.55,
+   "r": 180
+  },
+  "fahne": {
+   "x": 16.73,
+   "z": 5.9,
+   "r": 90
+  }
+ },
+ "markierungen": [
+  {
+   "rect": [
+    0.4,
+    4.25,
+    4.0,
+    5.95
+   ],
+   "text": "Programmfläche: zwei Stuhlreihen",
+   "farbe": "lila"
+  },
+  {
+   "rect": [
+    10.9,
+    9.45,
+    12.1,
+    10.15
+   ],
+   "text": "Abstellfläche",
+   "farbe": "tinte"
+  },
+  {
+   "rect": [
+    4.23,
+    0.2,
+    5.55,
+    3.1
+   ],
+   "text": "Weg zur Hoftür: frei halten",
+   "farbe": "rot"
+  },
+  {
+   "rect": [
+    4.1,
+    3.1,
+    5.3,
+    6.3
+   ],
+   "text": "frei halten",
+   "farbe": "rot"
+  },
+  {
+   "rect": [
+    11.7,
+    2.7,
+    13.05,
+    5.3
+   ],
+   "text": "Gasse: nichts abstellen",
+   "farbe": "rot"
+  }
+ ],
+ "gruende": {
+  "s1": "Bleibt in der Ecke an der Natursteinwand und ist nach vorn offen, weil die Theke dort nie stand. Die Stellwand rückt auf x 4,15: Das Wohnzimmer wird rund 35 cm schmaler, der Gang zu Hoftür und Lager 1,30 m breit.",
+  "s2": "Steht jetzt quer, die Schauseite zeigt in den Raum. So ist es von der Tür aus knapp 14 m gerade noch zu sehen und das Blickziel am Ende der Fensterfront. Beim Aufbau darf es nicht weiter nach links rücken. Rundherum kommt man nur knapp: 0,97 m bis Stütze 1 und 1,05 m bis zur Fensterbank, bei Programm ist die Nordseite zu. Beim Probeaufbau mit Rollstuhl prüfen.",
+  "s3": "Bleibt in der Nische zwischen Lager und Treppenhaus, die zwei echte Wände mitbringt. Weil die Aufsicht die Nische nicht sieht, gibt die Theke Hüte und Kostüme aus.",
+  "s4": "Neu an der Rückwand hinter der Theke, gleich nach der Gebietsreform: erst die Gründung, dann die Zahlen dazu. Sie ist nur 1,07 m tief, lässt den Weg in die Gasse und die Tür zu den Nebenräumen frei, und die Aufsicht hat die Drehwürfel in Rufweite. Sie steht vor dem Klimagerät: Wie hoch die Tafel sein darf, hängt davon ab, wo es hängt.",
+  "s5": "Neu in der linken Halle an der Fensterfront, hinter dem Oval bei x 5,9, zwischen Mero-System und Durchgang. Sie ist von der Tür und durch alle sechs Ovale zu sehen und zieht Besucher nach links, die Kreuzung vor der Theke bleibt frei.",
+  "s6": "Unverändert an der Brandmauer, erste Station gleich rechts hinter der Tür. Am Anfang der Wand steht eine Auftakt-Platte mit dem Titel und einem Satz zur Gründung 1977.",
+  "s7": "Neu an der Stirnwand des Treppenhauses, weil am alten Platz die Theke steht. Die Bildschirme sind von der Tür, durch drei Ovale und auf der Runde der Aufsicht zu sehen, gegen das Gegenlicht aus dem Oval bei x 9,8 braucht es Blendschutz.",
+  "s8": "Neu links neben der Tür, mit dem Rücken an der Fensterbank, als letzte Station vor dem Ausgang. Sie ist die bestgesehene Insel (Sicht unterwegs 0,96), und die Aufsicht hat Karten und Pinnwand im Blick.",
+  "fahne": "Steht als beidseitig bedruckte Finne südlich von Stütze 4, nicht in der Gasse. Sie verdeckt keine Insel und braucht keine Deckenhaken, aber einen schweren Fuß. Von der Tür sieht man zuerst die Kante, von beiden Seiten die Fläche.",
+  "theke": "Fest eingebaut, orange foliert, Infotheke und einziger Aufsichtsplatz mit Blick auf die Tür. Bedient wird an der Südseite. Der abgesenkte Tisch steht an der Südwest-Ecke vor Stütze 3: vor Ort prüfen, ob die Aufsicht ihn über die Ecke erreicht. Die Westseite an der Gasse ist nur Auslage, und die Lücke am Thekenende schließt ein rollbarer Prospektständer."
+ },
+ "staerken": [
+  "Keine Engstelle unter 1,20 m auf dem Rundgang. Hoftür und Lagertür sind mit 1,20 m Durchgang erreichbar, der Gang dorthin ist 1,30 m breit.",
+  "Sechs von acht Inseln sind von der Tür aus zu sehen, im ersten Vorschlag fünf. Neu dabei ist das Mero-System am Ende der Fensterfront, aus knapp 14 m gerade noch.",
+  "Die Zukunftsinsel ist Schlusspunkt am Ausgang und die bestgesehene Insel (Sicht unterwegs 0,96). Die Aufsicht sieht von der Theke, was an der Pinnwand hängt.",
+  "Der Rundgang folgt vier Kapiteln und nutzt im Normalbetrieb die Gasse als Rückweg aus der Ecke hinter der Theke. Stehen Menschen an der Westseite der Theke, führt der gemessene Weg an der orangen Wand zurück.",
+  "Die Stellung hält eine 30 cm größere Theke aus: Prüfung bestanden, keine Engstelle, der Rückweg durch die Gasse bleibt (Gesamtwert 93, Messung der Gegenprüfung).",
+  "Vor dem Wohnzimmer passen zwei Stuhlreihen, ohne dass ein Weg unter 1,20 m fällt. Mehr geht nicht: Eine dritte Reihe schließt den Zugang zum Wohnzimmer."
+ ],
+ "schwaechen": [
+  "Die Bildschirme der Medienstelen zeigen zur langen Fensterfront, gegenüber liegt das klare Oval bei x 9,8. Ohne Blendschutz und matte Bildschirme spiegelt es. Das ist die einzige Warnung der Prüfung.",
+  "Wohnzimmer und Selfie-Koje kommen erst nach 19,3 m in den Blick und sind von der Theke aus nicht zu sehen. Das Wohnzimmer bleibt die am schwächsten gesehene Insel (Blick 0,35).",
+  "Vor der Theke bleibt kein Platz für eine Gruppe. Gemessen sperrt schon eine halbe Schulklasse in der Kreuzung die linke Halle, und eine ganze Klasse vor der orangen Wand versperrt die Tür zu den Nebenräumen.",
+  "Statistik und Zukunftsinsel sind durch kein Oval von der Straße zu sehen, die Statistik im ersten Vorschlag durch vier. Die Rückseite der Zukunftsinsel verdeckt 0,8 m des Ovals bei x 13,4, und das Mero-System zeigt den beiden Ovalen der kurzen Fensterfront seine geschlossene Rückseite. Im Durchgang zwischen den Hallen werden 11 Prozent des Wegs doppelt gegangen, im ersten Vorschlag nichts.",
+  "Der Rundgang führt alle Besucher hinter die Theke: Der Halt vor der Statistik liegt 1,65 m hinter dem Personalplatz, an der offenen Rückseite der Theke. Das macht die bekannte Frage dringender, ob sich die Rückseite schließen lässt. Die Statistik steht außerdem vor dem Klimagerät.",
+  "Die Fahne steht mit der Kante zur Tür. Wer hereinkommt, liest sie erst nach zwei Schritten."
+ ],
+ "freieFlaeche": 85.1,
+ "warnungen": [
+  "Medienstelen: Die Bildschirme an der Stirnwand des Treppenhauses zeigen zur langen Fensterfront. Wer auf der Bank sitzt, hat das klare Oval bei x 9,8 im Rücken, es spiegelt sich in den Bildschirmen. Blendschutz am Oval und matte Bildschirme einplanen und an einem sonnigen Mittag prüfen."
+ ],
+ "pruefung": "Vier neue Fachgutachten lagen vor (Besucherforschung, Sicherheit, Betrieb, Recht), dazu das weiter gültige Vermittlungs-Gutachten der letzten Runde; zwei brachten eine eigene, nachgemessene Stellung mit. Die Leitung hat den ersten Vorschlag und beide Stellungen nachgemessen, sie kombiniert und in 26 Messungen geprüft, darunter Proben mit größerer Theke, Andrang, Stuhlreihen und Schulklasse: Die Empfehlung misst 0 Fehler, eine Warnung und den Gesamtwert 93 (erster Vorschlag 91, Stellung der Besucherforschung 93, sichere Stellung 95).",
+ "entscheidungen": [
+  {
+   "thema": "Rundgang in vier Kapiteln",
+   "entscheidung": "Gründung (6) · Zahlen und Bilder (4, 7) · Alltag der 70er (3, 1, 2, 5) · und morgen? (8). Die Gasse an der Theke ist der Rückweg aus der Ecke.",
+   "grund": "Die Kapitel aus dem Vermittlungs-Gutachten gelten weiter und tragen Rallye, Führung und Pubquiz. Die Reihenfolge mit der Litfaß-Säule vor der Selfie-Koje misst 92 statt 93 und ist 4,2 m länger."
+  },
+  {
+   "thema": "Zukunftsinsel an den Ausgang",
+   "entscheidung": "Insel 8 steht links neben der Tür mit dem Rücken an der Fensterbank (15,2 / 9,55 / r 180).",
+   "grund": "Besucherforschung und Vermittlung wollen sie als Schluss, das Rechts-Gutachten in Sichtweite der Theke. Ich weiche damit vom Sicherheits-Gutachten ab, das die Pinnwand an der Rückwand sieht, und vom Betriebs-Gutachten, das die Fläche vor der Theke frei halten will. An der Rückwand wäre die Zukunft zweite Station. Stellt man sie in der sicheren Stellung ans Ende des Rundgangs, fällt der Gesamtwert auf 85 mit zwei Engstellen am Thekenende. Zwischen Stehtisch und Thekenfront bleiben 3,3 m. Zwei Proben mit Andrang: In der ersten fiel die Prüfung durch (Theke, orange Wand und Zukunftsinsel mit 90 cm nicht erreichbar). In der zweiten blieb der Rundgang ohne Engstelle, es gab aber zwei Warnungen und den Gesamtwert 90. Die Menschen standen in beiden Proben direkt auf den Zielpunkten."
+  },
+  {
+   "thema": "Statistik hinter die Theke, Selfie-Koje bleibt in der Nische",
+   "entscheidung": "Insel 4 an die Rückwand (15,4 / 0,5 / r 0), Insel 3 bleibt bei 6,85 / 4,15.",
+   "grund": "Die Besucherforschung will die Koje an der Rückwand, im Blick der Aufsicht. Sie ist aber 2,10 m tief und ließe nach Plan nur 0,86 m bis zum Kopf der Theke. Das Sicherheits-Gutachten erlaubt dort nur Flaches. Die Statistik ist 1,07 m tief und hält den Weg in die Gasse offen. Auch die Statistik steht vor dem Klimagerät, die Höhe der Tafel hängt davon ab."
+  },
+  {
+   "thema": "Medienstelen an die Stirnwand",
+   "entscheidung": "Insel 7 an die Stirnwand des Treppenhauses (9,78 / 5,5 / r 0), Blendschutz am Oval bei x 9,8.",
+   "grund": "Sicherheit und Betrieb wollen sie dort: von der Tür zu sehen, auf der Runde der Aufsicht im Blick, Kabel an der Wand. Die Nische aus dem Gutachten der Besucherforschung wäre blendfrei, ist aber mit der Selfie-Koje belegt und von der Aufsicht nie einsehbar. Der Preis ist die Warnung zum Gegenlicht."
+  },
+  {
+   "thema": "Mero-System quer, Litfaß-Säule nach links",
+   "entscheidung": "Insel 2 auf 2,7 / 7,6 / r 90, Insel 5 auf 5,9 / 8,0.",
+   "grund": "Längs gestellt misst die Stellung 95 statt 93, das Mero-System zeigt dann aber die geschlossene Rückseite: Blick 0,2 statt rund 0,7, erster Blick nach 28,1 m statt von der Tür aus. Die Sorge des Sicherheits-Gutachtens gilt dem Trichter zur Hoftür. Quer endet das Mero-System bei x 3,88 und damit weiter westlich als längs, gemessen ohne Engstelle."
+  },
+  {
+   "thema": "Gasse und Thekenende",
+   "entscheidung": "In der Gasse steht nichts, die Westseite der Theke ist nur Auslage. Die Lücke am Thekenende schließt ein rollbarer Prospektständer, an der Südwest-Ecke steht ein abgesenkter Tisch.",
+   "grund": "Stehen Menschen an der Westseite, bleibt in der Gasse gemessen nur 1,0 m. Das Sicherheits-Gutachten will die Lücke offen lassen, Besucherforschung und Betrieb wollen sie schließen, weil sie in den Personalplatz führt. Auf Rollen bleibt sie für das Personal ein zweiter Weg. Das Regal hinter dem Sitzplatz aus dem Betriebs-Gutachten übernehme ich nicht: Damit ist der Personalplatz gemessen nur noch über weniger als 1,20 m erreichbar."
+  },
+  {
+   "thema": "Fahne an Stütze 4, nicht in die Gasse",
+   "entscheidung": "Die Fahne steht als beidseitig bedruckte Finne südlich von Stütze 4 (16,73 / 5,9 / r 90).",
+   "grund": "Die Leitung wollte sie flach an die Ostwand des Treppenhauses hängen. Die Gegenprüfung hat gezeigt: Dort hängt sie in der Gasse und macht sie 1,53 m statt 1,75 m breit. Mit einer 30 cm größeren Theke oder mit Menschen an der Westseite der Theke verlässt der Rundgang dann die Gasse (Gesamtwert 91, 55,2 m). Als Finne misst sie im Normalfall gleich (93) und hält den Rückweg in beiden Proben offen (93). Der Preis: Von der Tür sieht man zuerst die Kante. Den Titel tragen deshalb zusätzlich die Thekenfront und die Rückseite der Zukunftsinsel zur Straße."
+  },
+  {
+   "thema": "Wohnzimmer schmaler, Weg zur Hoftür frei",
+   "entscheidung": "Stellwand auf x 4,15 statt 4,52. Der Weg von der Hallenmitte zur Hoftür wird am Boden rot markiert, im Gang in voller Breite.",
+   "grund": "Mit der Stellwand am alten Platz sind Hoftür und Lagertür nur über eine Engstelle unter 1,20 m erreichbar (Messung des ersten Vorschlags). Solange nicht geklärt ist, ob die Hoftür Rettungsweg ist, wird sie wie einer behandelt."
+  },
+  {
+   "thema": "Programm vor dem Wohnzimmer, Klassen teilen",
+   "entscheidung": "Stühle stehen nur vor dem Wohnzimmer in zwei Reihen (x 0,4 bis 4,0 / z 4,25 bis 5,95), diese Fläche ist am Boden markiert. Stütze 1 steht darin, die hintere Reihe endet 10 cm vor dem Mero-System. Schulklassen werden vor der Tür geteilt: eine Hälfte an die orange Wand, eine zum Wohnzimmer. Kinderwagen und Ranzen stehen an der Fensterbank bei x 10,9 bis 12,1, zwischen zwei Ovalen.",
+   "grund": "Zwei Reihen ab z 4,25 (13 Stühle bei 50 cm je Stuhl) lassen alle Wege über 1,20 m (Gesamtwert 92). Zwei Reihen sind die Grenze: Eine dritte Reihe davor schließt den Zugang zum Wohnzimmer, die Prüfung fällt durch. Eine halbe Klasse vor der orangen Wand lässt alle anderen Ziele erreichbar, eine halbe Klasse in der Kreuzung sperrt die linke Halle. Die Fläche vor der Theke, die das Betriebs-Gutachten für Gruppen wollte, gebe ich für die Zukunftsinsel auf."
+  }
+ ],
+ "verworfen": [
+  {
+   "thema": "Selfie-Koje an die Rückwand hinter der Theke",
+   "grund": "Vorschlag der Besucherforschung, Gesamtwert 93. Verworfen, weil die 2,10 m tiefe Koje den Weg zwischen Ecke und Gasse nach Plan auf weniger als 1 m verengt und Kostüme an den Rückzugsweg der Aufsicht bringt."
+  },
+  {
+   "thema": "Sichere Stellung unverändert",
+   "grund": "Höchster Messwert (95). Die Zukunftsinsel ist dort aber zweite Station, das Mero-System zeigt die Rückseite (Blick 0,18, erster Blick nach 28,2 m), und nur vier Inseln sind von der Tür aus zu sehen. Der Inhalt geht vor."
+  },
+  {
+   "thema": "Zukunftsinsel an die Fensterbank der linken Halle",
+   "grund": "Eigene Variante, hält die Fläche vor der Theke frei und misst 92. Die Pinnwand stünde dann außer Rufweite der Theke, die Litfaß-Säule wäre der Schlusspunkt, und 18 Prozent des Wegs würden doppelt gegangen."
+  },
+  {
+   "thema": "Medienstelen in die Nische, Selfie-Koje an die Fensterbank",
+   "grund": "Eigene Variante, misst 94 ohne Warnung. Die Koje stünde aber im einzigen Durchgang zwischen den Hallen, ihre Rückwand verdeckte das Oval bei x 9,8, und die Stelen kämen erst nach 22,4 m in den Blick (Sicht unterwegs 0,35). Das ist Plan B, falls am Oval kein Blendschutz erlaubt ist."
+  },
+  {
+   "thema": "Gruppenplatz in der Kreuzung vor der Gasse",
+   "grund": "Die Kreuzung ist die größte freie Fläche in Türnähe. Gemessen macht dort aber schon eine halbe Klasse auf 2 × 2,6 m die Hoftür, das Wohnzimmer und alle Inseln der linken Halle mit 90 cm Durchgang unerreichbar."
+  },
+  {
+   "thema": "Fahne flach an die Ostwand des Treppenhauses",
+   "grund": "Erste Wahl der Leitung, misst im leeren Raum gleich (93). Die Gegenprüfung hat gezeigt, dass sie dort in der Gasse hängt (Restbreite 1,53 m) und der Rundgang bei größerer Theke oder Andrang an der Westseite aus der Gasse ausweicht (91, 55,2 m)."
+  }
+ ],
+ "teamfragen": [
+  "Steht die Theke wirklich so, wie sie jetzt im Plan liegt: als L um Stütze 3, knapp 4 m hinter der Tür? Wie lang sind beide Schenkel, wie hoch ist sie, und wie breit ist die Gasse zum Treppenhaus?",
+  "Ist die Hoftür ein Notausgang, gibt es einen Ausgang über die Nebenräume, und wie viele Personen dürfen gleichzeitig im Raum sein?",
+  "Wo genau sitzt das Klimagerät an der Rückwand, wie hoch hängt es, und läuft es? Davon hängt ab, wie hoch die Statistik-Tafel sein darf.",
+  "Dürfen Lager und Nebenräume mitgenutzt werden, und dürfen Besucher das WC benutzen?",
+  "In welche Himmelsrichtung zeigt die lange Fensterfront, und darf am Oval bei x 9,8 ein Rollo oder eine Folie angebracht werden?",
+  "Sind Laufzeit und Öffnungszeiten festgelegt, und wer macht Aufsicht? Gibt es bei Schulklassen, Erzählcafé und Pubquiz immer eine zweite Person für die linke Halle?",
+  "Wo sind Steckdosen und Sicherungskasten? Gibt es Strom an der Stirnwand des Treppenhauses, im Wohnzimmer und an der Fensterbank?",
+  "Wer überlässt der Stadt den Raum, gibt es dazu etwas Schriftliches, und wer zahlt Strom, Heizung und das Zurückstreichen?",
+  "In welchem Haushaltsjahr steht das Geld, ab wann darf bestellt werden, und wer unterschreibt Leihscheine und Aufträge?",
+  "Soll in der Selfie-Koje ein Gerät der Stadt fotografieren, oder nehmen Besucher das eigene Telefon?"
+ ],
+ "gutachten": [
+  {
+   "rolle": "Besucherforschung und Wegführung",
+   "kern": "Die Theke zieht geradeaus, dann nach rechts. Kreuzung vor der Gasse frei halten, Zukunftsinsel an den Ausgang, Mero-System quer, Litfaß-Säule nach links, Fahne an die Treppenhauswand. Übernommen bis auf die Plätze von Selfie-Koje, Statistik, Medienstelen und Fahne."
+  },
+  {
+   "rolle": "Barrierefreiheit, Sicherheit und Brandschutz",
+   "kern": "Das Originalkonzept fällt auf dem richtigen Grundriss durch die Prüfung. Gasse, Ecke hinter der Theke und Trichter zur Hoftür frei halten, nur Flaches an die Rückwand, Stelen an die Stirnwand, Stellwand auf x 4,15. Übernommen bis auf den Platz der Pinnwand und die Stellung des Mero-Systems."
+  },
+  {
+   "rolle": "Betrieb, Technik und Aufsicht",
+   "kern": "Die Aufsicht sieht die Tür, aber kaum die linke Halle: feste Runde, Leihgaben nach Sichtbarkeit verteilen. Stühle vor das Wohnzimmer, Strom über die Fensterbank, Klimagerät frei halten. Nicht übernommen sind die freie Fläche vor der Theke und das Regal hinter dem Sitzplatz."
+  },
+  {
+   "rolle": "Recht, Leihverkehr, Geld und Kommunikation",
+   "kern": "Es fehlen Nutzungsvereinbarung, Versicherung der Leihgaben, Rechteliste, Datenschutz an den Mitmachstationen und die Haushaltsfrage. Für die Stellung: Pinnwand in Sichtweite der Theke, Pflichttafel an die Rückwand neben der Brandmauer, keine Lesetafel in der Gasse."
+  },
+  {
+   "rolle": "Bildung und Vermittlung (letzte Runde)",
+   "kern": "Nicht erneuert, gilt aber weiter: vier Kapitel, Zukunft als Schluss am Ausgang, pro Insel eine Handlung, Textregeln, Schulangebot früh. Überholt sind die Programmfläche vor den Stelen und alles zur Theke links."
+  }
+ ],
+ "fest_vergleich": [
+  [
+   "Hoftür und Lagertür mit 1,20 m Durchgang",
+   "nicht erreichbar",
+   "erreichbar"
+  ],
+  [
+   "Zukunftsinsel: Sicht unterwegs",
+   "0,57",
+   "0,96"
+  ],
+  [
+   "Mero-System: Blick auf die Schauseite",
+   "0,26",
+   "0,73"
+  ],
+  [
+   "Medienstelen von der Straße",
+   "durch kein Oval",
+   "durch 3 Ovale"
+  ],
+  [
+   "Fläche abseits des Wegs",
+   "2 %",
+   "10 %",
+   false
+  ],
+  [
+   "Litfaß-Säule: Blick auf die Säule",
+   "0,62",
+   "0,47",
+   false
+  ],
+  [
+   "Statistik von der Straße",
+   "durch 4 Ovale",
+   "durch kein Oval",
+   false
+  ],
+  [
+   "Wohnzimmer: erster Blick nach",
+   "18,7 m",
+   "19,3 m",
+   false
+  ]
+ ],
+ "radar": [
+  {
+   "titel": "Zweiter Rettungsweg: Hoftür und Nebenräume klären",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Niemand hat geklärt, ob die Hoftür Notausgang ist, wie sie aufschlägt und ob der Hof stufenlos zur Straße führt. Offen ist auch, ob es über die Nebenräume hinter der Theke einen Ausgang ins Freie gibt. Ortstermin mit Gebäudemanagement und Brandschutzdienststelle ansetzen, bevor etwas bestellt wird, und beides in den Plan eintragen."
+  },
+  {
+   "titel": "Höchstzahl an Personen festlegen",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Für Eröffnung, Pubquiz und Schulklassen gibt es keine Obergrenze, sicher nutzbar ist nur die Glastür. Bei der Bauaufsicht die genehmigte Nutzung und die zulässige Personenzahl erfragen. Bis dahin mit einem eigenen Planwert arbeiten, ihn in den Dienstplan schreiben und bei Veranstaltungen an der Tür zählen."
+  },
+  {
+   "titel": "Brandlast: Nachweise für Stoffe, Sofa, Tapete, Forex",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Über Sponsoring und Leihgaben kommen Polster, Kissen, Fahne, Tapete und Kostüme ungeprüft in den Raum. In jede Anfrage einen Satz aufnehmen: schwer entflammbar (B1) mit Nachweis. Am Weg zur Hoftür die Brandlast klein halten: an der Selfie-Koje keine Kleiderstange, Hüte und Kostüme gibt die Theke aus."
+  },
+  {
+   "titel": "Löscher, Notlicht und Rettungsplan auf die neue Stellung abstimmen",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Feuerlöscher, Notlicht und Rettungszeichen stehen in keinem Plan, und falls ein Aushang vorhanden ist, zeigt er den leeren Laden. Beim Ortstermin alles fotografieren und einzeichnen, damit keine Insel ein Zeichen verdeckt. Den Flucht- und Rettungsplan mit der endgültigen Stellung neu zeichnen lassen und an Tür und Theke aushängen."
+  },
+  {
+   "titel": "Kippsicherheit, wenn nicht gebohrt werden darf",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Litfaß-Säule, Medienstelen, Statistik-Tafel, Zukunftsinsel, Schrankwand und Stehlampe müssen stehen bleiben, auch wenn Kinder daran ziehen. Für jedes Teil vorab festlegen: Ballast im Sockel, Verbindung untereinander oder Winkel an der Wand. Das Mero-System baut eine fachkundige Person auf, mit Vitrinen aus Sicherheitsglas oder Acryl. Vor der Eröffnung jede Insel drücken und ziehen und das Ergebnis mit Datum aufschreiben. Die Frage nach dem Bohren gehört als Zusatz in die laufende Anfrage zu Deckenhaken, Streichen und Tapezieren."
+  },
+  {
+   "titel": "Fensterbank als Sitzbank vor ungeprüftem Glas",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Kissen auf der 42 cm hohen Bank laden Kinder ein, darauf zu stehen, direkt vor den Scheiben. Stempel an den Scheiben suchen (ESG oder VSG) oder beim Vermieter fragen. Ohne Sicherheitsglas die Kissen nur als Sitzplätze für Erwachsene ausweisen. Keine Kissen hinter Mero-System und Litfaß-Säule und nicht auf der Abstellfläche."
+  },
+  {
+   "titel": "Ecke hinter der Theke und Heizkörper-Nische werden zum Lager",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "im Betrieb",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Flyer-Kartons, Getränkekisten und Kostüme landen dort, wo sie niemand sieht: hinter der Theke, vor der Tür zu den Nebenräumen, vor dem Heizkörper. Das ist Brandlast am Rückzugsweg der Aufsicht und versperrt den Rundgang durch die Gasse. Regel ins Dienstblatt und ein Foto vom Soll-Zustand an die Theke."
+  },
+  {
+   "titel": "Arbeitsschutz am Thekenplatz: Unterweisung, Notfall, Pause",
+   "bereich": "Sicherheit & Brandschutz",
+   "wann": "zur Eröffnung",
+   "aufwand": "mittel",
+   "quelle": "Betrieb und Technik",
+   "warum": "Die Aufsicht arbeitet voraussichtlich oft allein, stundenlang zwischen Glastür und Klimagerät. Die Fachkraft für Arbeitssicherheit der Stadt soll den Platz ansehen: Zugluft, Stehhilfe, abschließbares Fach, Telefon in Griffweite. Alle Aufsichten unterweisen und eine Seite Dienstanweisung schreiben: Notruf mit Adresse, Löscher, Verbandskasten, wer als zweite Person erreichbar ist, wie die Tür in der Pause gesichert wird."
+  },
+  {
+   "titel": "Strom: Steckdosen einmessen, Kabel nicht über Laufwege, Leihgaben prüfen",
+   "bereich": "Technik, Licht & Klima",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Betrieb und Technik",
+   "warum": "Niemand kennt die Steckdosen und den Sicherungskasten. Mero-System und Litfaß-Säule stehen frei, Stelen und Fernseher brauchen Strom an ihrer Wand. Jede Dose einzeichnen und testen, die Fensterbank als Kabelweg nutzen, Querungen nur mit flacher Kabelbrücke, kein Kabel durch die Gasse und den Eingang. Private Lampen und Radios aus den 70ern stromlos zeigen oder prüfen lassen. Alles über Funksteckdosen schalten, die Fernbedienung liegt an der Theke."
+  },
+  {
+   "titel": "Ton: mehrere Quellen in einem halligen Glasraum",
+   "bereich": "Technik, Licht & Klima",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Falls Fernseher, Medienstelen und Selfie-Koje gleichzeitig Ton abgeben, überlagern sie sich: Der Raum hat zwei Glasfronten, Naturstein und 2,50 m Decke. Die Aufsicht hört dann den ganzen Tag dieselbe Schleife, Führungen werden übertönt. Stelen stumm mit Untertiteln, Fernsehton nur auf Knopfdruck oder über einen Hörer am Sofa."
+  },
+  {
+   "titel": "Sonne: Blendung an Stelen und Theke, ausbleichende Originale",
+   "bereich": "Technik, Licht & Klima",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Betrieb und Technik",
+   "warum": "Die Himmelsrichtungen im Plan sind nicht überprüft. An einem sonnigen Tag morgens, mittags und nachmittags fotografieren, wo Lichtflecken liegen. Kritisch sind das Oval bei x 9,8 gegenüber den Medienstelen und das Oval bei x 13,4 vor der Theke: Rollo oder halbtransparentes Motiv vorsehen und fragen, ob das erlaubt ist. Plakate und Fotos nur als Reproduktion ins Licht, Originale in den hinteren Raumteil."
+  },
+  {
+   "titel": "Technik-Routine, Ersatzteilkiste und Übergabebuch",
+   "bereich": "Technik, Licht & Klima",
+   "wann": "zur Eröffnung",
+   "aufwand": "klein",
+   "quelle": "Betrieb und Technik",
+   "warum": "Schleifen sollten ohne Internet vom Stick laufen und nach einem Stromausfall von selbst starten. Die Aufsicht sieht die Bildschirme vom Sitzplatz nicht, ein Ausfall fällt erst auf der Runde auf. Eine Seite Anleitung an die Theke, dazu eine Kiste mit zweitem Stick, Batterien und Ersatzkabeln. Störungen kommen mit Datum ins Übergabebuch."
+  },
+  {
+   "titel": "Klimagerät, Heizkörper und Lüften",
+   "bereich": "Technik, Licht & Klima",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Betrieb und Technik",
+   "warum": "Die Statistik steht vor dem Klimagerät an der Rückwand, niemand weiß, ob es läuft. Vor Ort prüfen: Höhe, Luftrichtung, Kondenswasser, Wartung, Fernbedienung. Die Tafel muss unter dem Gerät enden. Vor dem Heizkörper in der Nische hinter der Gasse steht nichts. Den Vermieter fragen, ob sich außer den Türen etwas öffnen lässt, und bei vollem Raum Lüftungspausen einplanen."
+  },
+  {
+   "titel": "Raumlicht: Welche Leuchten gibt es, wo sind die Schalter?",
+   "bereich": "Technik, Licht & Klima",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Betrieb und Technik",
+   "warum": "Bei 2,50 m Decke bestimmen die vorhandenen Leuchten, welche Tafel lesbar ist und wo Vitrinenglas spiegelt. In der dunklen Jahreszeit fehlt am späten Nachmittag das Tageslicht. Beim Ortstermin alle Schaltkreise einzeln einschalten und fotografieren, dunkle Wandstücke im Plan markieren, Klemmleuchten einplanen."
+  },
+  {
+   "titel": "Eingang und Orientierung: Schwelle, Kontraste, Leitstreifen",
+   "bereich": "Barrierefreiheit",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Ob es an der Glastür eine Stufe gibt und wie schwer die Flügel gehen, ist nicht erfasst. Drei weiße Stützen stehen frei im Raum, eine davon vor dem Eingang, die vierte steckt in der Theke. Schwelle messen, Schmutzfangmatte einplanen, Stützen, Thekenkante und Glastür mit Kontrastbändern markieren. Ein aufgeklebter Leitstreifen von der Tür zum abgesenkten Tisch hilft blinden Besuchern, dort übernimmt die Aufsicht."
+  },
+  {
+   "titel": "Abgesenkter Tisch an der Theke, Schreibplatz im Sitzen an der Zukunftsinsel",
+   "bereich": "Barrierefreiheit",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Die Theke ist rund 1 m hoch, die Zukunftsinsel hat einen Stehtisch. Wer sitzt oder klein ist, sieht die Auslage nicht und kann keine Karte schreiben. Ein unterfahrbarer Tisch in Tischhöhe steht an der Südwest-Ecke der Theke, er ist im Plan eingezeichnet und mitgemessen. An der Zukunftsinsel einen Seitentisch ergänzen, Karten und Stifte auch dort auslegen, Magnete statt Nadeln."
+  },
+  {
+   "titel": "Sitzplätze mit Lehne für Ältere",
+   "bereich": "Barrierefreiheit",
+   "wann": "zur Eröffnung",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Wer 1977 schon erwachsen war, ist 2027 mindestens 68. Die Fensterbank ist niedrig und ohne Lehne. Die Bank der Medienstelen bekommt eine Rückenlehne und daneben einen freien Platz für einen Rollstuhl. Dazu Stühle mit Armlehnen: am Mero-System, im Wohnzimmer und vor der orangen Wand."
+  },
+  {
+   "titel": "Lesbarkeit: ein Regelblatt für alle, ein Großdruck-Heft zum Ausleihen",
+   "bereich": "Barrierefreiheit",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Vermittlung",
+   "warum": "Mehrere Gruppen schreiben Texte, runde Platten fassen wenig. Jetzt festlegen: Texte nur in Lesehöhe, große Schrift, wenige Wörter je Platte, dunkle Schrift auf hellem Grund, darüber und darunter nur Bilder und Jahreszahlen. Alle Tafeltexte zusätzlich als Großdruck-Heft an die Theke, dazu eine Seite Kurzfassung in den häufigsten Sprachen der Stadt."
+  },
+  {
+   "titel": "Barrierefreiheit früh abstimmen, auch digital",
+   "bereich": "Barrierefreiheit",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Recht, Geld und Kommunikation",
+   "warum": "Barrierefreiheit ist für eine Stadt Pflicht. Jetzt klären, wer in Stadt oder Kreis als Beauftragte zuständig ist, und den Plan zeigen, bevor gedruckt wird. Auch die Seite zur Ausstellung, der Flyer als PDF und Filme im Netz müssen barrierefrei sein: Alternativtexte, Untertitel, lesbare Dateien. Das Grafikbüro im Auftrag darauf verpflichten."
+  },
+  {
+   "titel": "Die Aufsicht sieht die Tür, aber nicht die linke Halle",
+   "bereich": "Betrieb & Personal",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Betrieb und Technik",
+   "warum": "Das Treppenhaus verdeckt vom Platz hinter der Theke Wohnzimmer, Selfie-Koje, den Gang zur Hoftür und die Lagertür. Die Theke ist deshalb kein Dauerposten: feste Runde jede halbe Stunde durch die linke Halle, Türkontakt mit Summer an der Hoftür. Leihgaben nach Sichtbarkeit verteilen, im Wohnzimmer nichts Loses zeigen, das in eine Tasche passt. Bei Programm steht eine zweite Person links."
+  },
+  {
+   "titel": "Personalplan: Aufsichtsstunden, Wochenenddienst, Ehrenamtliche",
+   "bereich": "Betrieb & Personal",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Museumsleitung",
+   "warum": "Öffnungszeiten und Laufzeit stehen in keinem Protokoll, davon hängt alles ab. Rechnung aufmachen: Wochen mal Öffnungstage mal Stunden, bei Veranstaltungen doppelt besetzt. Dienst am Wochenende ist ein Fall für Personalamt und Personalrat. Ehrenamtliche brauchen eine schriftliche Beauftragung der Stadt, sonst ist nach einem Unfall offen, wer zahlt. Unfallschutz und Haftpflicht über das Personalamt klären."
+  },
+  {
+   "titel": "Abstellfläche für Kinderwagen, Rollatoren und Ranzen",
+   "bereich": "Betrieb & Personal",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Der bisher geplante Platz links neben der Tür ist jetzt die Zukunftsinsel. Ohne neue Fläche stehen Kinderwagen im Eingang oder vor der Theke. Neu markiert ist die Fensterbank an der Kreuzung (x 10,9 bis 12,1, zwischen zwei Ovalen), mitgemessen ohne Engstelle. Schild an der Theke, Hakenleiste und Schirmständer dazu, dort keine Sitzkissen."
+  },
+  {
+   "titel": "WC und Tür zu den Nebenräumen",
+   "bereich": "Betrieb & Personal",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Die Tür liegt an der Rückwand hinter der Theke, am Ende der orangen Wand, und kann wie ein Teil der Ausstellung wirken. Klären, ob das WC für Besucher offen und stufenlos erreichbar ist. Je nach Antwort beschildern oder auf das nächste öffentliche WC verweisen. Eine Dank- und Pflichttafel zwischen Tür und Brandmauer macht klar, dass hier die Ausstellung endet."
+  },
+  {
+   "titel": "Perücken und Kostüme: Ausgabe an der Theke, Hygiene",
+   "bereich": "Betrieb & Personal",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Vermittlung",
+   "warum": "Die Selfie-Koje ist von der Theke aus nicht zu sehen, geteilte Perücken sind bei Schulklassen ein Läuse- und Beschwerdethema. Besser Hüte, Brillen, Westen und Schilder zum Halten, abwischbar oder waschbar, in doppeltem Satz mit festem Waschtag. Die Theke gibt sie aus und nimmt sie zurück."
+  },
+  {
+   "titel": "Tägliche Runde: Checkliste, Nachschub, Reinigung",
+   "bereich": "Betrieb & Personal",
+   "wann": "zur Eröffnung",
+   "aufwand": "klein",
+   "quelle": "Betrieb und Technik",
+   "warum": "Wenn jemand stolpert oder eine Leihgabe fehlt, zählt, ob regelmäßig kontrolliert wurde. Morgens und abends dieselbe Runde abhaken: Kabel, Standfestigkeit, Hoftür, Vollzähligkeit nach Foto, Karten und Stifte auffüllen. Abends Koje, Sofa und WC auf Personen prüfen, bevor abgeschlossen wird. Festlegen, wer wöchentlich putzt, auch die Glasfronten."
+  },
+  {
+   "titel": "Besucher zählen und in der ersten Woche beobachten",
+   "bereich": "Betrieb & Personal",
+   "wann": "zur Eröffnung",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Sponsoren und Magistrat fragen später nach Zahlen, rückwirkend gibt es keine. Handzähler oder Strichliste an der Theke. In der ersten Woche einige Besucher beobachten: Gehen sie rechts herum, finden sie die Gasse und das Wohnzimmer? Danach nachjustieren."
+  },
+  {
+   "titel": "Schlüssel, Schließdienst, Schaufenster bei Nacht",
+   "bereich": "Betrieb & Personal",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Museumsleitung",
+   "warum": "Leihgaben stehen wochenlang hinter Glas an der Straße. Klären: Wer schließt auf und ab, gibt es eine Alarmanlage, was verlangt die Versicherung? Wertvolles nicht in die Ovale stellen. Schaufensterlicht per Zeitschaltuhr in den Abend hinein, das ist zugleich die beste Werbung."
+  },
+  {
+   "titel": "Was die Aufsicht darf und sagt: Hausrecht, Bürgerfragen, Kurzbesuch",
+   "bereich": "Betrieb & Personal",
+   "wann": "zur Eröffnung",
+   "aufwand": "klein",
+   "quelle": "Recht, Geld und Kommunikation",
+   "warum": "Hunde, Eis, Fahrräder, Betrunkene: Die Aufsicht braucht eine Hausordnung an der Glastür und das schriftlich übertragene Hausrecht. Eine besetzte Theke der Stadt direkt hinter der Tür wird außerdem als Bürgerbüro gelesen: ein Blatt mit den häufigsten Verweisen bereitlegen. Viele bleiben nur kurz und sehen nur die rechte Halle. Dafür einen Satz einüben: „Links hinten steht ein Wohnzimmer von 1977.“"
+  },
+  {
+   "titel": "Nutzungsvereinbarung für den Raum, mit Lager und Rückbau",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Recht, Geld und Kommunikation",
+   "warum": "Nirgends steht, wer der Stadt den Raum überlässt, von wann bis wann und zu welchen Kosten. Geplant sind Eingriffe in fremdes Eigentum: Folie auf der Theke, Farbe auf der Brandmauer, Tapete im Wohnzimmer. Eine Seite Vereinbarung aufsetzen: Laufzeit mit Aufbau und Abbau, Nebenkosten, erlaubte Eingriffe, Nutzung von Lager und Nebenräumen, Rückgabezustand und wer das Zurückstreichen bezahlt. Bei Einzug ein Übergabeprotokoll mit Fotos."
+  },
+  {
+   "titel": "Leihgaben: Leihschein, Versicherung, Wertgrenze",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Recht, Geld und Kommunikation",
+   "warum": "Offen ist, ob die städtische Versicherung fremde Sachen in einem fremden Laden deckt, bis zu welcher Summe und ob der Transport im Privatwagen mitversichert ist. Vor der ersten Zusage mit der zuständigen Stelle sprechen und eine Wertgrenze festlegen. Was darüber liegt, kommt nur als Reproduktion. Für jedes Stück einen Leihschein mit Foto, Wert, Standort und Rückgabetermin. Originale mit Wert nur in abschließbare Mero-Vitrinen oder in die rechte Halle."
+  },
+  {
+   "titel": "Rechteliste für alle Motive, alle Nutzungen und die Musik",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Recht, Geld und Kommunikation",
+   "warum": "Angefragt sind bisher nur Fernsehbilder und ein Markenmotiv. Plakate an der Litfaß-Säule, Bilder auf den Stelen, Zeitungsausschnitte, Karten und Archivfotos brauchen ebenfalls Rechte, auch für Presse, Website und eine spätere Wanderausstellung. Eine Tabelle anlegen, eine Zeile je Motiv, mit der Spalte „Fotografieren durch Besucher erlaubt“. Kein Motiv geht ohne ausgefüllte Zeile in den Druck. Für Musik im Wohnzimmer und beim Pubquiz die GEMA klären."
+  },
+  {
+   "titel": "Datenschutz und Einwilligungen an den Mitmachstationen",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Recht, Geld und Kommunikation",
+   "warum": "Daten fallen an der Selfie-Koje, an der Pinnwand und in Anmeldelisten an, dazu bei Zeitzeugen und eingereichten Familienfotos. Die Datenschutzbeauftragte der Stadt jetzt einbinden. Einfachste Lösung für die Koje: kein städtisches Gerät. Pinnwandkarten ohne Namensfeld drucken, Anmeldelisten nach der Veranstaltung löschen, für Zeitzeugen und Privatfotos eine einseitige Einwilligung."
+  },
+  {
+   "titel": "Sponsoring: Rollen trennen, Gegenleistung und Steuer klären",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Recht, Geld und Kommunikation",
+   "warum": "Wer der Stadt etwas schenkt und zugleich einen Auftrag bekommt, muss sauber dokumentiert sein. Kämmerei und Rechtsamt fragen: Gibt es eine Dienstanweisung zu Spenden und Sponsoring, wie wird eine Sachleistung gebucht, ist die Nennung mit Logo umsatzsteuerpflichtig? Je Firma eine Seite Vereinbarung. Sponsoren nur auf einer Tafel nennen, nicht in den Ovalen und nicht auf der Thekenfront."
+  },
+  {
+   "titel": "Geld: Kostenplan, Haushaltsjahr, Fördergeld vor dem ersten Auftrag",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Recht, Geld und Kommunikation",
+   "warum": "In den Protokollen steht kein Budget, bestellt werden muss ab sofort. Die Kämmerei fragen, in welchem Haushaltsjahr die Mittel stehen und ab wann beauftragt werden darf. Stiftungen, Sparkasse, Kreis und Land fördern Jubiläen, verlangen aber fast immer, dass vor der Bewilligung nichts bestellt ist. Kosten mit Reserve zusammenzählen und eine Person benennen, die Bestellungen freigibt."
+  },
+  {
+   "titel": "Wer unterschreibt, und wo liegt die Akte?",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Recht, Geld und Kommunikation",
+   "warum": "Leihscheine, Sponsorenvereinbarungen, Rechteverträge und Aufträge verpflichten die Stadt, nicht jede Sachbearbeitung darf zeichnen. Hauptamt oder Rechtsamt fragen, wer was unterschreibt, und die Muster einmal freigeben lassen. Alle Verträge, Einwilligungen und Belege in einen gemeinsamen Ordner, den eine Person führt."
+  },
+  {
+   "titel": "Bargeld an der Theke nur mit Regelung der Stadtkasse",
+   "bereich": "Recht, Leihgaben & Geld",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Recht, Geld und Kommunikation",
+   "warum": "Spendenbox, Verkauf oder Getränke gegen Geld machen die Theke zur städtischen Kasse. Die Stadtkasse fragen, ob eine Handkasse eingerichtet wird, wer zählt und wo das Geld nachts liegt. Die Spendenbox festschrauben, auf dem kurzen Schenkel direkt vor der Aufsicht, und täglich leeren. Sonst ganz auf Bargeld verzichten."
+  },
+  {
+   "titel": "Theke einmessen, dann Probeaufbau mit Kreppband",
+   "bereich": "Aufbau, Abbau & Logistik",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Die Lage der Theke stammt aus einem Foto und kann 30 cm abweichen. Davon hängen die Gasse, der Platz vor der Kundenseite und der Weg hinter die Theke ab. Beide Schenkel, die Stütze und die Höhe mit dem Maßband aufnehmen und die Stellung neu messen. Danach die Standflächen aufkleben und mit Kinderwagen und Rollstuhl einmal durchgehen, erst dann bauen."
+  },
+  {
+   "titel": "Litfaß-Säule: passt sie durch die Tür und unter die Decke?",
+   "bereich": "Aufbau, Abbau & Logistik",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Falls die Säule höher als rund 2,2 m wird, lässt sie sich unter einer 2,50 m hohen Decke nicht am Stück aufrichten und passt womöglich nicht durch einen Türflügel. Zusammen mit der Meldung der Größe ans Gleichstellungsreferat beim Hersteller nach Bauweise in Segmenten fragen und Ballast im Sockel vorsehen. Erst dann die Zahl der Plakate nennen."
+  },
+  {
+   "titel": "Runde Platten auf frischer Farbe: Klebeband hält nicht",
+   "bereich": "Aufbau, Abbau & Logistik",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Sicherheit und Barrierefreiheit",
+   "warum": "Montageband kann sich auf frisch gestrichener Wand nach Wochen lösen, erst recht, falls Sonne darauf fällt. Dann fallen Platten aus Kopfhöhe. In die laufende Anfrage an den Vermieter aufnehmen, ob geschraubt werden darf. Sonst eine Schiene oder eine vorgesetzte Platte planen und ein Muster einige Wochen testen."
+  },
+  {
+   "titel": "Zeitplan rückwärts von der Eröffnung, Aufbau von hinten links nach vorn rechts",
+   "bereich": "Aufbau, Abbau & Logistik",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Betrieb und Technik",
+   "warum": "Bisher gibt es Einzeltermine, keinen Gesamtplan. Vom Eröffnungstag rückwärts rechnen: Druck, davor Korrektur, davor Texte und Bildrechte, für jede Insel ein Redaktionsschluss. Alles kommt durch eine Tür: erst streichen und folieren, dann Strom, dann die linke Halle mit Wohnzimmer und Mero-System, zuletzt die rechte Halle. Für die Aufbautage eine Ladezone beim Ordnungsamt beantragen und die Breite eines Türflügels messen."
+  },
+  {
+   "titel": "Abbau, Rückgabe und Nachnutzung planen",
+   "bereich": "Aufbau, Abbau & Logistik",
+   "wann": "zum Abbau",
+   "aufwand": "mittel",
+   "quelle": "Museumsleitung",
+   "warum": "Leihgaben gehen zuerst und mit Protokoll zurück. Gekaufte Stelen, Säule und Möbel sind städtisches Vermögen und dürfen nicht einfach verschenkt werden, die Regeln dazu kennt die Kämmerei. Tafeln so bauen, dass sie danach ins Rathaus, in Schulen oder die Bürgerhäuser der fünf Stadtteile wandern können. Vor dem Abbau alles fotografieren und ans Stadtarchiv geben."
+  },
+  {
+   "titel": "Kein Auftakt: In zehn Sekunden muss klar sein, worum es geht",
+   "bereich": "Inhalt & Gestaltung",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Wer hereinkommt, sieht die Theke, eine orange Wand mit vielen Kreisen und fünf weitere Inseln, aber keinen Satz, der sagt, was hier gefeiert wird. Den Titel, der noch fehlt, dorthin setzen, wo der Blick landet: auf die orange Thekenfront, auf die Fahne und auf eine Auftakt-Platte am Anfang der orangen Wand. Titel, Laufzeit und Öffnungszeiten als Folie an die Glastür."
+  },
+  {
+   "titel": "Alle fünf Stadtteile zählen: Wer kommt wie oft vor?",
+   "bereich": "Inhalt & Gestaltung",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Vermittlung",
+   "warum": "Die Ausstellung steht in Sprendlingen, die Plakate kommen aus einem Bürgerhaus, die Fotos von einem Fotografen. Das Material kippt leicht zu einem Stadtteil. Vor der Druckfreigabe eine Strichliste über alle Inseln führen und Lücken gezielt über die Vereine füllen."
+  },
+  {
+   "titel": "Umgang mit Streit: War die Zusammenlegung umstritten?",
+   "bereich": "Inhalt & Gestaltung",
+   "wann": "sofort",
+   "aufwand": "klein",
+   "quelle": "Museumsleitung",
+   "warum": "Gebietsreformen wurden vielerorts nicht nur gefeiert. Mit dem Stadtarchiv klären, wie es in den fünf Orten war, und entscheiden, ob Gegenstimmen gezeigt werden. Eine städtische Ausstellung gewinnt, wenn sie das selbst anspricht, statt im Gästebuch daran erinnert zu werden."
+  },
+  {
+   "titel": "Faktencheck und Korrektorat",
+   "bereich": "Inhalt & Gestaltung",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Vermittlung",
+   "warum": "Viele Hände schreiben, niemand liest alles. Eine Person prüft Jahreszahlen, Namen und Zahlen gegen die Quellen des Stadtarchivs, eine zweite liest Korrektur. Zur bekannten Statistik-Recherche: 1970 gab es die Stadt noch nicht, gebraucht werden die Zahlen der fünf damaligen Gemeinden."
+  },
+  {
+   "titel": "Pro Insel eine Handlung und eine Frage",
+   "bereich": "Vermittlung & Programm",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Vermittlung",
+   "warum": "Mitmachen ist als Leitlinie beschlossen, an den meisten Inseln kann man bisher nur lesen oder schauen. Für jede Insel eine einfache Handlung festlegen: klappen, drehen, blättern, schätzen, kleben. Als einseitige Tabelle fürs Team. Die Fragen sind zugleich Rallye und Pubquiz."
+  },
+  {
+   "titel": "Schulangebot früh an die Schulen, Aufsichtspflicht regeln",
+   "bereich": "Vermittlung & Programm",
+   "wann": "sofort",
+   "aufwand": "mittel",
+   "quelle": "Vermittlung",
+   "warum": "Ausflugstage sind Monate im Voraus vergeben. Ein einseitiges Angebot mit buchbaren Vormittagen und einer Buchungsadresse formulieren. In die Bestätigung schreiben: Die Aufsichtspflicht bleibt bei den Lehrkräften, je Klasse kommen zwei Begleitpersonen. Die Aufsicht der Stadt sieht die linke Halle nicht und kann keine Kinder beaufsichtigen."
+  },
+  {
+   "titel": "Gruppen: geteilt hinein, Stühle vor das Wohnzimmer",
+   "bereich": "Vermittlung & Programm",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Betrieb und Technik",
+   "warum": "Die alte Programmfläche vor den Medienstelen gibt es nicht mehr, dort steht die Theke. Drinnen ist kein Sammelpunkt für eine ganze Klasse: Gemessen sperrt schon eine halbe Klasse in der Kreuzung die linke Halle. Klassen vor der Tür teilen, eine Hälfte beginnt an der orangen Wand, die andere am Wohnzimmer. Erzählcafé und Pubquiz sitzen auf der markierten Fläche vor dem Wohnzimmer, immer mit zweiter Person. Stühle leihen, Lagerplatz klären, Pubquiz mit Klemmbrettern statt Tischen."
+  },
+  {
+   "titel": "Beiträge der Besucher: Pinnwand pflegen, Scan-Nachmittage anbieten",
+   "bereich": "Vermittlung & Programm",
+   "wann": "im Betrieb",
+   "aufwand": "mittel",
+   "quelle": "Vermittlung",
+   "warum": "Die Lieblingsplatz-Wand kann schon nach dem ersten Wochenende voll sein. Die Stadt verantwortet, was dort hängt: auf der täglichen Runde ansehen, Unpassendes abnehmen, fotografieren. Viele werden eigene Fotos und Geschichten mitbringen. Zwei oder drei feste Nachmittage ansetzen: scannen, sofort zurückgeben, Einwilligung unterschreiben lassen. Am Ende geht die Sammlung ans Stadtarchiv."
+  },
+  {
+   "titel": "Wohnzimmer und Selfie-Koje sind von der Tür aus unsichtbar",
+   "bereich": "Kommunikation & Sichtbarkeit",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Besucherforschung",
+   "warum": "Beide kommen laut Messung erst nach 19,3 m Weg in den Blick. Beim Ortstermin prüfen, ob die linke Halle dunkler ist als die rechte: Besucher gehen dorthin, wo es hell ist und wo sie etwas sehen. Wohnzimmer und Schauseite des Mero-Systems eigens anstrahlen, eine brennende Stehlampe ins Wohnzimmer, einen Wegweiser an die Thekenfront: rechts Gebietsreform, links Wohnzimmer."
+  },
+  {
+   "titel": "Schaufenster: jedes Oval ein Bild, jede Rückseite ein Motiv",
+   "bereich": "Kommunikation & Sichtbarkeit",
+   "wann": "vor dem Aufbau",
+   "aufwand": "mittel",
+   "quelle": "Besucherforschung",
+   "warum": "Von der Straße sieht man nur durch sechs Ovale, abends wirken sie ohne Licht wie schwarze Löcher. Im Blick liegen auch Rückseiten: die Zukunftsinsel im Oval bei x 13,4, das Mero-System zur kurzen Fensterfront. Jedem Oval ein Motiv zuweisen und anstrahlen. Jede Rückseite bekommt den Titel oder ein Bild und gehört in die Druckliste, rohe Platten wirken von der Straße wie ein Lager."
+  },
+  {
+   "titel": "Öffentliche Nummern in Gehreihenfolge",
+   "bereich": "Kommunikation & Sichtbarkeit",
+   "wann": "vor dem Aufbau",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Die Nummern 1 bis 8 sind Arbeitsnummern und folgen nicht dem Rundgang. Für Besucher neu zählen oder nur Namen und Farben verwenden: 1 Gebietsreform, 2 Statistik, 3 Bildschirme, 4 Selfie, 5 Wohnzimmer, 6 Mero, 7 Litfaß-Säule, 8 Zukunft. Intern bleiben die alten Nummern."
+  },
+  {
+   "titel": "Eröffnung: passt nicht in den Raum",
+   "bereich": "Kommunikation & Sichtbarkeit",
+   "wann": "zur Eröffnung",
+   "aufwand": "mittel",
+   "quelle": "Recht, Geld und Kommunikation",
+   "warum": "Magistrat, Stadtverordnete, Zeitzeugen, Vereine aus fünf Stadtteilen, Sponsoren, Leihgeber und Presse sind zusammen mehr, als der Raum fasst. Reden an einem größeren Ort oder vor der Tür, danach Besuch in Gruppen mit Anmeldung. Ausschank nicht an der Theke, sie steht direkt hinter dem einzigen sicheren Ausgang. Mit der Pressestelle ein Pressepaket mit freigegebenen Bildern bauen, Pressetermin am Vortag."
+  },
+  {
+   "titel": "Schwellenangst: Von außen sieht man nicht, dass offen ist",
+   "bereich": "Kommunikation & Sichtbarkeit",
+   "wann": "zur Eröffnung",
+   "aufwand": "klein",
+   "quelle": "Besucherforschung",
+   "warum": "Die Front ist foliert, die Theke steht wie ein Empfang hinter der Tür. Viele gehen vorbei, weil sie Eintritt oder eine Behörde vermuten. „Eintritt frei, bitte hereinkommen“ in Augenhöhe an die Tür, bei gutem Wetter die Tür offen. Aufsteller auf dem Gehweg, Banner und Plakate brauchen eine Erlaubnis: Ordnungsamt und Eigentümer fragen. Öffnungszeiten auch auf die städtische Website und in die Kartendienste."
+  }
+ ],
+ "gegenpruefung": "Eine unabhängige Stelle hat alle Zahlen nachgemessen, sie stimmen. Sie hat über 40 eigene Stellungen, 135 Raster-Stellungen von Mero-System und Litfaß-Säule und alle 48 Reihenfolgen innerhalb der Kapitel probiert: Keine misst bei gleichem Inhalt klar besser, höchstens 94 statt 93 und jeweils mit einem Nachteil. Urteil: mit Korrekturen. Übernommen sind die Fahne an Stütze 4 statt in der Gasse, die Programmfläche auf den gemessenen zwei Stuhlreihen, die volle Breite der Markierung zur Hoftür, die Abstellfläche zwischen zwei Ovalen, die Verschlechterungen gegenüber dem ersten Vorschlag in der Tabelle oben sowie Korrekturen an Ortsangaben und an Radar-Punkten, die Vermutungen als Tatsachen ausgaben."
+}
