@@ -14,9 +14,9 @@
   .fill { width: 100%; height: 100%; }
   .bear { position: absolute; }
   .bear img { position: absolute; left: 0; top: 0; width: 100%; display: block; }
-  .bear .lit { filter: drop-shadow(0 0 1.5px rgba(255, 226, 170, .95)) drop-shadow(0 0 26px rgba(255, 176, 74, .30)) drop-shadow(0 18px 22px rgba(2, 4, 20, .55)); }
-  .bear .shade { filter: brightness(0); opacity: .62; }
-  #logo { filter: drop-shadow(0 0 22px rgba(255, 205, 110, .40)) drop-shadow(0 8px 10px rgba(0, 0, 0, .55)); }
+  .bear .lit { filter: drop-shadow(0 12px 12px rgba(70, 24, 0, .42)); }
+  .bear .shade { filter: brightness(0); opacity: .5; }
+  #logo { filter: drop-shadow(0 0 3px rgba(255, 236, 170, .95)) drop-shadow(0 0 20px rgba(255, 196, 90, .55)) drop-shadow(0 10px 10px rgba(0, 0, 0, .55)); }
 </style>
 </head>
 <body>
@@ -27,7 +27,7 @@ const SUNDAY = +(params.get('n') || 1);
 const FORMAT = params.get('f') || '4x5';
 const W = 1080, H = FORMAT === '9x16' ? 1920 : 1350;
 const TALL = FORMAT === '9x16';
-const INK = '#150f12';
+const INK = '#1e1412';
 const stage = document.getElementById('stage');
 stage.style.height = H + 'px';
 
@@ -36,11 +36,12 @@ function rngFactory(seed) { let a = seed >>> 0; return () => { a |= 0; a = a + 0
 const R = (rng, a, b) => a + (b - a) * rng();
 const pick = (rng, arr) => arr[Math.floor(rng() * arr.length)];
 const f1 = v => Math.round(v * 100) / 100;
+const rad = d => d * Math.PI / 180;
 
 /* ---------- content ---------- */
 const WISH = { 1: 'einen schönen', 2: 'einen besinnlichen', 3: 'einen gemütlichen', 4: 'einen frohen' }[SUNDAY];
 
-/* bear sprites: geometry in source units (image is 2480 x 1754 units) */
+/* bear sprites: geometry in source units (image is 2480 x 1754 units), hx = x of head centre */
 const SPR = {
   praesident: { src: 'baer_praesident.png', hx: 1600 },
   bembel:     { src: 'baer_bembel.png',     hx: 1450 },
@@ -48,30 +49,35 @@ const SPR = {
   garde:      { src: 'baer_garde.png',      hx: 1240 },
   ballett:    { src: 'baer_ballett.png',    hx: 1700 },
 };
-/* placements: cx = x of head centre, by = y of image bottom edge, s = px per unit, flip, shade start (0..1 of height) */
+/* placements: cx = x of head centre, by = y of image bottom edge, s = px per unit */
 const LAYOUT = {
   '4x5': {
-    text: { logoY: 36, logoH: 190, ribbonY: 248, wishY: 334, bigY: 506, bigSize: 186 },
-    candles: { xs: [369, 483, 597, 711], base: 1282, w: 74, h0: 166, burn: 16 },
-    garlandY: 1262,
-    1: [{ k: 'praesident', cx: 664, by: 1262, s: .375 }],
-    2: [{ k: 'tracht', cx: 775, by: 1250, s: .345 }, { k: 'garde', cx: 285, by: 1250, s: .365 }],
-    3: [{ k: 'ballett', cx: 520, by: 1212, s: .30 }, { k: 'bembel', cx: 806, by: 1282, s: .30, flip: true }],
-    4: [{ k: 'garde', cx: 252, by: 1004, s: .235, fade: true }, { k: 'tracht', cx: 832, by: 1004, s: .235, fade: true }, { k: 'praesident', cx: 566, by: 1040, s: .26, fade: true },
-        { k: 'ballett', cx: 404, by: 1272, s: .235, shade: .60 }, { k: 'bembel', cx: 752, by: 1272, s: .235, flip: true, shade: .60 }],
+    text: { ribbonY: 96, wishY: 214, bigY: 392, bigSize: 196 },
+    ring: { cy: 846, R: 392, r: 290 },
+    fgY: 1150,
+    candles: { xs: [244, 390, 690, 836], base: 1286, w: 70, h0: 204, burn: 17 },
+    crest: { top: 1158, h: 170 },
+    1: [{ k: 'praesident', cx: 592, by: 1166, s: .375 }],
+    2: [{ k: 'tracht', cx: 770, by: 1170, s: .355 }, { k: 'garde', cx: 304, by: 1170, s: .385 }],
+    3: [{ k: 'ballett', cx: 610, by: 1166, s: .37 }, { k: 'bembel', cx: 826, by: 1300, s: .35, flip: true }],
+    4: [{ k: 'garde', cx: 236, by: 934, s: .26, fade: true }, { k: 'tracht', cx: 848, by: 934, s: .26, fade: true }, { k: 'praesident', cx: 566, by: 962, s: .29, fade: true },
+        { k: 'ballett', cx: 408, by: 1178, s: .26, shade: .74 }, { k: 'bembel', cx: 752, by: 1178, s: .26, flip: true, shade: .74 }],
   },
   '9x16': {
-    text: { logoY: 196, logoH: 214, ribbonY: 436, wishY: 528, bigY: 716, bigSize: 198 },
-    candles: { xs: [345, 475, 605, 735], base: 1766, w: 88, h0: 192, burn: 18 },
-    garlandY: 1728,
-    1: [{ k: 'praesident', cx: 700, by: 1728, s: .46 }],
-    2: [{ k: 'tracht', cx: 750, by: 1670, s: .40 }, { k: 'garde', cx: 300, by: 1728, s: .44 }],
-    3: [{ k: 'ballett', cx: 622, by: 1590, s: .36 }, { k: 'bembel', cx: 850, by: 1770, s: .36, flip: true }],
-    4: [{ k: 'garde', cx: 250, by: 1440, s: .30, fade: true }, { k: 'tracht', cx: 826, by: 1440, s: .30, fade: true }, { k: 'praesident', cx: 566, by: 1440, s: .33, fade: true },
-        { k: 'ballett', cx: 452, by: 1750, s: .28, shade: .62 }, { k: 'bembel', cx: 790, by: 1750, s: .28, flip: true, shade: .62 }],
+    text: { ribbonY: 262, wishY: 392, bigY: 592, bigSize: 212 },
+    ring: { cy: 1124, R: 452, r: 338 },
+    fgY: 1500,
+    candles: { xs: [226, 384, 696, 854], base: 1664, w: 80, h0: 236, burn: 19 },
+    crest: { top: 1516, h: 214 },
+    1: [{ k: 'praesident', cx: 604, by: 1540, s: .435 }],
+    2: [{ k: 'tracht', cx: 760, by: 1540, s: .42 }, { k: 'garde', cx: 300, by: 1560, s: .46 }],
+    3: [{ k: 'ballett', cx: 670, by: 1540, s: .42 }, { k: 'bembel', cx: 836, by: 1710, s: .40, flip: true }],
+    4: [{ k: 'garde', cx: 240, by: 1236, s: .31, fade: true }, { k: 'tracht', cx: 844, by: 1236, s: .31, fade: true }, { k: 'praesident', cx: 566, by: 1250, s: .34, fade: true },
+        { k: 'ballett', cx: 466, by: 1528, s: .29, shade: .76 }, { k: 'bembel', cx: 772, by: 1528, s: .29, flip: true, shade: .76 }],
   },
 };
 const L = LAYOUT[FORMAT];
+const RG = L.ring, CX = W / 2;
 
 /* ---------- helpers ---------- */
 const NS = 'http://www.w3.org/2000/svg';
@@ -80,6 +86,7 @@ function svgLayer(inner, extra = '') {
   d.innerHTML = `<svg xmlns="${NS}" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" style="display:block;${extra}">${inner}</svg>`;
   stage.appendChild(d); return d;
 }
+function divLayer(css) { const d = document.createElement('div'); d.className = 'fill'; d.style.cssText = css; stage.appendChild(d); return d; }
 function star4(x, y, r, fill, op = 1, rot = 0) {
   const k = r * .17;
   return `<path transform="translate(${f1(x)} ${f1(y)}) rotate(${rot})" d="M0 ${-r} Q${k} ${-k} ${r} 0 Q${k} ${k} 0 ${r} Q${-k} ${k} ${-r} 0 Q${-k} ${-k} 0 ${-r}Z" fill="${fill}" opacity="${op}"/>`;
@@ -89,100 +96,210 @@ function star5(x, y, r, rot = 0) {
   for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5 + rot, rr = i % 2 ? r * .46 : r; d += (i ? 'L' : 'M') + f1(x + Math.cos(a) * rr) + ' ' + f1(y + Math.sin(a) * rr); }
   return d + 'Z';
 }
+const goldStar = (x, y, r, rot = 0) => `<path d="${star5(x, y, r, rot)}" fill="url(#gStar)" stroke="${INK}" stroke-width="3.4" stroke-linejoin="round"/><path d="${star5(x - r * .12, y - r * .14, r * .34, rot)}" fill="#fff6c9" opacity=".75"/>`;
+
+/* shared paint servers (duplicated per svg layer through this string) */
+const DEFS = `
+  <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#fff9d6"/><stop offset=".28" stop-color="#ffe682"/><stop offset=".52" stop-color="#ffc93c"/>
+    <stop offset=".55" stop-color="#e58d0c"/><stop offset=".80" stop-color="#f9b934"/><stop offset="1" stop-color="#b6600a"/>
+  </linearGradient>
+  <linearGradient id="goldFlat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0b0"/><stop offset="1" stop-color="#f1b63a"/></linearGradient>
+  <linearGradient id="gStar" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0a0"/><stop offset=".5" stop-color="#ffcf3f"/><stop offset=".51" stop-color="#f5ae1c"/><stop offset="1" stop-color="#d98a0c"/></linearGradient>
+  <radialGradient id="bRed" cx=".36" cy=".32" r=".8"><stop offset="0" stop-color="#ff7a6e"/><stop offset=".40" stop-color="#e02a24"/><stop offset=".41" stop-color="#cc1f1e"/><stop offset=".78" stop-color="#b21517"/><stop offset=".79" stop-color="#8a0d12"/><stop offset="1" stop-color="#6f080e"/></radialGradient>
+  <radialGradient id="bGold" cx=".36" cy=".32" r=".8"><stop offset="0" stop-color="#fff6b8"/><stop offset=".40" stop-color="#ffd44a"/><stop offset=".41" stop-color="#f9bc20"/><stop offset=".78" stop-color="#e79d10"/><stop offset=".79" stop-color="#b9650b"/><stop offset="1" stop-color="#9a4f06"/></radialGradient>
+  <radialGradient id="bBlue" cx=".36" cy=".32" r=".8"><stop offset="0" stop-color="#8ea6ff"/><stop offset=".40" stop-color="#3556dc"/><stop offset=".41" stop-color="#2945cc"/><stop offset=".78" stop-color="#1d33a6"/><stop offset=".79" stop-color="#14237a"/><stop offset="1" stop-color="#0f1a60"/></radialGradient>
+  <linearGradient id="snowG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".55" stop-color="#f1f6ff"/><stop offset="1" stop-color="#bcd0f7"/></linearGradient>`;
+
+/* ---------- ornaments ---------- */
+const bauble = (x, y, r, g) => `<g><rect x="${f1(x - r * .2)}" y="${f1(y - r * 1.22)}" width="${f1(r * .4)}" height="${f1(r * .36)}" rx="2.5" fill="#f6c443" stroke="${INK}" stroke-width="3"/>
+  <circle cx="${x}" cy="${y}" r="${r}" fill="url(#${g})" stroke="${INK}" stroke-width="4.5"/>
+  <path d="M${f1(x - r * .78)} ${f1(y + r * .08)} Q${x} ${f1(y + r * .42)} ${f1(x + r * .78)} ${f1(y + r * .08)}" fill="none" stroke="#fff3c4" stroke-width="${f1(r * .09)}" opacity=".55" stroke-linecap="round"/>
+  <ellipse cx="${f1(x - r * .36)}" cy="${f1(y - r * .40)}" rx="${f1(r * .24)}" ry="${f1(r * .14)}" transform="rotate(-38 ${f1(x - r * .36)} ${f1(y - r * .40)})" fill="#fff" opacity=".92"/>
+  <circle cx="${f1(x + r * .42)}" cy="${f1(y + r * .46)}" r="${f1(r * .09)}" fill="#fff" opacity=".45"/></g>`;
+const berries = (x, y, r) => [[0, 0], [r * 1.55, r * .5], [r * .5, r * 1.55]].map(([dx, dy]) => `<circle cx="${f1(x + dx)}" cy="${f1(y + dy)}" r="${r}" fill="#dc2a25" stroke="${INK}" stroke-width="3"/><circle cx="${f1(x + dx - r * .3)}" cy="${f1(y + dy - r * .3)}" r="${f1(r * .27)}" fill="#fff" opacity=".9"/>`).join('');
+function orangeSlice(x, y, r, rot = 0) {
+  let s = `<g transform="translate(${x} ${y}) rotate(${rot})"><circle r="${r}" fill="#e2701a" stroke="${INK}" stroke-width="4"/><circle r="${f1(r * .86)}" fill="#ffd27a"/>`;
+  for (let i = 0; i < 8; i++) { const a0 = rad(i * 45 + 5), a1 = rad(i * 45 + 40), rr = r * .78;
+    s += `<path d="M${f1(Math.cos((a0 + a1) / 2) * r * .13)} ${f1(Math.sin((a0 + a1) / 2) * r * .13)} L${f1(Math.cos(a0) * rr)} ${f1(Math.sin(a0) * rr)} A${f1(rr)} ${f1(rr)} 0 0 1 ${f1(Math.cos(a1) * rr)} ${f1(Math.sin(a1) * rr)}Z" fill="${i % 2 ? '#f79a25' : '#f58a1a'}" stroke="#c2570f" stroke-width="1.6" stroke-linejoin="round"/>`; }
+  return s + `<path d="M${f1(-r * .62)} ${f1(-r * .42)} A${f1(r * .76)} ${f1(r * .76)} 0 0 1 ${f1(-r * .1)} ${f1(-r * .74)}" fill="none" stroke="#fff" stroke-width="${f1(r * .1)}" stroke-linecap="round" opacity=".7"/></g>`;
+}
+function pineCone(x, y, s = 1, rot = 0) {
+  let g = `<g transform="translate(${x} ${y}) rotate(${rot}) scale(${s})"><path d="M0 -40 C24 -34 30 -6 22 16 C16 32 6 40 0 42 C-6 40 -16 32 -22 16 C-30 -6 -24 -34 0 -40Z" fill="#7b4a22" stroke="${INK}" stroke-width="${f1(4 / s)}" stroke-linejoin="round"/>`;
+  const rows = [[-26, 13], [-13, 20], [1, 22], [15, 19], [28, 12]];
+  rows.forEach(([yy, hw], ri) => { const n = ri % 2 ? 3 : 2; for (let i = 0; i < n; i++) { const cx = (i - (n - 1) / 2) * (hw * 2 / n); g += `<path d="M${f1(cx - hw / n)} ${yy - 5} Q${f1(cx)} ${yy + 11} ${f1(cx + hw / n)} ${yy - 5}" fill="#a9703a" stroke="#4a2a12" stroke-width="2.2" stroke-linejoin="round"/><path d="M${f1(cx - hw / n * .5)} ${yy - 3} Q${f1(cx)} ${yy + 3} ${f1(cx + hw / n * .5)} ${yy - 3}" fill="none" stroke="#e2b27a" stroke-width="1.6" opacity=".8"/>`; } });
+  return g + '</g>';
+}
+function snowBlob(x, y, w, seed) {
+  const rng = rngFactory(seed), n = Math.max(3, Math.round(w / 20)), id = 'sn' + seed; let c = [];
+  for (let i = 0; i < n; i++) { const t = i / (n - 1); c.push([x - w * .42 + w * .84 * t, y - Math.sin(t * Math.PI) * w * .07 + R(rng, -2, 2), w * (.09 + .10 * Math.sin(t * Math.PI)) * R(rng, .88, 1.12)]); }
+  const base = y + w * .05;
+  let s = `<clipPath id="${id}"><rect x="${f1(x - w)}" y="${f1(y - w)}" width="${f1(w * 2)}" height="${f1(w + w * .05)}"/></clipPath><g clip-path="url(#${id})">`;
+  s += c.map(([a, b, r]) => `<circle cx="${f1(a)}" cy="${f1(b)}" r="${f1(r + 2.6)}" fill="#3a55b0"/>`).join('');
+  s += c.map(([a, b, r]) => `<circle cx="${f1(a)}" cy="${f1(b)}" r="${f1(r)}" fill="url(#snowG)"/>`).join('') + '</g>';
+  s += `<path d="M${f1(x - w * .5)} ${f1(base)} L${f1(x + w * .5)} ${f1(base)}" stroke="#3a55b0" stroke-width="2.6" stroke-linecap="round"/>`;
+  return s + `<ellipse cx="${f1(x - w * .10)}" cy="${f1(y - w * .11)}" rx="${f1(w * .13)}" ry="${f1(w * .03)}" fill="#fff"/>`;
+}
+
+/* ================= FIR ================= */
+const GREEN_BACK = ['#0a2e20', '#0e3a28', '#11452f', '#0c3424'];
+const GREEN_MID = ['#145a39', '#1a6a42', '#1f7749', '#16603d'];
+const GREEN_FRONT = ['#1f7c4c', '#2a9058', '#35a163', '#238753', '#58ba76'];
+function twig(rng, x, y, ang, len, pal, scale = 1) {
+  let ink = '', fill = '';
+  const bend = R(rng, -.55, .55), step = 6.2 * scale, steps = Math.max(4, Math.floor(len / step));
+  let px = x, py = y; const stem = [`M${f1(px)} ${f1(py)}`];
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps, a = ang + bend * t * t;
+    px += Math.cos(a) * step; py -= Math.sin(a) * step; stem.push(`L${f1(px)} ${f1(py)}`);
+    const nl = (40 - 24 * t) * scale * R(rng, .78, 1.18), spread = 1.02 - .42 * t;
+    for (const side of [-1, 1]) {
+      const na = a + side * spread * R(rng, .86, 1.12);
+      const tx = px + Math.cos(na) * nl, ty = py - Math.sin(na) * nl;
+      const wx = Math.cos(na + Math.PI / 2) * 2.4 * scale, wy = -Math.sin(na + Math.PI / 2) * 2.4 * scale;
+      const mx = (px + tx) / 2, my = (py + ty) / 2, c = side * 3.2 * scale;
+      const d = `M${f1(px - wx)} ${f1(py - wy)}Q${f1(mx - wx + c)} ${f1(my - wy)} ${f1(tx)} ${f1(ty)}Q${f1(mx + wx + c)} ${f1(my + wy)} ${f1(px + wx)} ${f1(py + wy)}Z`;
+      ink += d; fill += `<path d="${d}" fill="${pick(rng, pal)}"/>`;
+    }
+  }
+  return { ink, stem: stem.join(''), fill, tip: [px, py] };
+}
+function twigSet(list, pal, rng, inkW = 5.5) {
+  let ink = '', fills = '', stems = '';
+  for (const [x, y, a, len, sc] of list) { const t = twig(rng, x, y, a, len, pal, sc); ink += t.ink; fills += t.fill; stems += t.stem; }
+  return `<path d="${ink}" fill="${INK}" stroke="${INK}" stroke-width="${inkW}" stroke-linejoin="round"/>${fills}<path d="${stems}" fill="none" stroke="#3b2a1c" stroke-width="2.2" stroke-linecap="round" opacity=".5"/>`;
+}
+function bed(seed, yBase, pal, opts = {}) {
+  const rng = rngFactory(seed), n = opts.n || 30, scale = opts.scale || 1, list = [];
+  for (let i = 0; i < n; i++) {
+    const x = -60 + (W + 120) * (i + R(rng, .15, .85)) / n;
+    const y = yBase + R(rng, -14, 30) + (opts.arch ? opts.arch * Math.sin(Math.PI * x / W) : 0);
+    let a = x < W / 2 ? R(rng, 112, 196) : R(rng, -16, 68);
+    if (opts.flat) a = x < W / 2 ? R(rng, 146, 204) : R(rng, -24, 34); else if (rng() < .24) a = R(rng, 62, 118);
+    list.push([x, y, rad(a), R(rng, 96, 168) * scale, scale]);
+  }
+  return twigSet(list, pal, rng, opts.inkW || 5.5);
+}
+function ringTwigs(seed, pal, n, rOff, lenA, lenB, scale, inkW) {
+  const rng = rngFactory(seed), list = [];
+  for (let i = 0; i < n; i++) {
+    const th = (i + R(rng, .1, .9)) / n * Math.PI * 2, rr = (RG.R + RG.r) / 2 + R(rng, -rOff, rOff);
+    const x = CX + Math.cos(th) * rr, y = RG.cy + Math.sin(th) * rr;
+    const dir = rng() < .78 ? 1 : -1;                    // mostly clockwise, some against the grain
+    const tang = Math.atan2(-Math.cos(th) * dir, -Math.sin(th) * dir) + R(rng, -.55, .55);   // tangent in (cos, -sin) convention
+    list.push([x, y, tang, R(rng, lenA, lenB) * scale, scale]);
+  }
+  return twigSet(list, pal, rng, inkW);
+}
 
 /* ================= BACKGROUND ================= */
 (function background() {
-  const gy = TALL ? .66 : .70;                         // glow centre (where the candles are)
-  const bg = document.createElement('div'); bg.className = 'fill';
-  bg.style.background = `
-    radial-gradient(ellipse 78% 46% at 50% ${gy * 100 + 12}%, rgba(255,150,60,.34), rgba(255,120,50,.10) 55%, transparent 78%),
-    radial-gradient(ellipse 95% 70% at 50% ${gy * 100 - 8}%, #27409f 0%, #17286f 38%, #0c1546 68%, #060a26 100%)`;
-  stage.appendChild(bg);
+  const gy = RG.cy / H * 100;
+  divLayer(`background:radial-gradient(ellipse 96% ${TALL ? 58 : 72}% at 50% ${gy}%, #2f4dba 0%, #1c3088 34%, #0f1b58 64%, #070b2c 100%)`);
+  const rays = divLayer(`background:repeating-conic-gradient(from 2deg at 50% ${gy}%, rgba(160,188,255,.10) 0deg 5deg, transparent 5deg 10deg)`);
+  rays.style.webkitMaskImage = rays.style.maskImage = `radial-gradient(circle ${RG.R * 2.1}px at 50% ${gy}%, #000 30%, rgba(0,0,0,.5) 62%, transparent 100%)`;
+  const ht = divLayer(`background:radial-gradient(circle at 50% 50%, rgba(140,170,255,.30) 0 2.3px, transparent 2.9px) 0 0 / 15px 15px, radial-gradient(circle at 50% 50%, rgba(140,170,255,.30) 0 2.3px, transparent 2.9px) 7.5px 7.5px / 15px 15px`);
+  ht.style.webkitMaskImage = ht.style.maskImage = `radial-gradient(ellipse 72% 62% at 50% 50%, transparent 60%, rgba(0,0,0,.9) 100%)`;
+  // warm halo spilling out of the wreath
+  divLayer(`background:radial-gradient(circle ${RG.R * 1.62}px at 50% ${gy}%, rgba(255,205,120,.62) 0%, rgba(255,176,84,.40) 58%, rgba(255,150,60,.16) 78%, transparent 100%);mix-blend-mode:screen`);
+  divLayer(`background:radial-gradient(ellipse 88% 78% at 50% 50%, transparent 56%, rgba(3,5,22,.74) 100%)`);
 
-  // comic sunburst
-  const rays = document.createElement('div'); rays.className = 'fill';
-  rays.style.background = `repeating-conic-gradient(from 3deg at 50% ${gy * 100 - 6}%, rgba(150,180,255,.085) 0deg 5deg, transparent 5deg 10deg)`;
-  rays.style.webkitMaskImage = rays.style.maskImage = `radial-gradient(ellipse 80% 62% at 50% ${gy * 100 - 6}%, #000 8%, rgba(0,0,0,.55) 45%, transparent 82%)`;
-  stage.appendChild(rays);
-
-  // halftone corners
-  const ht = document.createElement('div'); ht.className = 'fill';
-  ht.style.background = `radial-gradient(circle at 50% 50%, rgba(140,170,255,.30) 0 2.3px, transparent 2.9px) 0 0 / 15px 15px, radial-gradient(circle at 50% 50%, rgba(140,170,255,.30) 0 2.3px, transparent 2.9px) 7.5px 7.5px / 15px 15px`;
-  ht.style.webkitMaskImage = ht.style.maskImage = `radial-gradient(ellipse 70% 60% at 50% 52%, transparent 62%, rgba(0,0,0,.9) 100%)`;
-  stage.appendChild(ht);
-
-  // vignette
-  const vg = document.createElement('div'); vg.className = 'fill';
-  vg.style.background = `radial-gradient(ellipse 85% 75% at 50% 50%, transparent 55%, rgba(3,5,22,.72) 100%)`;
-  stage.appendChild(vg);
-
-  // far snow + sky sparkles
   const rng = rngFactory(77 + SUNDAY * 13);
   let s = '<defs><filter id="sb" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.1"/></filter></defs><g filter="url(#sb)">';
   for (let i = 0; i < (TALL ? 150 : 110); i++) s += `<circle cx="${f1(R(rng, 0, W))}" cy="${f1(R(rng, 0, H))}" r="${f1(R(rng, 1.2, 4.2))}" fill="#fff" opacity="${f1(R(rng, .25, .8))}"/>`;
   s += '</g>';
-  const top = TALL ? 200 : 40, span = TALL ? 620 : 470;
-  for (let i = 0; i < 16; i++) {
-    const left = i % 2 === 0, x = left ? R(rng, 50, 250) : R(rng, 830, 1030), y = R(rng, top, top + span);
-    s += star4(x, y, R(rng, 7, 20), '#ffe9a6', R(rng, .55, 1), R(rng, -8, 8));
+  const top = TALL ? 190 : 30, span = TALL ? 520 : 430;
+  for (let i = 0; i < 18; i++) {
+    const left = i % 2 === 0, x = left ? R(rng, 44, 190) : R(rng, 890, 1036), y = R(rng, top, top + span);
+    s += star4(x, y, R(rng, 6, 18), '#ffe9a6', R(rng, .5, 1), R(rng, -8, 8));
   }
   svgLayer(s);
 })();
 
-/* ================= HEADER / LETTERING ================= */
+/* ================= WREATH + GOLDEN DISC ================= */
+(function wreath() {
+  const { cy, R: Ro, r: ri } = RG, rm = (Ro + ri) / 2, dr = ri + 16;
+  let s = `<defs>${DEFS}
+    <radialGradient id="disc" cx=".5" cy=".42" r=".62"><stop offset="0" stop-color="#fffdf0"/><stop offset=".34" stop-color="#fff0bd"/><stop offset=".66" stop-color="#ffd67a"/><stop offset=".88" stop-color="#f9b345"/><stop offset="1" stop-color="#e88a22"/></radialGradient>
+    <radialGradient id="discShade" cx=".5" cy=".5" r=".5"><stop offset=".70" stop-color="#7a3200" stop-opacity="0"/><stop offset=".90" stop-color="#7a3200" stop-opacity=".34"/><stop offset="1" stop-color="#4a1c00" stop-opacity=".62"/></radialGradient>
+    <radialGradient id="rayFade" cx=".5" cy=".5" r=".5"><stop offset=".12" stop-color="#fff" stop-opacity="0"/><stop offset=".55" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity=".5"/></radialGradient>
+    <mask id="rayMask"><circle cx="${CX}" cy="${cy}" r="${dr}" fill="url(#rayFade)"/></mask>
+    <radialGradient id="dotFade" cx=".5" cy=".5" r=".5"><stop offset=".60" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="1"/></radialGradient>
+    <mask id="dotMask"><circle cx="${CX}" cy="${cy}" r="${dr}" fill="url(#dotFade)"/></mask>
+    <pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="3.1" fill="#ee8418"/><circle cx="12" cy="12" r="3.1" fill="#ee8418"/></pattern>
+  </defs>`;
+  s += `<circle cx="${CX}" cy="${cy}" r="${dr}" fill="url(#disc)"/>`;
+  let rays = '';
+  for (let i = 0; i < 20; i++) { const a0 = rad(i * 18 - 4.5), a1 = rad(i * 18 + 4.5); rays += `M${CX} ${cy}L${f1(CX + Math.cos(a0) * dr)} ${f1(cy + Math.sin(a0) * dr)}A${dr} ${dr} 0 0 1 ${f1(CX + Math.cos(a1) * dr)} ${f1(cy + Math.sin(a1) * dr)}Z`; }
+  s += `<path d="${rays}" fill="#fff" opacity=".42" mask="url(#rayMask)"/>`;
+  s += `<circle cx="${CX}" cy="${cy}" r="${dr}" fill="url(#dots)" mask="url(#dotMask)" opacity=".55"/>`;
+  s += `<circle cx="${CX}" cy="${cy}" r="${dr}" fill="url(#discShade)"/>`;
+  // wreath body
+  s += `<circle cx="${CX}" cy="${cy}" r="${rm}" fill="none" stroke="${INK}" stroke-width="${Ro - ri - 6}"/><circle cx="${CX}" cy="${cy}" r="${rm}" fill="none" stroke="#0a2a1d" stroke-width="${Ro - ri - 16}"/>`;
+  s += ringTwigs(310, GREEN_BACK, 58, 34, 84, 128, .92, 6);
+  s += ringTwigs(320, GREEN_MID, 46, 24, 78, 118, .88, 5.5);
+  s += ringTwigs(330, GREEN_FRONT, 36, 14, 70, 104, .82, 5);
+  // decoration on the visible upper arc
+  const P = (deg, k = 0) => [CX + Math.cos(rad(deg)) * (rm + k), cy + Math.sin(rad(deg)) * (rm + k)];
+  const deco = [[-168, 'bRed', 30, 4], [-141, 'bGold', 24, -14], [-116, 'bBlue', 22, 12], [-64, 'bRed', 23, 10], [-39, 'bBlue', 25, -12], [-12, 'bGold', 30, 4], [176, 'bBlue', 22, -8], [8, 'bRed', 22, -8]];
+  for (const [deg, g, r, k] of deco) { const [x, y] = P(deg, k); s += bauble(f1(x), f1(y), r, g); }
+  for (const [deg, r, k, rot] of [[-154, 17, 22, .2], [-128, 14, -22, -.3], [-90, 19, 6, 0], [-52, 14, -24, .4], [-26, 17, 22, -.2], [-103, 12, -26, .5], [-77, 12, 26, -.4]]) { const [x, y] = P(deg, k); s += goldStar(f1(x), f1(y), r, rot); }
+  for (const [deg, k] of [[-176, -26], [-4, -26], [-110, 30], [-70, -30]]) { const [x, y] = P(deg, k); s += berries(f1(x), f1(y), 8); }
+  // snow resting on the top of the wreath
+  const snowTop = [[-136, 86], [-112, 112], [-90, 96], [-66, 118], [-44, 84]];
+  snowTop.forEach(([deg, w], i) => { const [x, y] = P(deg, (Ro - ri) / 2 - 12); s += snowBlob(f1(x), f1(y), w, 500 + i); });
+  svgLayer(s, 'filter:drop-shadow(0 14px 16px rgba(2,4,24,.55))');
+})();
+
+/* ================= LETTERING ================= */
 (function header() {
-  const T = L.text, cx = W / 2;
-  const logoW = T.logoH * 883 / 1261;
-  let s = `<defs>
-    <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#fff7c9"/><stop offset=".30" stop-color="#ffe27a"/><stop offset=".53" stop-color="#ffc93c"/>
-      <stop offset=".56" stop-color="#e9930f"/><stop offset=".80" stop-color="#f7b530"/><stop offset="1" stop-color="#b9650b"/>
-    </linearGradient>
-    <linearGradient id="goldFlat" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0b0"/><stop offset="1" stop-color="#f1b63a"/></linearGradient>
-    <linearGradient id="rib" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2343a"/><stop offset=".55" stop-color="#c81e2a"/><stop offset=".56" stop-color="#b01825"/><stop offset="1" stop-color="#a11421"/></linearGradient>
+  const T = L.text;
+  let s = `<defs>${DEFS}
+    <linearGradient id="rib" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e7383c"/><stop offset=".55" stop-color="#cb1f2a"/><stop offset=".56" stop-color="#b21825"/><stop offset="1" stop-color="#9d1220"/></linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".0"/><stop offset=".16" stop-color="#fff" stop-opacity=".75"/><stop offset=".40" stop-color="#fff" stop-opacity="0"/></linearGradient>
   </defs>`;
 
-  // gold flourish lines either side of the crest
-  const ly = T.logoY + T.logoH * .52, gap = logoW / 2 + 26, len = 250;
+  // arched ribbon
+  const ry = T.ribbonY, hw = 372, sag = 34, bw = 70;
+  const arc = (dy = 0, inset = 0) => `M${CX - hw + inset} ${ry + sag + dy} Q${CX} ${ry - sag + dy} ${CX + hw - inset} ${ry + sag + dy}`;
   for (const dir of [-1, 1]) {
-    const x1 = cx + dir * gap, x2 = cx + dir * (gap + len);
-    s += `<path d="M${x1} ${ly} L${x2} ${ly}" stroke="url(#goldFlat)" stroke-width="3" stroke-linecap="round"/>`;
-    s += `<path d="M${x1 + dir * 26} ${ly + 11} L${x2 - dir * 46} ${ly + 11}" stroke="#f1b63a" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>`;
-    s += star4(x2 + dir * 20, ly, 13, '#ffe9a6');
-    s += star4(x1 + dir * 2, ly, 7, '#ffe9a6');
+    const ex = CX + dir * hw, ey = ry + sag, rot = dir * 10.5;
+    s += `<g transform="translate(${ex} ${ey}) rotate(${rot})">
+      <path d="M${-dir * 40} ${-bw / 2 + 16} L${dir * 66} ${-bw / 2 + 16} L${dir * 40} 16 L${dir * 66} ${bw / 2 + 16} L${-dir * 40} ${bw / 2 + 16}Z" fill="#8f1220" stroke="${INK}" stroke-width="4.5" stroke-linejoin="round"/>
+      <path d="M${-dir * 40} ${bw / 2} L${-dir * 40} ${bw / 2 + 16} L${-dir * 4} ${bw / 2}Z" fill="#560912" stroke="${INK}" stroke-width="3.5" stroke-linejoin="round"/></g>`;
   }
+  s += `<path d="${arc()}" fill="none" stroke="${INK}" stroke-width="${bw + 9}" stroke-linecap="butt"/>`;
+  s += `<path d="${arc()}" fill="none" stroke="#cb1f2a" stroke-width="${bw}"/>`;
+  s += `<path d="${arc(-bw * .25)}" fill="none" stroke="#e7383c" stroke-width="${bw * .5}"/>`;
+  s += `<path d="${arc(bw * .30)}" fill="none" stroke="#b21825" stroke-width="${bw * .38}" opacity=".9"/>`;
+  s += `<path d="${arc(-bw / 2 + 8, 6)}" fill="none" stroke="#ffd98a" stroke-width="2" opacity=".9"/><path d="${arc(bw / 2 - 8, 6)}" fill="none" stroke="#ffd98a" stroke-width="2" opacity=".9"/>`;
+  s += `<path id="ribArc" d="${arc(12)}" fill="none"/>`;
+  s += `<text font-family="Cinzel" font-weight="800" font-size="35" letter-spacing="4.6" fill="#fff5d6" stroke="${INK}" stroke-width="5.5" paint-order="stroke" stroke-linejoin="round"><textPath href="#ribArc" startOffset="50%" text-anchor="middle">DIE BIMMBÄRN WÜNSCHEN</textPath></text>`;
 
-  // ribbon banner
-  const ry = T.ribbonY, rh = 68, rw = 700, x0 = cx - rw / 2, x1 = cx + rw / 2, tail = 58, drop = 16;
-  const tailPath = dir => {
-    const xa = dir < 0 ? x0 + 34 : x1 - 34, xb = xa + dir * (tail + 34), notch = xb - dir * 26;
-    return `<path d="M${xa} ${ry + drop} L${xb} ${ry + drop} L${notch} ${ry + drop + rh / 2} L${xb} ${ry + drop + rh} L${xa} ${ry + drop + rh}Z" fill="#8f1220" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/>
-            <path d="M${xa} ${ry + rh} L${xa} ${ry + drop + rh} L${dir < 0 ? x0 : x1} ${ry + rh}Z" fill="#5d0a14" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>`;
-  };
-  s += tailPath(-1) + tailPath(1);
-  s += `<path d="M${x0} ${ry} Q${cx} ${ry - 9} ${x1} ${ry} L${x1} ${ry + rh} Q${cx} ${ry + rh - 9} ${x0} ${ry + rh}Z" fill="url(#rib)" stroke="${INK}" stroke-width="4.5" stroke-linejoin="round"/>`;
-  s += `<path d="M${x0 + 12} ${ry + 9} Q${cx} ${ry} ${x1 - 12} ${ry + 9}" fill="none" stroke="#ffd98a" stroke-width="1.8" opacity=".85"/>
-        <path d="M${x0 + 12} ${ry + rh - 9} Q${cx} ${ry + rh - 18} ${x1 - 12} ${ry + rh - 9}" fill="none" stroke="#ffd98a" stroke-width="1.8" opacity=".85"/>`;
-  s += `<text x="${cx}" y="${ry + rh / 2 + 7}" text-anchor="middle" font-family="Cinzel" font-weight="800" font-size="34" letter-spacing="4.4" fill="#fff3d0" stroke="${INK}" stroke-width="5" paint-order="stroke" stroke-linejoin="round">DIE BIMMBÄRN WÜNSCHEN</text>`;
-
-  // wish line
-  s += `<text x="${cx}" y="${T.wishY + 44}" text-anchor="middle" font-family="PlayfairI" font-style="italic" font-weight="700" font-size="${TALL ? 66 : 60}" fill="#fff6e2" stroke="${INK}" stroke-width="9" paint-order="stroke" stroke-linejoin="round">${WISH}</text>`;
+  // wish line with flourishes
+  const wy = T.wishY, wfs = TALL ? 68 : 62;
+  s += `<text id="wish" x="${CX}" y="${wy}" text-anchor="middle" font-family="PlayfairI" font-style="italic" font-weight="700" font-size="${wfs}" fill="#fff6e2" stroke="${INK}" stroke-width="9" paint-order="stroke" stroke-linejoin="round">${WISH}</text>`;
 
   // big golden word
-  const big = `<tspan font-family="Yeseva" font-size="${T.bigSize * .92}">${SUNDAY}.</tspan><tspan dx="${T.bigSize * .15}">Advent</tspan>`, by = T.bigY + T.bigSize * .30, fs = T.bigSize;
-  const attrs = `x="${cx}" text-anchor="middle" font-family="Berkshire" font-size="${fs}"`;
-  s += `<text ${attrs} y="${by + 13}" dx="9" fill="#5d0a14" stroke="#5d0a14" stroke-width="20" stroke-linejoin="round">${big}</text>`;
-  s += `<text ${attrs} y="${by + 13}" dx="9" fill="none" stroke="${INK}" stroke-width="27" stroke-linejoin="round" opacity=".9" style="mix-blend-mode:normal">${big}</text>`;
-  s += `<text ${attrs} y="${by + 12}" dx="8" fill="#7c0f1b" stroke="#7c0f1b" stroke-width="18" stroke-linejoin="round">${big}</text>`;
+  const fs = T.bigSize, by = T.bigY;
+  const big = `<tspan font-family="Yeseva" font-size="${fs * .92}">${SUNDAY}.</tspan><tspan dx="${fs * .15}">Advent</tspan>`;
+  const attrs = `x="${CX}" text-anchor="middle" font-family="Berkshire" font-size="${fs}"`;
+  s += `<text ${attrs} y="${by + 15}" dx="10" fill="${INK}" stroke="${INK}" stroke-width="30" stroke-linejoin="round" opacity=".55">${big}</text>`;
+  s += `<text ${attrs} y="${by + 12}" dx="8" fill="#7c0f1b" stroke="${INK}" stroke-width="27" stroke-linejoin="round" paint-order="stroke">${big}</text>`;
+  s += `<text ${attrs} y="${by + 12}" dx="8" fill="#8a1220" stroke="#8a1220" stroke-width="18" stroke-linejoin="round">${big}</text>`;
   s += `<text ${attrs} y="${by}" fill="url(#gold)" stroke="${INK}" stroke-width="18" paint-order="stroke" stroke-linejoin="round">${big}</text>`;
-  s += `<text ${attrs} y="${by}" fill="url(#gold)" stroke="#fff6cf" stroke-width="2.2" stroke-linejoin="round" paint-order="stroke">${big}</text>`;
-  const sp = rngFactory(5 + SUNDAY);
-  s += star4(cx - 372, by - fs * .62, 22, '#fffbe0') + star4(cx + 404, by - fs * .16, 16, '#fffbe0') + star4(cx + 356, by - fs * .70, 10, '#fffbe0');
-  svgLayer(s);
-
-  const logo = new Image(); logo.id = 'logo'; logo.src = '../assets/wappen_comic.png';
-  logo.style.cssText = `position:absolute;left:${cx - logoW / 2}px;top:${T.logoY}px;width:${logoW}px;height:${T.logoH}px;`;
-  stage.appendChild(logo);
+  s += `<text ${attrs} y="${by}" fill="url(#gold)" stroke="#fff6cf" stroke-width="2.4" stroke-linejoin="round" paint-order="stroke">${big}</text>`;
+  s += `<text ${attrs} y="${by}" fill="url(#gloss)">${big}</text>`;
+  s += star4(CX - 392, by - fs * .64, 24, '#fffbe0') + star4(CX + 410, by - fs * .12, 17, '#fffbe0') + star4(CX + 366, by - fs * .72, 11, '#fffbe0') + star4(CX - 420, by - fs * .16, 10, '#fffbe0');
+  const layer = svgLayer(s);
+  // flourish lines left and right of the wish line, fitted to its measured width
+  const bb = layer.querySelector('#wish').getBBox(), g = document.createElementNS(NS, 'g');
+  let fl = '';
+  for (const dir of [-1, 1]) {
+    const x1 = CX + dir * (bb.width / 2 + 30), x2 = CX + dir * Math.min(bb.width / 2 + 190, 470), yy = wy - wfs * .28;
+    if (Math.abs(x2 - x1) > 50) fl += `<path d="M${x1} ${yy} L${x2} ${yy}" stroke="#f6c860" stroke-width="3" stroke-linecap="round"/>` + star4(x2 + dir * 18, yy, 11, '#ffe9a6') + star4(x1 - dir * 2, yy, 6, '#ffe9a6');
+  }
+  g.innerHTML = fl; layer.querySelector('svg').appendChild(g);
 })();
 
 /* ================= BEARS ================= */
@@ -192,148 +309,100 @@ function star5(x, y, r, rot = 0) {
     const sp = SPR[b.k], w = 2480 * b.s, h = 1754 * b.s;
     const left = b.flip ? b.cx - (2480 - sp.hx) * b.s : b.cx - sp.hx * b.s, top = b.by - h;
     const d = document.createElement('div'); d.className = 'bear';
-    const fade = b.fade ? '-webkit-mask-image:linear-gradient(to bottom,#000 74%,transparent 97%);mask-image:linear-gradient(to bottom,#000 74%,transparent 97%);' : '';
+    const fade = b.fade ? '-webkit-mask-image:linear-gradient(to bottom,#000 76%,transparent 98%);mask-image:linear-gradient(to bottom,#000 76%,transparent 98%);' : '';
     d.style.cssText = `left:${left}px;top:${top}px;width:${w}px;height:${h}px;${b.flip ? 'transform:scaleX(-1);' : ''}${fade}`;
-    const shadeFrom = b.shade ?? Math.max(.30, Math.min(.86, (L.garlandY - 250 - top) / h));
-    const mask = `linear-gradient(to bottom, transparent ${shadeFrom * 100}%, #000 ${Math.min(100, shadeFrom * 100 + 34)}%)`;
+    const shadeFrom = b.shade ?? Math.max(.30, Math.min(.90, (L.fgY - 150 - top) / h));
+    const mask = `linear-gradient(to bottom, transparent ${shadeFrom * 100}%, #000 ${Math.min(100, shadeFrom * 100 + 30)}%)`;
     d.innerHTML = `<img class="lit" src="../assets/${sp.src}"><img class="shade" src="../assets/${sp.src}" style="-webkit-mask-image:${mask};mask-image:${mask}">`;
     wrap.appendChild(d);
   }
   stage.appendChild(wrap);
 })();
 
-/* ================= FIR GARLAND ================= */
-const GREEN_BACK = ['#0b3323', '#0f402b', '#134d33', '#0d3a27'];
-const GREEN_MID = ['#145a39', '#1a6a42', '#207a4b', '#16603d'];
-const GREEN_FRONT = ['#1f7c4c', '#2a9058', '#38a565', '#238753', '#56b873'];
-function twig(rng, x, y, ang, len, pal, scale = 1) {
-  // returns {ink, fill}; dir = (cos, -sin)
-  let ink = '', fill = '';
-  const bend = R(rng, -.55, .55), steps = Math.floor(len / (6.2 * scale));
-  let px = x, py = y; const stem = [`M${f1(px)} ${f1(py)}`];
-  for (let i = 0; i <= steps; i++) {
-    const t = i / steps, a = ang + bend * t * t;
-    px += Math.cos(a) * 6.2 * scale; py -= Math.sin(a) * 6.2 * scale; stem.push(`L${f1(px)} ${f1(py)}`);
-    const nl = (40 - 24 * t) * scale * R(rng, .78, 1.18), spread = 1.02 - .42 * t;
-    for (const side of [-1, 1]) {
-      const na = a + side * spread * R(rng, .86, 1.12);
-      const tx = px + Math.cos(na) * nl, ty = py - Math.sin(na) * nl;
-      const wx = Math.cos(na + Math.PI / 2) * 2.3 * scale, wy = -Math.sin(na + Math.PI / 2) * 2.3 * scale;
-      const mx = (px + tx) / 2, my = (py + ty) / 2, c = side * 3.2 * scale;
-      const d = `M${f1(px - wx)} ${f1(py - wy)}Q${f1(mx - wx + c)} ${f1(my - wy)} ${f1(tx)} ${f1(ty)}Q${f1(mx + wx + c)} ${f1(my + wy)} ${f1(px + wx)} ${f1(py + wy)}Z`;
-      ink += d; fill += `<path d="${d}" fill="${pick(rng, pal)}"/>`;
-    }
-  }
-  // tip needle
-  const stemD = stem.join('');
-  return { ink: ink, stem: stemD, fill };
-}
-function garland(seed, yBase, pal, opts = {}) {
-  const rng = rngFactory(seed), n = opts.n || 30, scale = opts.scale || 1;
-  let ink = '', fills = '', stems = '';
-  const order = [];
-  for (let i = 0; i < n; i++) order.push(i);
-  for (const i of order) {
-    const x = -60 + (W + 120) * (i + R(rng, .15, .85)) / n;
-    const leftSide = x < W / 2;
-    const y = yBase + R(rng, -14, 34) + (opts.arch ? opts.arch * Math.sin(Math.PI * x / W) : 0);
-    let a = leftSide ? R(rng, 112, 196) : R(rng, -16, 68);
-    if (rng() < .22) a = R(rng, 60, 120);
-    const t = twig(rng, x, y, a * Math.PI / 180, R(rng, 96, 172) * scale, pal, scale);
-    ink += t.ink; fills += t.fill; stems += t.stem;
-  }
-  return `<path d="${ink}" fill="${INK}" stroke="${INK}" stroke-width="${opts.inkW || 5.5}" stroke-linejoin="round"/>${fills}<path d="${stems}" fill="none" stroke="#3b2a1c" stroke-width="${2.4 * scale}" stroke-linecap="round" opacity=".55"/>`;
-}
-
 /* ================= CANDLES ================= */
 function candle(x, base, w, h, lit, i) {
-  const rx = w / 2, ry = w * .17, top = base - h, x0 = x - rx, x1 = x + rx;
-  const id = 'c' + i;
+  const rx = w / 2, ry = w * .17, top = base - h, x0 = x - rx, x1 = x + rx, id = 'c' + i;
   let s = `<defs>
-    <linearGradient id="${id}b" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#e2363c"/><stop offset=".60" stop-color="#cf2630"/><stop offset=".61" stop-color="#a0141f"/><stop offset="1" stop-color="#7c0d18"/>
-    </linearGradient>
+    <linearGradient id="${id}b" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ee4044"/><stop offset=".30" stop-color="#dc2c33"/><stop offset=".62" stop-color="#cb222c"/><stop offset=".63" stop-color="#a1141f"/><stop offset="1" stop-color="#780b16"/></linearGradient>
+    <linearGradient id="${id}t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd9a0" stop-opacity="${lit ? .55 : 0}"/><stop offset=".45" stop-color="#ffd9a0" stop-opacity="0"/></linearGradient>
     <clipPath id="${id}c"><path d="M${x0} ${top} L${x0} ${base} A${rx} ${ry} 0 0 0 ${x1} ${base} L${x1} ${top} A${rx} ${ry} 0 0 1 ${x0} ${top}Z"/></clipPath>
   </defs>`;
-  // body
   s += `<path d="M${x0} ${top} L${x0} ${base} A${rx} ${ry} 0 0 0 ${x1} ${base} L${x1} ${top}Z" fill="url(#${id}b)" stroke="${INK}" stroke-width="5" stroke-linejoin="round"/>`;
   s += `<g clip-path="url(#${id}c)">
-      <rect x="${x0 + w * .13}" y="${top + ry + 8}" width="${w * .11}" height="${h}" rx="${w * .05}" fill="#ff8f86" opacity=".85"/>
-      <rect x="${x0 - 4}" y="${base - h * .30}" width="${w + 8}" height="${h * .095}" fill="#f6c443"/>
-      <rect x="${x0 - 4}" y="${base - h * .30}" width="${w + 8}" height="${h * .095}" fill="none" stroke="${INK}" stroke-width="3"/>
-      <rect x="${x0 + w * .61}" y="${base - h * .30}" width="${w * .5}" height="${h * .095}" fill="#b9650b" opacity=".55"/>
-      <rect x="${x0 - 4}" y="${base - h * .168}" width="${w + 8}" height="${h * .03}" fill="#f6c443" stroke="${INK}" stroke-width="2.2"/>
+      <rect x="${x0}" y="${top}" width="${w}" height="${h}" fill="url(#${id}t)"/>
+      <rect x="${x0 + w * .13}" y="${top + ry + 10}" width="${w * .10}" height="${h}" rx="${w * .05}" fill="#ff9a90" opacity=".85"/>
+      <rect x="${x0 - 4}" y="${base - h * .34}" width="${w + 8}" height="${h * .12}" fill="#f6c443"/>
+      <rect x="${x0 + w * .62}" y="${base - h * .34}" width="${w * .5}" height="${h * .12}" fill="#b9650b" opacity=".55"/>
+      <rect x="${x0 + w * .08}" y="${base - h * .325}" width="${w * .16}" height="${h * .03}" rx="2" fill="#fff6c9" opacity=".9"/>
+      <rect x="${x0 - 4}" y="${base - h * .34}" width="${w + 8}" height="${h * .12}" fill="none" stroke="${INK}" stroke-width="3.2"/>
     </g>`;
-  // wax drips from the rim
   const dr = (dx, len, ww) => `M${x + dx - ww} ${top + ry * .6} L${x + dx - ww} ${top + len} a${ww} ${ww} 0 0 0 ${ww * 2} 0 L${x + dx + ww} ${top + ry * .6}Z`;
-  s += `<path d="${dr(-w * .22, h * .22 + (i * 7) % 16, w * .075)}${dr(w * .12, h * .12 + (i * 11) % 14, w * .06)}" fill="#f0575a" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>`;
-  // top
-  s += `<ellipse cx="${x}" cy="${top}" rx="${rx}" ry="${ry}" fill="#f0575a" stroke="${INK}" stroke-width="5"/>`;
-  s += `<ellipse cx="${x}" cy="${top + 1}" rx="${rx * .62}" ry="${ry * .56}" fill="${lit ? '#ffb199' : '#d8454b'}" opacity=".95"/>`;
-  // wick
+  s += `<path d="${dr(-w * .22, h * .22 + (i * 7) % 16, w * .075)}${dr(w * .14, h * .12 + (i * 11) % 14, w * .06)}" fill="#f25c5e" stroke="${INK}" stroke-width="3" stroke-linejoin="round"/>`;
+  s += `<ellipse cx="${x}" cy="${top}" rx="${rx}" ry="${ry}" fill="#f25c5e" stroke="${INK}" stroke-width="5"/>`;
+  s += `<ellipse cx="${x}" cy="${top + 1}" rx="${rx * .62}" ry="${ry * .56}" fill="${lit ? '#ffc4a4' : '#d9484d'}" opacity=".96"/>`;
   s += `<path d="M${x} ${top + 1} q${lit ? 2 : 5} -9 ${lit ? 0 : 3} -19" fill="none" stroke="${INK}" stroke-width="4.6" stroke-linecap="round"/>`;
   let glow = '';
   if (lit) {
-    const fy = top - 16, fh = w * 1.12, fw = w * .5, tilt = [-5, 4, -3, 6][i];
+    const fy = top - 16, fh = w * 1.16, fw = w * .52, tilt = [-5, 4, -3, 6][i];
     s += `<g transform="translate(${x} ${fy}) rotate(${tilt})">
-      <path d="M0 ${-fh} C${fw * .95} ${-fh * .52} ${fw * .82} ${-fh * .06} 0 0 C${-fw * .82} ${-fh * .06} ${-fw * .95} ${-fh * .52} 0 ${-fh}Z" fill="#ff9d1f" stroke="#8a2f05" stroke-width="4.5" stroke-linejoin="round"/>
-      <path d="M0 ${-fh * .84} C${fw * .66} ${-fh * .46} ${fw * .60} ${-fh * .08} 0 ${-fh * .04} C${-fw * .60} ${-fh * .08} ${-fw * .66} ${-fh * .46} 0 ${-fh * .84}Z" fill="#ffd23a"/>
-      <path d="M0 ${-fh * .56} C${fw * .36} ${-fh * .32} ${fw * .34} ${-fh * .10} 0 ${-fh * .07} C${-fw * .34} ${-fh * .10} ${-fw * .36} ${-fh * .32} 0 ${-fh * .56}Z" fill="#fffbe0"/>
+      <path d="M0 ${-fh} C${fw * .95} ${-fh * .52} ${fw * .82} ${-fh * .06} 0 0 C${-fw * .82} ${-fh * .06} ${-fw * .95} ${-fh * .52} 0 ${-fh}Z" fill="#ff8f17" stroke="#7a2603" stroke-width="4.5" stroke-linejoin="round"/>
+      <path d="M0 ${-fh * .86} C${fw * .68} ${-fh * .46} ${fw * .62} ${-fh * .08} 0 ${-fh * .04} C${-fw * .62} ${-fh * .08} ${-fw * .68} ${-fh * .46} 0 ${-fh * .86}Z" fill="#ffcf33"/>
+      <path d="M0 ${-fh * .58} C${fw * .38} ${-fh * .32} ${fw * .36} ${-fh * .10} 0 ${-fh * .07} C${-fw * .36} ${-fh * .10} ${-fw * .38} ${-fh * .32} 0 ${-fh * .58}Z" fill="#fffbe0"/>
     </g>`;
-    glow = `<circle cx="${x}" cy="${fy - fh * .45}" r="${w * 2.5}" fill="url(#glowBig)"/><circle cx="${x}" cy="${fy - fh * .45}" r="${w * 1.05}" fill="url(#glowCore)"/>`;
-    glow += star4(x + w * .78, fy - fh * 1.02, 11, '#fff7cf', .95) + star4(x - w * .82, fy - fh * .34, 7, '#fff7cf', .9);
+    glow = `<circle cx="${x}" cy="${fy - fh * .45}" r="${w * 2.3}" fill="url(#glowBig)"/><circle cx="${x}" cy="${fy - fh * .45}" r="${w}" fill="url(#glowCore)"/>`;
+    glow += star4(x + w * .80, fy - fh * 1.04, 11, '#fff7cf', .95) + star4(x - w * .84, fy - fh * .34, 7, '#fff7cf', .9);
   }
   return { body: s, glow };
 }
 
+/* ================= FOREGROUND ARRANGEMENT ================= */
 (function foreground() {
-  const C = L.candles, gy = L.garlandY;
-  // back garland (behind candles)
-  svgLayer(`<path d="M-20 ${gy + 8} L${W + 20} ${gy + 8} L${W + 20} ${H + 20} L-20 ${H + 20}Z" fill="#082519"/>` + garland(900 + 1, gy + 6, GREEN_BACK, { n: 40, arch: -10, inkW: 6 }) + garland(900 + 2, gy + 30, GREEN_MID, { n: 30, scale: .95 }));
+  const C = L.candles, gy = L.fgY, K = L.crest, cw = K.h * 883 / 1261;
+  // bed behind the candles
+  svgLayer(`<path d="M-20 ${gy + 46} L${W + 20} ${gy + 46} L${W + 20} ${H + 20} L-20 ${H + 20}Z" fill="#082519"/>`
+    + bed(901, gy + 34, GREEN_BACK, { n: 42, arch: -12, inkW: 6 }) + bed(902, gy + 62, GREEN_MID, { n: 32, scale: .95 }),
+    'filter:drop-shadow(0 -8px 12px rgba(20,8,0,.35))');
 
   // candles
   let bodies = '', glows = `<defs>
-    <radialGradient id="glowBig"><stop offset="0" stop-color="#ffd27a" stop-opacity="${f1(.46 - .06 * (SUNDAY - 1))}"/><stop offset=".35" stop-color="#ffb44d" stop-opacity="${f1(.15 - .025 * (SUNDAY - 1))}"/><stop offset="1" stop-color="#ff9a2e" stop-opacity="0"/></radialGradient>
-    <radialGradient id="glowCore"><stop offset="0" stop-color="#fff3c2" stop-opacity="${f1(.8 - .08 * (SUNDAY - 1))}"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient></defs>`;
+    <radialGradient id="glowBig"><stop offset="0" stop-color="#ffd27a" stop-opacity="${f1(.50 - .05 * (SUNDAY - 1))}"/><stop offset=".35" stop-color="#ffb44d" stop-opacity="${f1(.17 - .02 * (SUNDAY - 1))}"/><stop offset="1" stop-color="#ff9a2e" stop-opacity="0"/></radialGradient>
+    <radialGradient id="glowCore"><stop offset="0" stop-color="#fff3c2" stop-opacity="${f1(.8 - .06 * (SUNDAY - 1))}"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient></defs>`;
   C.xs.forEach((x, i) => {
     const lit = i < SUNDAY;
-    const h = C.h0 - (lit ? (SUNDAY - i) * C.burn : 0) + [0, 10, -6, 6][i];
+    const h = C.h0 - (lit ? (SUNDAY - i) * C.burn : 0) + [0, 12, 4, -6][i];
     const c = candle(x, C.base, C.w, h, lit, i);
     bodies += c.body; glows += c.glow;
   });
   svgLayer(bodies, 'filter:drop-shadow(0 10px 10px rgba(0,0,0,.45))');
 
-  // front garland + ornaments
-  const rng = rngFactory(4242);
-  let orn = `<defs>
-    <radialGradient id="bRed" cx=".36" cy=".32" r=".8"><stop offset="0" stop-color="#ff6b62"/><stop offset=".42" stop-color="#d9231f"/><stop offset=".43" stop-color="#c41c1c"/><stop offset=".80" stop-color="#b01516"/><stop offset=".81" stop-color="#8a0d12"/><stop offset="1" stop-color="#7a0a10"/></radialGradient>
-    <radialGradient id="bGold" cx=".36" cy=".32" r=".8"><stop offset="0" stop-color="#fff2a8"/><stop offset=".42" stop-color="#ffcf3f"/><stop offset=".43" stop-color="#f7b81c"/><stop offset=".80" stop-color="#e79d10"/><stop offset=".81" stop-color="#b9650b"/><stop offset="1" stop-color="#a45508"/></radialGradient>
-    <radialGradient id="bBlue" cx=".36" cy=".32" r=".8"><stop offset="0" stop-color="#7f9bff"/><stop offset=".42" stop-color="#2f4fd6"/><stop offset=".43" stop-color="#2742c9"/><stop offset=".80" stop-color="#1d33a6"/><stop offset=".81" stop-color="#14237a"/><stop offset="1" stop-color="#101c66"/></radialGradient>
-  </defs>`;
-  const bauble = (x, y, r, g) => `<g><rect x="${x - r * .2}" y="${y - r * 1.2}" width="${r * .4}" height="${r * .34}" rx="2" fill="#f6c443" stroke="${INK}" stroke-width="3"/>
-    <circle cx="${x}" cy="${y}" r="${r}" fill="url(#${g})" stroke="${INK}" stroke-width="4.5"/>
-    <ellipse cx="${x - r * .36}" cy="${y - r * .40}" rx="${r * .22}" ry="${r * .14}" transform="rotate(-38 ${x - r * .36} ${y - r * .40})" fill="#fff" opacity=".9"/></g>`;
-  const berries = (x, y, r) => [[0, 0], [r * 1.5, r * .5], [r * .5, r * 1.5]].map(([dx, dy]) => `<circle cx="${x + dx}" cy="${y + dy}" r="${r}" fill="#d9231f" stroke="${INK}" stroke-width="3"/><circle cx="${x + dx - r * .3}" cy="${y + dy - r * .3}" r="${r * .26}" fill="#fff" opacity=".85"/>`).join('');
-  const yb = gy + (TALL ? 48 : 14);
-  const placed = [
-    ['bRed', 86, yb + 6, 30], ['bGold', 214, yb + 30, 23], ['bBlue', 306, yb - 2, 19],
-    ['bGold', 421, yb + 44, 20], ['bBlue', 539, yb + 46, 22], ['bRed', 657, yb + 44, 20],
-    ['bBlue', 788, yb + 2, 20], ['bGold', 880, yb + 22, 28], ['bRed', 1002, yb - 4, 25],
-  ];
-  for (const [g, x, y, r] of placed) orn += bauble(x, y, r, g);
-  orn += berries(150, yb - 26, 8.5) + berries(946, yb - 34, 8.5) + berries(262, yb + 52, 7.5) + berries(830, yb + 56, 7.5);
-  for (const [x, y, r, rot] of [[352, yb + 4, 17, .2], [478, yb - 4, 13, -.3], [600, yb - 2, 13, .5], [730, yb + 6, 17, -.1], [38, yb + 58, 15, .3], [1048, yb + 52, 14, -.2]])
-    orn += `<path d="${star5(x, y, r, rot)}" fill="#ffd34d" stroke="${INK}" stroke-width="3.2" stroke-linejoin="round"/>`;
-  let lower = '';
-  for (let yy = gy + 150, k = 0; yy < H + 40; yy += 84, k++) lower += garland(950 + k, yy, k % 2 ? GREEN_FRONT : GREEN_MID, { n: 30, scale: .95, inkW: 5 });
-  svgLayer(garland(900 + 3, gy + 62, GREEN_FRONT, { n: 34, scale: .92, inkW: 5 }) + lower + orn, 'filter:drop-shadow(0 -6px 10px rgba(0,0,0,.35))');
+  // front bed, snow and ornaments
+  const yb = gy + 108;
+  let front = `<defs>${DEFS}</defs>` + bed(903, gy + 152, GREEN_FRONT, { n: 36, scale: .9, inkW: 5, flat: true });
+  for (let yy = gy + 230, k = 0; yy < H + 40; yy += 86, k++) front += bed(950 + k, yy, k % 2 ? GREEN_FRONT : GREEN_MID, { n: 30, scale: .96, inkW: 5 });
+  let orn = '';
+  orn += snowBlob(92, yb - 44, 120, 11) + snowBlob(318, yb - 34, 96, 12) + snowBlob(764, yb - 36, 100, 13) + snowBlob(990, yb - 46, 124, 14);
+  orn += orangeSlice(146, yb + 30, 37, -15) + orangeSlice(942, yb + 34, 37, 20);
+  orn += pineCone(318, yb + 40, .92, -28) + pineCone(766, yb + 42, .92, 26);
+  orn += bauble(54, yb + 34, 31, 'bBlue') + bauble(232, yb + 54, 27, 'bRed') + bauble(404, yb + 56, 23, 'bGold') + bauble(676, yb + 56, 23, 'bBlue') + bauble(852, yb + 56, 27, 'bGold') + bauble(1030, yb + 30, 31, 'bRed');
+  orn += goldStar(196, yb - 8, 18, .2) + goldStar(462, yb + 6, 15, -.2) + goldStar(618, yb + 6, 15, .3) + goldStar(884, yb - 8, 18, -.2);
+  orn += berries(268, yb - 4, 8.5) + berries(798, yb - 2, 8.5) + berries(14, yb - 16, 8) + berries(1052, yb - 22, 8);
+  if (TALL) {   // more room below: second row of decoration and a snow drift along the bottom edge
+    const y2 = yb + 150;
+    orn += bauble(128, y2 + 6, 30, 'bGold') + bauble(332, y2 + 26, 25, 'bBlue') + bauble(748, y2 + 26, 25, 'bRed') + bauble(952, y2 + 6, 30, 'bBlue');
+    orn += goldStar(234, y2 - 14, 17, .2) + goldStar(846, y2 - 14, 17, -.2) + goldStar(440, y2 + 18, 15, .4) + goldStar(640, y2 + 18, 15, -.4) + pineCone(540, y2 + 30, .95, 6) + orangeSlice(46, y2 + 64, 34, 10) + orangeSlice(1034, y2 + 64, 34, -10);
+    orn += `<path d="M-20 ${H - 86} Q150 ${H - 150} 330 ${H - 104} T700 ${H - 112} T${W + 20} ${H - 96} L${W + 20} ${H + 20} L-20 ${H + 20}Z" fill="url(#snowG)" stroke="#2a3f8a" stroke-width="4"/>`;
+  }
+  svgLayer(front + orn, 'filter:drop-shadow(0 -6px 10px rgba(0,0,0,.35))');
+
+  // club crest as the emblem in the middle of the arrangement
+  const logo = new Image(); logo.id = 'logo'; logo.src = '../assets/wappen_comic.png';
+  logo.style.cssText = `position:absolute;left:${CX - cw / 2}px;top:${K.top}px;width:${cw}px;height:${K.h}px;`;
+  stage.appendChild(logo);
 
   // light: flame glows + warm wash
   svgLayer(glows, 'mix-blend-mode:screen');
   const litX = C.xs.slice(0, SUNDAY).reduce((a, b) => a + b, 0) / SUNDAY;
-  const wash = document.createElement('div'); wash.className = 'fill';
-  wash.style.cssText = `background:radial-gradient(ellipse ${46 + SUNDAY * 7}% ${TALL ? 30 : 36}% at ${litX / W * 100}% ${(C.base - C.h0 - 40) / H * 100}%, rgba(255,170,70,${.11 + SUNDAY * .02}), transparent 72%);mix-blend-mode:screen;`;
-  stage.appendChild(wash);
+  divLayer(`background:radial-gradient(ellipse ${40 + SUNDAY * 8}% ${TALL ? 22 : 28}% at ${litX / W * 100}% ${(C.base - C.h0 - 30) / H * 100}%, rgba(255,170,70,${.10 + SUNDAY * .02}), transparent 72%);mix-blend-mode:screen;`);
 
   // near snow
   const sr = rngFactory(31 + SUNDAY);
@@ -344,9 +413,12 @@ function candle(x, base, w, h, lit, i) {
   // gold frame
   const m = 26;
   svgLayer(`<defs><linearGradient id="fr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0b0"/><stop offset=".5" stop-color="#e9a826"/><stop offset="1" stop-color="#fff0b0"/></linearGradient>
-     <mask id="fm"><rect width="${W}" height="${H}" fill="#fff"/><rect x="0" y="${gy - 40}" width="${W}" height="${H}" fill="#000"/><rect x="${W / 2 - L.text.logoH * .42}" y="0" width="${L.text.logoH * .84}" height="${TALL ? 0 : 120}" fill="#000"/></mask></defs>
+     <mask id="fm"><rect width="${W}" height="${H}" fill="#fff"/><rect x="0" y="${gy - 10}" width="${W}" height="${H}" fill="#000"/></mask></defs>
      <g mask="url(#fm)"><rect x="${m}" y="${m}" width="${W - 2 * m}" height="${H - 2 * m}" rx="14" fill="none" stroke="url(#fr)" stroke-width="3.2"/>
      <rect x="${m + 11}" y="${m + 11}" width="${W - 2 * m - 22}" height="${H - 2 * m - 22}" rx="8" fill="none" stroke="#f1b63a" stroke-width="1.3" opacity=".7"/></g>`);
+
+  // print grain so the flat areas do not look sterile
+  svgLayer(`<defs><filter id="grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="7"/><feColorMatrix type="matrix" values="0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 1.1 -.25"/></filter></defs><rect width="${W}" height="${H}" filter="url(#grain)"/>`, 'mix-blend-mode:soft-light;opacity:.34');
 })();
 
 document.fonts.ready.then(() => Promise.all([...document.images].map(i => i.decode().catch(() => {})))).then(() => { document.body.dataset.ready = '1'; });

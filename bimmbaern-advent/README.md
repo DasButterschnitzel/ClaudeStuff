@@ -12,7 +12,9 @@ Fertige Bilder: `out/bimmbaern_<n>-advent_<format>.png`
 | 3. Advent | einen gemütlichen | Männerballett + Bembel |
 | 4. Advent | einen frohen | alle fünf |
 
-Pro Sonntag brennt eine Kerze mehr, die schon länger brennenden Kerzen sind kürzer.
+Aufbau: gebogenes Banner und Goldschrift oben, die Bären vor einem Adventskranz mit Goldscheibe,
+unten das Gesteck mit vier Kerzen und dem Vereinswappen in der Mitte. Pro Sonntag brennt eine Kerze
+mehr, die schon länger brennenden Kerzen sind kürzer.
 
 ## Neu rendern
 
@@ -27,6 +29,7 @@ Braucht Node mit Playwright/Chromium. Texte, Bären-Positionen und Kerzen stehen
 
 ## Material
 
-- `assets/baer_*.png` – freigestellte Bärchen aus dem Drive-Ordner „Maskottchen“
-- `assets/wappen_comic.*` – Vereinswappen, aus `wappen_plain.svg` ohne Bevel-Effekte, mit Tuschekontur
+- `assets/baer_*.png` – freigestellte Bärchen aus dem Drive-Ordner „Maskottchen“, mit einheitlicher Tuschekontur;
+  die Narrenkappe des Elferrats-Bären ist auf die Wappenfarben umgefärbt (`src/cap_recolor.py`, `src/cutout.py`, `src/contour.py`)
+- `assets/wappen_comic.*` – Vereinswappen, aus `wappen_plain.svg` ohne Bevel-Effekte, mit Tuschekontur (`src/logo_comic.py`)
 - `fonts/` – Berkshire Swash, Yeseva One, Cinzel, Playfair Display (alle SIL Open Font License)
