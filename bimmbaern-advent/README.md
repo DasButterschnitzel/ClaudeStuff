@@ -9,7 +9,7 @@ Fertige Bilder: `out/bimmbaern_<n>-advent_<format>.png`
 |---|---|---|
 | 1. Advent | einen schönen | Sitzungspräsident |
 | 2. Advent | einen besinnlichen | Garde + Tracht |
-| 3. Advent | einen gemütlichen | Männerballett + Bembel |
+| 3. Advent | einen gemütlichen | Bembel |
 | 4. Advent | einen frohen | alle fünf |
 
 Aufbau: gebogenes Banner und Goldschrift oben, die Bären vor einem Adventskranz mit Goldscheibe,
