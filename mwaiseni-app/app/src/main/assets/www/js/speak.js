@@ -189,7 +189,9 @@
       if (mode === 'hear') list.appendChild(h('p', { class: 'muted', style: { margin: '12px 6px' } }, 'These are things people may say to you. Listen a few times so you recognise them.'));
     }
     draw();
-    return page(c.title, c.titleDe, [(c.hear && c.hear.length) ? seg : null, list], h('div', { style: { fontSize: '28px', paddingRight: '10px' } }, em(c.emoji)));
+    const foodLink = (window.Food && Food.has() && (c.id === 'shopping' || c.id === 'food')) ? h('button', { class: 'card tap row', style: { width: '100%', margin: '0 0 12px' }, onclick: () => push('food', {}) }, h('div', { class: 'badge y' }, em('🍲')),
+      h('div', { class: 'grow' }, h('h3', null, 'Find Zambian ingredients'), h('div', { class: 'muted' }, 'German, Asian, Turkish and Afro shop names')), icon('chev', 'chev')) : null;
+    return page(c.title, c.titleDe, [foodLink, (c.hear && c.hear.length) ? seg : null, list], h('div', { style: { fontSize: '28px', paddingRight: '10px' } }, em(c.emoji)));
   };
 
   // ───────────────────────── show-cards

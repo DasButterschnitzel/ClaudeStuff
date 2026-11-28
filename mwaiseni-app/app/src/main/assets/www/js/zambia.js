@@ -96,7 +96,9 @@
       const rows = [['welcome', 'Willkommen', 'Welcome'], ['hello', 'Hallo', 'Hello'], ['morning', 'Guten Morgen', 'Good morning'], ['afternoon', 'Guten Tag', 'Good afternoon'], ['evening', 'Guten Abend', 'Good evening'], ['howAreYou', 'Wie geht es dir?', 'How are you?'], ['thanks', 'Danke', 'Thank you'], ['fine', 'Mir geht es gut', 'I am fine'], ['goodNight', 'Gute Nacht', 'Good night'], ['goodbye', 'Auf Wiedersehen', 'Goodbye'], ['wellDone', 'Gut gemacht!', 'Well done!']].filter(r => g[r[0]] && !(r[0] === 'hello' && g.hello === g.howAreYou));
       MW.add(body, [h('div', { class: 'sect' }, g.lang + ' → Deutsch'), h('div', { class: 'list' }, rows.map(r => h('div', { class: 'item' }, h('div', { class: 'grow' }, h('div', { class: 's' }, g[r[0]] + ' · ' + r[2]), h('div', { class: 't' }, r[1])), sayBtn(r[1], 'de', 'sm'))))]);
     }
-    if (H.foods.length) {
+    if (window.Food && Food.has()) {
+      MW.add(body, [h('div', { class: 'sect' }, 'Taste of home'), Food.finderCard()]);
+    } else if (H.foods.length) {
       MW.add(body, [h('div', { class: 'sect' }, 'Taste of home: find it in Germany'), h('div', { class: 'grid2' }, H.foods.map(f => h('button', { class: 'cat', onclick: () => foodSheet(f) }, h('span', { class: 'em emoji' }, f.emoji || '🍲'), h('span', { class: 't' }, f.name), h('span', { class: 's' }, f.german || ''))))]);
     }
     if ((H.shops || []).length) {

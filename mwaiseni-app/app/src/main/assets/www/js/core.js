@@ -5,7 +5,8 @@
   D.units = [].concat(D.unitsA || [], D.unitsB || []);
   D.phrasebook = D.phrasebook || []; D.showcards = D.showcards || []; D.emergency = D.emergency || [];
   D.guide = D.guide || []; D.glossary = D.glossary || []; D.senders = D.senders || [];
-  D.places = D.places || []; D.placeCats = D.placeCats || [];
+  D.places = (D.places || []).concat((D.placesFood || []).filter(p => !(D.places || []).some(q => q.id === p.id))); D.placeCats = D.placeCats || [];
+  D.foodFinder = D.foodFinder || []; D.foodCats = D.foodCats || [];
   D.home = D.home || {}; ['greetings', 'cities', 'foods', 'links', 'holidaysZM', 'holidaysDE'].forEach(k => { D.home[k] = D.home[k] || []; });
 
   // ───────────────────────── DOM helper
