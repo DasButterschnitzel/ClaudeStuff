@@ -16,6 +16,7 @@ An Android app for a Zambian woman who has just moved to Dreieich (Hessen) and s
 | **Letter helper** | Photograph a German letter: the app reads it, translates it, names the sender, finds deadlines, appointments, amounts and IBANs, explains 139 bureaucratic words and can put a date into the calendar |
 | **Dreieich** | Verified local places (offices, courses, health, transport, African shops, churches, help) with route, call and website buttons, and 30 "How Germany works" cards |
 | **Zambia** | Time and weather at home, Euro ↔ Kwacha, Zambian and Hessian holidays, greetings in Bemba / Nyanja / Tonga / Lozi with their German match, where to find nshima ingredients, news, radio, embassy, money transfer |
+| **Food finder** | 89 Zambian ingredients with what they are called in German supermarkets and in Turkish, Asian, Indian and Afro shops ("spinach" → Mangold, rape → Yu Choy 油菜, kapenta → dried anchovies). Searchable in English, Nyanja, German or the shop's own script; a card shows the label to the shop staff; German shopping list |
 | **SOS** | One-tap 112, 110, 116 117, the women's help line 116 016 and her husband, plus her address and emergency sentences in German |
 
 Sharing also works from outside: mark German text in WhatsApp or any app and choose *Mwaiseni: translate*, or share a photo of a letter to Mwaiseni.

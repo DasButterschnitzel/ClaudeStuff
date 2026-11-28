@@ -19,6 +19,8 @@
     bio: { e: '🌿', t: 'Organic shop', d: 'Bioladen, Reformhaus' }
   };
   const shopMeta = id => SHOPS[id] || { e: '🏪', t: id, d: '' };
+  const GERMAN_SHOPS = ['supermarket', 'market', 'butcher', 'bio', 'drugstore', 'online'];
+  const short = f => String(f.zm).replace(/\s*\(.*?\)/g, '').split(/\s+[–-]\s+/)[0];
 
   // ───────────────────────── search
   // Fold accents so "ca com" finds "cá cơm" and "susskartoffel" finds "Süßkartoffel"; keep CJK/Thai/Devanagari as they are.
@@ -59,7 +61,7 @@
 
   // ───────────────────────── rows
   function shopLine(f) {
-    return (f.shops || []).filter(s => s.shop !== 'supermarket' && s.shop !== 'market').slice(0, 3)
+    return (f.shops || []).filter(s => GERMAN_SHOPS.indexOf(s.shop) < 0).slice(0, 3)
       .map(s => shopMeta(s.shop).e + ' ' + [s.label, s.script].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(' ')).join('   ');
   }
   function row(f) {
@@ -145,7 +147,7 @@
             h('div', { class: 't selectable' }, s.label || f.de, s.script ? h('span', { style: { marginLeft: '8px', fontSize: '20px' } }, s.script) : null),
             s.roman && s.roman !== s.label ? h('div', { class: 's' }, s.roman) : null,
             s.note ? h('div', { class: 's' }, s.note) : null),
-          s.shop === 'supermarket' || s.shop === 'market' || s.shop === 'butcher' ? sayBtn(s.label || f.de, 'de', 'sm')
+          GERMAN_SHOPS.indexOf(s.shop) >= 0 ? sayBtn(s.label || f.de, 'de', 'sm')
             : h('button', { class: 'say sm', 'aria-label': 'Show large', onclick: () => showBig([s.script, s.label].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join('\n') + (s.roman && s.roman !== s.label ? '\n' + s.roman : ''), m.t + ': ' + f.zm + ' (' + f.de + ')') }, icon('expand')));
       })));
     }
@@ -154,7 +156,7 @@
       h('div', { class: 'row', style: { marginTop: '6px' } }, h('div', { class: 'grow' }, h('div', { style: { fontWeight: 900, fontSize: '18px' } }, f.ask), h('div', { class: 'muted' }, f.askEn || '')), sayBtn(f.ask, 'de'))));
 
     // a card to show the shop staff: German name plus the label in the shop's own script
-    const labels = shops.filter(s => s.script || (s.label && s.label !== f.de && s.shop !== 'supermarket' && s.shop !== 'market'))
+    const labels = shops.filter(s => s.script || (s.label && s.label !== f.de && GERMAN_SHOPS.indexOf(s.shop) < 0))
       .map(s => [s.script, s.label].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join('  '));
     const showText = [f.de].concat(labels.filter((v, i, a) => a.indexOf(v) === i)).join('\n');
     body.push(h('button', { class: 'btn', style: { marginTop: '16px' }, onclick: () => showBig((f.ask ? f.ask + '\n' : '') + showText, f.askEn ? f.askEn + ' (' + f.zm + ')' : f.zm) }, icon('expand'), 'Show this to the shop staff'));
@@ -185,14 +187,14 @@
     const inp = h('input', { class: 'input', placeholder: 'What are you looking for?', autocomplete: 'off', enterkeyhint: 'search' });
     const go = () => push('food', { q: inp.value.trim() });
     inp.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
-    const popularIds = ['spinach', 'rape', 'mealie-meal', 'kapenta', 'pumpkin-leaves', 'sweet-potato-leaves', 'okra', 'sugar-beans'];
+    const popularIds = ['spinach', 'rape', 'breakfast-meal', 'kapenta', 'pumpkin-leaves', 'sweet-potato-leaves', 'okra', 'groundnuts-raw'];
     let popular = popularIds.map(id => F().find(f => f.id === id)).filter(Boolean);
     if (popular.length < 4) popular = F().slice(0, 6);
     const n = (S.foodFavs || []).length;
     return h('div', { class: 'card' },
       h('div', { class: 'row' }, h('div', { class: 'badge y' }, em('🍲')), h('div', { class: 'grow' }, h('h3', null, 'Find your food in Germany'), h('div', { class: 'muted' }, F().length + ' Zambian ingredients and their names in German, Turkish, Asian and Afro shops'))),
       h('div', { class: 'search', style: { marginTop: '12px' } }, icon('search'), inp),
-      h('div', { class: 'wrap', style: { marginTop: '10px' } }, popular.map(f => h('button', { class: 'chip', onclick: () => push('foodItem', { id: f.id }) }, em(f.emoji || '🍲'), f.zm + ' → ' + f.de))),
+      h('div', { class: 'wrap', style: { marginTop: '10px' } }, popular.map(f => h('button', { class: 'chip', style: { whiteSpace: 'normal', maxWidth: '100%' }, onclick: () => push('foodItem', { id: f.id }) }, em(f.emoji || '🍲'), short(f) + ' → ' + f.de))),
       h('div', { class: 'btnrow', style: { marginTop: '12px' } },
         h('button', { class: 'btn small soft', onclick: () => push('food', {}) }, 'Browse all'),
         h('button', { class: 'btn small ghost', onclick: () => push('shoppingList') }, '🛒 My list' + (n ? ' (' + n + ')' : ''))));

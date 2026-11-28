@@ -6,7 +6,7 @@ window.DATA.placeCats = [
   {id:"learn", title:"Learn German", emoji:"📚"},
   {id:"health", title:"Health", emoji:"🏥"},
   {id:"transport", title:"Bus & train", emoji:"🚆"},
-  {id:"shop", title:"African shops & hair", emoji:"🛍️"},
+  {id:"shop", title:"Food shops & hair", emoji:"🛍️"},
   {id:"community", title:"Meet people", emoji:"🤝"},
   {id:"faith", title:"Churches", emoji:"⛪"},
   {id:"fun", title:"Nice places", emoji:"🌳"},
