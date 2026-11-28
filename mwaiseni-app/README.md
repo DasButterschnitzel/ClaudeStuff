@@ -26,7 +26,13 @@ Download `dist/Mwaiseni.apk` on the phone, open it and allow "install unknown ap
 
 First start: the short welcome asks for her name, home language and home town. The husband's phone number, the home address and a personal note for the home screen can be added there or later under Settings (gear icon on the Today screen).
 
-Worth doing once while on Wi-Fi: Settings → *Offline translator* → Download (about 30 MB), and test the German voice.
+Worth doing once while on Wi-Fi: Settings → *Offline translator* → Download (about 30 MB).
+
+### Voice
+
+The app speaks through the phone's text-to-speech engine, so quality depends on what is installed. It uses Google's engine ("Speech Services by Google") whenever it is on the phone, even if the phone's default is another engine, and picks the best installed voice per language. Settings → *Voice & how names sound* lets you switch engine, hear and pick each German and English voice, and set how her names are spoken.
+
+A German voice reads names by German rules ("Chilufya" becomes "Kilufya"). The app respells her names for the German voice only (Chilufya → Tschilufja, Natasha → Natascha, Mwila → Muila, Joyce → Dscheuss); the spelling can be corrected by ear on the same screen.
 
 ## How it is built
 

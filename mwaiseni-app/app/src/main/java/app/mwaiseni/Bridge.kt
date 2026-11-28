@@ -11,8 +11,6 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.provider.CalendarContract
 import android.speech.RecognizerIntent
-import android.speech.tts.TextToSpeech
-import android.speech.tts.UtteranceProgressListener
 import android.view.WindowManager
 import android.webkit.JavascriptInterface
 import com.google.mlkit.common.model.DownloadConditions
@@ -39,26 +37,15 @@ import java.util.concurrent.atomic.AtomicBoolean
  * a missing voice, missing Google app or missing network must never crash.
  * Asynchronous answers go back through MainActivity.callback(reqId, json).
  */
-class Bridge(private val act: MainActivity) : TextToSpeech.OnInitListener {
+class Bridge(private val act: MainActivity) {
 
     private val io = Executors.newCachedThreadPool()
     private val main = Handler(Looper.getMainLooper())
-    private var tts: TextToSpeech? = null
-    @Volatile private var ttsReady = false
-    @Volatile private var ttsFailed = false
-    @Volatile private var pendingSpeak: Array<String>? = null
+    private val voice = Speech(act)
     private val translators = HashMap<String, Translator>()
 
-    init {
-        try {
-            tts = TextToSpeech(act.applicationContext, this)
-        } catch (e: Exception) {
-            ttsFailed = true
-        }
-    }
-
     fun shutdown() {
-        try { tts?.stop(); tts?.shutdown() } catch (_: Exception) {}
+        voice.shutdown()
         translators.values.forEach { try { it.close() } catch (_: Exception) {} }
         io.shutdown()
     }
@@ -78,77 +65,35 @@ class Bridge(private val act: MainActivity) : TextToSpeech.OnInitListener {
             .put("version", BuildConfig.VERSION_NAME)
             .put("sdk", Build.VERSION.SDK_INT)
             .put("speech", hasSpeech)
-            .put("tts", !ttsFailed)
+            .put("tts", voice.available())
             .put("notifications", act.notificationsGranted())
             .toString()
     }
 
     // ------------------------------------------------------------------ voice out
 
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            ttsReady = true
-            tts?.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                override fun onStart(id: String) {}
-                override fun onDone(id: String) { act.callback(id, JSONObject().put("ok", true)) }
-                @Deprecated("Deprecated in Java")
-                override fun onError(id: String) { act.callback(id, JSONObject().put("ok", false).put("error", "tts")) }
-                override fun onError(id: String, code: Int) { act.callback(id, JSONObject().put("ok", false).put("error", "tts")) }
-                override fun onStop(id: String, interrupted: Boolean) {
-                    act.callback(id, JSONObject().put("ok", false).put("error", "stopped"))
-                }
-            })
-            pendingSpeak?.let { speak(it[0], it[1], it[2], it[3]) }
-        } else {
-            ttsFailed = true
-            pendingSpeak?.let { act.callback(it[3], JSONObject().put("ok", false).put("error", "notts")) }
-        }
-        pendingSpeak = null
-    }
-
     @JavascriptInterface
     fun speak(text: String, lang: String, rate: String, req: String) {
-        val engine = tts
-        if (engine == null || ttsFailed) {
-            act.callback(req, JSONObject().put("ok", false).put("error", "notts"))
-            return
-        }
-        if (!ttsReady) {
-            pendingSpeak?.let { act.callback(it[3], JSONObject().put("ok", false).put("error", "stopped")) }
-            pendingSpeak = arrayOf(text, lang, rate, req)
-            return
-        }
-        try {
-            val res = engine.setLanguage(Locale.forLanguageTag(lang))
-            if (res == TextToSpeech.LANG_MISSING_DATA || res == TextToSpeech.LANG_NOT_SUPPORTED) {
-                act.callback(req, JSONObject().put("ok", false).put("error", "novoice"))
-                return
-            }
-            engine.setSpeechRate(rate.toFloatOrNull() ?: 1.0f)
-            val r = engine.speak(text, TextToSpeech.QUEUE_FLUSH, Bundle(), req)
-            if (r != TextToSpeech.SUCCESS) act.callback(req, JSONObject().put("ok", false).put("error", "tts"))
-        } catch (e: Exception) {
-            act.callback(req, JSONObject().put("ok", false).put("error", "tts"))
-        }
+        voice.speak(text, lang, rate.toFloatOrNull() ?: 1.0f, req)
     }
 
     @JavascriptInterface
-    fun stopSpeak() {
-        try { tts?.stop() } catch (_: Exception) {}
-    }
+    fun stopSpeak() = voice.stop()
 
     @JavascriptInterface
-    fun installVoices() {
-        act.runOnUiThread {
-            try {
-                act.startActivity(Intent(TextToSpeech.Engine.ACTION_INSTALL_TTS_DATA).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-            } catch (e: Exception) {
-                try {
-                    act.startActivity(Intent("com.android.settings.TTS_SETTINGS").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                } catch (_: Exception) {}
-            }
-        }
-    }
+    fun installVoices() = voice.installVoices()
+
+    /** Engines, voices and the current choice, for the voice picker. */
+    @JavascriptInterface
+    fun voiceInfo(): String = try { voice.info().toString() } catch (e: Exception) { "{}" }
+
+    /** lang = "de" | "en"; name = "" for automatic. */
+    @JavascriptInterface
+    fun setVoice(lang: String, name: String) = voice.setVoice(lang, name)
+
+    /** pkg = "" for the phone's default engine. Answers {ok} when the engine is ready. */
+    @JavascriptInterface
+    fun setEngine(pkg: String, req: String) = voice.setEngine(pkg, req)
 
     // ------------------------------------------------------------------ voice in
 

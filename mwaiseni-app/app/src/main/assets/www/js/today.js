@@ -118,6 +118,102 @@
     return page('My first steps', 'Meine ersten Schritte', body);
   };
 
+  // ───────────────────────── voice & pronunciation
+  const GOOGLE_TTS = 'com.google.android.tts';
+  const SAMPLE = { de: 'Hallo {name}! Ich wohne in Dreieich-Sprendlingen. Morgen um halb zehn habe ich einen Termin beim Arzt.', en: 'Hello {name}! This letter is from the immigration office in Dietzenbach.' };
+  const COUNTRY = { DE: '', AT: 'Austrian', CH: 'Swiss', GB: '', US: 'American', AU: 'Australian', IN: 'Indian', NG: 'Nigerian', ZA: 'South African', KE: 'Kenyan', IE: 'Irish', CA: 'Canadian' };
+  let voiceTries = 0, showEn = false;
+  screens.voice = function () {
+    const pr = S.profile; const body = [];
+    if (!N.native) {
+      body.push(h('div', { class: 'card', style: { marginTop: '4px' } }, h('h3', null, 'Works in the Android app'), h('p', { class: 'muted' }, 'Voice choice uses the voices installed on the phone.')));
+    }
+    const info = N.voiceInfo();
+    if (N.native && (!info || !info.ready)) {
+      if (info && info.failed) body.push(h('div', { class: 'verdict urgent', style: { marginTop: '4px' } }, h('div', { class: 'em emoji' }, '🔇'), h('div', null, h('h3', null, 'No voice engine works'), h('p', null, 'Install "Speech Services by Google" from the Play Store, then open this page again.'),
+        h('button', { class: 'btn small', style: { marginTop: '10px' }, onclick: openGoogleTts }, 'Open Play Store'))));
+      else {
+        body.push(h('div', { class: 'card center', style: { marginTop: '4px', padding: '26px' } }, h('div', { class: 'spinner' }), h('p', { class: 'muted', style: { marginTop: '12px' } }, 'Starting the voice…')));
+        if (voiceTries++ < 20) setTimeout(() => { if (MW.state && document.querySelector('.spinner')) MW.replace('voice'); }, 700);
+      }
+    }
+    if (info && info.ready) {
+      voiceTries = 0;
+      // engine
+      if (info.engine !== GOOGLE_TTS && info.google) {
+        body.push(h('div', { class: 'verdict important', style: { marginTop: '4px' } }, h('div', { class: 'em emoji' }, '✨'), h('div', { class: 'grow' }, h('h3', null, 'Better voices are on this phone'),
+          h('p', null, 'You are using ' + (info.engineLabel || 'the phone’s own engine') + '. Google’s voices sound much more natural.'),
+          h('button', { class: 'btn small', style: { marginTop: '10px' }, onclick: () => switchEngine(GOOGLE_TTS) }, 'Use Google voices'))));
+      } else if (!info.google) {
+        body.push(h('div', { class: 'verdict important', style: { marginTop: '4px' } }, h('div', { class: 'em emoji' }, '✨'), h('div', { class: 'grow' }, h('h3', null, 'Get the most natural voice'),
+          h('p', null, 'Install the free app "Speech Services by Google". Its German voices sound like a real person.'),
+          h('button', { class: 'btn small', style: { marginTop: '10px' }, onclick: openGoogleTts }, 'Install from Play Store'))));
+      }
+      if ((info.engines || []).length > 1) {
+        const sel = h('select', { class: 'input' }, info.engines.map(e => h('option', { value: e.pkg, selected: e.pkg === info.engine }, e.label + (e.pkg === GOOGLE_TTS ? ' (recommended)' : ''))));
+        sel.addEventListener('change', () => switchEngine(sel.value));
+        body.push(h('label', { class: 'field' }, h('span', null, 'Voice engine'), sel));
+      } else if (info.engineLabel) {
+        body.push(h('p', { class: 'muted', style: { margin: '12px 6px 0' } }, 'Voice engine: ' + info.engineLabel + (info.engine === GOOGLE_TTS ? ' ✓' : '')));
+      }
+    }
+
+    // names
+    body.push(h('div', { class: 'sect' }, 'How your name sounds'));
+    const nameRow = (label, nameKey, sayKey) => {
+      const real = (pr[nameKey] || '').trim();
+      if (!real) return null;
+      const inp = h('input', { class: 'input', value: pr[sayKey] || '', placeholder: MW.germanize(real), autocapitalize: 'words', autocomplete: 'off', spellcheck: 'false' });
+      inp.addEventListener('input', () => { pr[sayKey] = inp.value; save(); });
+      return h('div', { class: 'card' }, h('div', { class: 'muted' }, label), h('div', { style: { fontWeight: 900, fontSize: '20px' } }, real),
+        h('div', { class: 'row', style: { marginTop: '8px' } }, h('div', { class: 'grow' }, inp),
+          h('button', { class: 'say', 'aria-label': 'Listen', onclick: function () { say('Hallo ' + MW.myName() + ' ' + (S.profile.surname || '') + '! Wie geht es dir?', 'de', { btn: this }); } }, icon('speaker'))));
+    };
+    body.push(nameRow('Your first name', 'name', 'nameSay'));
+    body.push(nameRow('Your family name', 'surname', 'surnameSay'));
+    body.push(h('p', { class: 'muted', style: { margin: '10px 6px 0' } }, 'The German voice reads names by German rules. Write the name the way a German would spell the sound, then tap 🔊. Examples: Chilufya → Tschilufja, Natasha → Natascha, Mwila → Muila. Leave it empty for the automatic spelling.'));
+
+    // voices
+    if (info && info.ready) {
+      const list = (lang) => {
+        const L = info[lang] || { voices: [] }; const chosen = L.chosen || '';
+        const box = h('div', { class: 'list' });
+        const pickRow = (name, title, sub, ok) => {
+          const on = chosen === name;
+          return h('button', { class: 'item', onclick: () => {
+            if (!ok) { N.installVoices(); toast('Download this voice, then come back and choose it.'); return; }
+            N.setVoice(lang, name); L.chosen = name; MW.replace('voice'); setTimeout(() => say(SAMPLE[lang], lang), 150);
+          } },
+            h('div', { class: 'say sm', style: on ? { background: 'var(--green)', color: '#fff' } : { background: 'var(--bg2)', color: 'var(--ink3)' } }, icon(on ? 'check' : 'play')),
+            h('div', { class: 'grow' }, h('div', { class: 't' }, title), sub ? h('div', { class: 's' }, sub) : null));
+        };
+        box.appendChild(pickRow('', 'Automatic', 'The best voice installed on this phone' + (L.auto ? '' : ' (none installed yet)'), true));
+        L.voices.forEach((v, i) => {
+          const tags = [COUNTRY[v.country] != null ? COUNTRY[v.country] : v.country, v.network ? 'online, highest quality' : '', !v.installed ? 'needs download' : '', v.name === L.auto ? 'used now' : ''].filter(Boolean);
+          box.appendChild(pickRow(v.name, (lang === 'de' ? 'Stimme ' : 'Voice ') + (i + 1), tags.join(' · '), v.installed || v.network));
+        });
+        return box;
+      };
+      body.push(h('div', { class: 'sect' }, 'German voice', h('button', { onclick: function () { say(SAMPLE.de, 'de'); } }, '🔊 Listen')));
+      body.push(list('de'));
+      body.push(h('div', { class: 'sect' }, 'English voice', h('button', { onclick: () => { showEn = !showEn; MW.replace('voice'); } }, showEn ? 'Hide' : 'Show')));
+      if (showEn) body.push(list('en'));
+      body.push(h('p', { class: 'muted', style: { margin: '12px 6px 0' } }, 'Tap a voice to hear it. Online voices sound best but need internet; without it the app switches to a voice on the phone by itself.'));
+    }
+    const sp = S.settings;
+    body.push(h('div', { class: 'list', style: { marginTop: '18px' } }, h('div', { class: 'item' }, h('div', { class: 'grow' }, h('div', { class: 't' }, 'Speaking speed'), h('div', { class: 's' }, 'Hold any speaker button for extra slow')),
+      h('div', { style: { width: '130px' } }, select(sp, 'rate', [[0.8, 'Slow'], [0.95, 'Normal'], [1.1, 'Fast']], () => { sp.rate = +sp.rate; save(); say(SAMPLE.de, 'de'); })))));
+    if (N.native) body.push(h('button', { class: 'btn ghost', style: { marginTop: '14px' }, onclick: () => N.installVoices() }, 'Download more voices'));
+    return page('Voice', 'Stimme & Aussprache', body);
+  };
+  function openGoogleTts() { if (!N.open('market://details?id=' + GOOGLE_TTS)) N.open('https://play.google.com/store/apps/details?id=' + GOOGLE_TTS); }
+  async function switchEngine(pkg) {
+    toast('Switching voice…');
+    const r = await N.setEngine(pkg);
+    MW.replace('voice');
+    if (r.ok) setTimeout(() => say(SAMPLE.de, 'de'), 200); else toast('That voice engine did not start.');
+  }
+
   // ───────────────────────── SOS
   screens.sos = function () {
     const pr = S.profile; const body = [];
@@ -188,7 +284,7 @@
       })),
       h('div', { class: 'item' }, h('div', { class: 'grow' }, h('div', { class: 't' }, 'Reminder time')), h('div', { style: { width: '130px' } }, timeSel)),
       h('div', { class: 'item' }, h('div', { class: 'grow' }, h('div', { class: 't' }, 'Daily goal')), h('div', { style: { width: '130px' } }, select(st, 'goal', [[15, 'Easy · 15'], [30, 'Normal · 30'], [50, 'Serious · 50'], [80, 'Intense · 80']]))),
-      h('div', { class: 'item' }, h('div', { class: 'grow' }, h('div', { class: 't' }, 'Speaking speed'), h('div', { class: 's' }, 'Tip: hold a speaker button for extra slow')), h('div', { style: { width: '130px' } }, select(st, 'rate', [[0.7, 'Slow'], [0.9, 'Normal'], [1.05, 'Fast']], () => { st.rate = +st.rate; save(); say('Guten Tag! Wie geht es Ihnen?', 'de'); }))),
+      h('div', { class: 'item' }, h('div', { class: 'grow' }, h('div', { class: 't' }, 'Speaking speed'), h('div', { class: 's' }, 'Tip: hold a speaker button for extra slow')), h('div', { style: { width: '130px' } }, select(st, 'rate', [[0.8, 'Slow'], [0.95, 'Normal'], [1.1, 'Fast']], () => { st.rate = +st.rate; save(); say('Guten Tag! Wie geht es Ihnen?', 'de'); }))),
       h('div', { class: 'item' }, h('div', { class: 'grow' }, h('div', { class: 't' }, 'Speak translations aloud')), toggle(st, 'speakOut')),
       h('div', { class: 'item' }, h('div', { class: 'grow' }, h('div', { class: 't' }, 'My English sounds most like')), h('div', { style: { width: '178px' } }, select(st, 'accent', [['en-ZA', 'Southern Africa'], ['en-KE', 'East Africa'], ['en-NG', 'West Africa'], ['en-GB', 'British'], ['en-US', 'American']])))));
 
@@ -198,7 +294,7 @@
     if (N.native) N.modelStatus().then(r => { trStatus.textContent = r.ok && r.ready ? 'Ready. Works without internet ✓' : 'Not downloaded yet (about 30 MB)'; if (!(r.ok && r.ready)) trBtn.classList.remove('hide'); });
     body.push(h('div', { class: 'list' },
       h('div', { class: 'item' }, h('div', { class: 'grow' }, h('div', { class: 't' }, 'Offline translator'), trStatus), trBtn),
-      h('div', { class: 'item' }, h('div', { class: 'grow' }, h('div', { class: 't' }, 'German voice'), h('div', { class: 's' }, 'No sound? Install the German voice.')), h('button', { class: 'btn small soft', onclick: () => say('Hallo ' + MW.myName() + '! Schön, dass du da bist.', 'de') }, 'Test'), N.native ? h('button', { class: 'btn small ghost', onclick: () => N.installVoices() }, 'Install') : null),
+      h('button', { class: 'item', onclick: () => push('voice') }, h('div', { class: 'grow' }, h('div', { class: 't' }, 'Voice & how names sound'), h('div', { class: 's' }, 'Choose the most natural voice and fix how your name is said')), icon('chev', 'chev')),
       h('div', { class: 'item' }, h('div', { class: 'grow' }, h('div', { class: 't' }, 'Design')), h('div', { style: { width: '130px' } }, select(st, 'theme', [['auto', 'Automatic'], ['light', 'Light'], ['dark', 'Dark']], MW.applyTheme)))));
 
     body.push(h('div', { class: 'tip', style: { background: 'var(--blue-soft)' } }, h('h3', null, em('✨'), 'Hidden helpers'), h('p', null, 'In WhatsApp or any app: mark a German text, tap "Share" or "Mwaiseni: translate", and it opens here in English. You can also share a photo of a letter to Mwaiseni.')));
@@ -232,6 +328,7 @@
         const sur = h('input', { class: 'input', style: { marginTop: '10px' }, placeholder: 'Family name (optional)', value: pr.surname || '', autocapitalize: 'words', autocomplete: 'off' });
         sur.addEventListener('input', () => { pr.surname = sur.value.trim(); });
         MW.add(pg, [h('h2', null, 'What is your name?'), h('p', null, 'In German: "Wie heißt du?"'), h('div', { style: { marginTop: '22px' } }, inp, sur),
+          h('button', { class: 'choice', style: { marginTop: '14px' }, onclick: () => { pr.name = inp.value.trim(); pr.surname = sur.value.trim(); say('Hallo ' + MW.myName() + '! Schön, dass du da bist.', 'de'); } }, h('span', { style: { fontSize: '24px' } }, '🔊'), h('span', { class: 'grow' }, 'Hear your name in German', h('small', null, 'Sounds wrong? Fix it later under Settings → Voice'))),
           h('p', { style: { fontSize: '15.5px', marginTop: '18px' } }, 'The lessons use your name, so you learn to introduce yourself.')]);
         MW.add(ft, [dots, next('Continue', () => { pr.name = inp.value.trim(); save(); })]);
         setTimeout(() => inp.focus(), 350);

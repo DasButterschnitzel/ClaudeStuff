@@ -74,7 +74,7 @@
   const defaults = () => ({
     onboarded: false,
     profile: { name: '', surname: '', lang: 'bem', city: 'Lusaka', partnerName: '', partnerPhone: '', address: '', note: '', arrived: '', permit: '' },
-    settings: { rate: 0.9, theme: 'auto', accent: 'en-ZA', remind: false, remindH: 9, remindM: 0, goal: 30, speakOut: true },
+    settings: { rate: 0.95, theme: 'auto', accent: 'en-ZA', remind: false, remindH: 9, remindM: 0, goal: 30, speakOut: true },
     xp: { total: 0, days: {} }, streak: { n: 0, last: '' },
     units: {}, srs: {}, checks: {}, favs: [], talk: [], scans: [], seenGuide: {}, rateCache: null, wxCache: null
   });
@@ -83,6 +83,8 @@
     const raw = JSON.parse(localStorage.getItem(KEY) || 'null');
     if (raw) { const d = defaults(); S = Object.assign(d, raw); S.profile = Object.assign(d.profile, raw.profile); S.settings = Object.assign(d.settings, raw.settings); S.xp = Object.assign({ total: 0, days: {} }, raw.xp); S.streak = Object.assign({ n: 0, last: '' }, raw.streak); }
   } catch (e) { S = defaults(); }
+  // older versions used other speed steps
+  S.settings.rate = ({ 0.7: 0.8, 0.9: 0.95, 1.05: 1.1 })[S.settings.rate] || S.settings.rate;
   let saveT = null;
   function save() { clearTimeout(saveT); saveT = setTimeout(() => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }, 60); }
   function saveNow() { clearTimeout(saveT); try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) { } }
@@ -115,6 +117,44 @@
   const mySurname = () => (S.profile.surname || '').trim() || 'Banda';
   // lessons are written for "{name} Banda": swap in her own first and family name
   const P = (t) => String(t == null ? '' : t).replace(/\{name\}/g, myName()).replace(/\bBanda\b/g, mySurname());
+
+  // A German voice reads every name by German rules: "Chilufya" comes out as "Kilufya", "Natasha" as "Nata-s-ha".
+  // Respell Zambian / English spelling the German way so the voice says it right. She can override it in Settings.
+  // English first names common in Zambia, spelled the way a German voice says them right
+  const NAME_SOUNDS = {
+    grace: 'Greis', joyce: 'Dscheuss', joy: 'Dscheu', precious: 'Preschess', patience: 'Peischens', prudence: 'Pruhdens',
+    charity: 'Tscheriti', hope: 'Houp', faith: 'Feis', mercy: 'Mörsi', memory: 'Memori', loveness: 'Lawness', blessings: 'Blessings',
+    mirriam: 'Mirjam', miriam: 'Mirjam', mary: 'Märi', jane: 'Dschein', ruth: 'Ruhs', esther: 'Ester', martha: 'Marsa', sarah: 'Sära',
+    rose: 'Rous', catherine: 'Kättrin', christine: 'Kristien', elizabeth: 'Elisabeth', florence: 'Florens', irene: 'Airien', ireen: 'Airien',
+    patricia: 'Patrischa', beatrice: 'Biatriss', agness: 'Agnes', violet: 'Waiolett', nancy: 'Nänsi', dorothy: 'Dorosi', eunice: 'Junis',
+    josephine: 'Dschosefin', judith: 'Dschudis', juliet: 'Dschuliett', theresa: 'Teresa', veronica: 'Weronika', abigail: 'Äbigeil',
+    edith: 'Idis', gertrude: 'Gertrud', getrude: 'Gertrud', jennifer: 'Dschennifer', jessica: 'Dschessika', james: 'Dscheims', john: 'Dschonn',
+    joseph: 'Dschosef', michael: 'Maikel', charles: 'Tscharls', george: 'Dschordsch', peter: 'Piter', david: 'Deiwid', moses: 'Mouses'
+  };
+  function germanize(name) {
+    return String(name || '').split(/(\s+|-)/).map(w => {
+      if (!/[a-z]/i.test(w)) return w;
+      if (NAME_SOUNDS[w.toLowerCase()]) return NAME_SOUNDS[w.toLowerCase()];
+      let s = w.toLowerCase()
+        .replace(/sch/g, '§')                                  // already German: keep
+        .replace(/t?ch/g, 'tsch').replace(/sh/g, 'sch').replace(/ph/g, 'f')
+        .replace(/j/g, 'dsch').replace(/y(?=[aeiou])/g, 'j').replace(/([^aeiou])y$/, '$1i')
+        .replace(/([bcdfgklmnpstz])w(?=[aeiou])/g, '$1u')       // Mwila → Muila, Bwalya → Bualja
+        .replace(/v/g, 'w').replace(/z/g, 's').replace(/ng'/g, 'ng').replace(/'/g, '')
+        .replace(/§/g, 'sch');
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }).join('');
+  }
+  const reEsc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const spokenName = () => (S.profile.nameSay || '').trim() || germanize(myName());
+  const spokenSurname = () => (S.profile.surnameSay || '').trim() || germanize(mySurname());
+  /** Swap her names for their spoken spelling, only for the German voice. */
+  function forGermanVoice(t) {
+    [[myName(), spokenName()], [mySurname(), spokenSurname()]].forEach(([n, sp]) => {
+      if (n && sp && n !== sp) t = t.replace(new RegExp('(?<![\\p{L}])' + reEsc(n) + '(?![\\p{L}])', 'gu'), sp);
+    });
+    return t;
+  }
   function norm(s) {
     return String(s).toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
       .replace(/[^a-z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
@@ -160,6 +200,9 @@
     keepAwake(on) { try { NB && NB.keepAwake(!!on); } catch (e) { } },
     setBars(bg, light) { try { NB && NB.setBars(bg, !!light); } catch (e) { } },
     installVoices() { try { NB && NB.installVoices(); } catch (e) { } },
+    voiceInfo() { try { return NB && NB.voiceInfo ? JSON.parse(NB.voiceInfo()) : null; } catch (e) { return null; } },
+    setVoice(lang, name) { try { NB && NB.setVoice(lang, name || ''); } catch (e) { } },
+    setEngine(pkg) { return ncall('setEngine', pkg || ''); },
     listen(lang, prompt) { return ncall('listen', lang, prompt || ''); },
     scan(source) { return ncall('scan', source); },
     ocr(file) { return ncall('ocr', file); },
@@ -200,11 +243,12 @@
   /** Speak text. lang: 'de' | 'en'. Resolves when finished (or failed). */
   function say(text, lang, opts) {
     opts = opts || {};
-    text = P(text).replace(/…/g, ' ').trim();
+    text = P(text).replace(/…/g, ' ').replace(/\s*·\s*/g, ', ').replace(/\s+/g, ' ').trim();
+    if (lang !== 'en') text = forGermanVoice(text);
     stopSay();
     const token = sayToken;
     const tag = (lang === 'en') ? 'en-GB' : 'de-DE';
-    const rate = (opts.slow ? 0.6 : 1) * (S.settings.rate || 0.9);
+    const rate = (opts.slow ? 0.72 : 1) * (S.settings.rate || 0.95);
     if (opts.btn) { curBtn = opts.btn; curBtn.classList.add('playing'); }
     const fin = () => { if (token === sayToken && curBtn) { curBtn.classList.remove('playing'); curBtn = null; } };
     if (!text) { fin(); return Promise.resolve(false); }
@@ -230,7 +274,7 @@
       h('h2', null, 'German voice is missing'),
       h('p', null, 'Your phone has no German voice installed yet. Install "Deutsch (Deutschland)" once, then every word can be spoken to you.'),
       h('div', { class: 'gap' }),
-      h('button', { class: 'btn', onclick: () => { N.installVoices(); close(); } }, 'Install the voice'),
+      h('button', { class: 'btn', onclick: () => { close(); push('voice'); } }, 'Fix the voice'),
       h('button', { class: 'link', style: { width: '100%', textAlign: 'center' }, onclick: close }, 'Later')
     ]);
   }
@@ -343,6 +387,6 @@
 
   window.MW = { D, S: () => S, state: S, save, saveNow, h, add, icon, em, N, say, stopSay, sayBtn, toast, sheet, showBig, confetti, pushOverlay,
     screens, go, push, pop, replace, render, tabState, topbar, page, applyTheme, addXp, streakNow, xpToday, dayKey, pad,
-    P, myName, norm, similar, shuffle, pick, esc, defaults,
+    P, myName, germanize, spokenName, norm, similar, shuffle, pick, esc, defaults,
     reset() { const d = defaults(); Object.keys(S).forEach(k => delete S[k]); Object.assign(S, d); saveNow(); } };
 })();
