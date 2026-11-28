@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Mwaiseni</string>
+    <string name="share_label">Translate with Mwaiseni</string>
+    <string name="process_text_label">Mwaiseni: translate</string>
+    <string name="channel_daily">Word of the day</string>
+    <string name="channel_daily_desc">One friendly German word every day</string>
+</resources>

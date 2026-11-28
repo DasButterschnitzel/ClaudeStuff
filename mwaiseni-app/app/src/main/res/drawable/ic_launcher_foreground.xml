@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <!-- house -->
+    <path android:fillColor="#FFFFFFFF" android:pathData="M54,29 L79,50 L73,50 L73,74 Q73,77 70,77 L38,77 Q35,77 35,74 L35,50 L29,50 Z" />
+    <!-- heart -->
+    <path android:fillColor="#FFDE2010" android:pathData="M54,70 C44,62 42,57 42,53.5 C42,49.5 45,47 48.2,47 C50.6,47 52.8,48.3 54,50.4 C55.2,48.3 57.4,47 59.8,47 C63,47 66,49.5 66,53.5 C66,57 64,62 54,70 Z" />
+    <!-- flag stripes: red, black, orange on green -->
+    <path android:fillColor="#FF198A00" android:pathData="M63,79 h12 v3 h-12 z" />
+    <path android:fillColor="#FFDE2010" android:pathData="M33,79 h10 v3 h-10 z" />
+    <path android:fillColor="#FF1B1B1B" android:pathData="M43,79 h10 v3 h-10 z" />
+    <path android:fillColor="#FFFFC247" android:pathData="M53,79 h10 v3 h-10 z" />
+</vector>
