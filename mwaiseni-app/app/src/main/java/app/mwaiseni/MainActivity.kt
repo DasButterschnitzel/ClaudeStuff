@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.view.ViewGroup
+import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -37,8 +38,15 @@ import java.io.File
  */
 class MainActivity : ComponentActivity() {
 
+    private companion object {
+        const val START_URL = "https://appassets.androidplatform.net/assets/www/index.html"
+    }
+
     lateinit var web: WebView
         private set
+    private lateinit var loader: WebViewAssetLoader
+    private var recoveries = 0
+    private var lastRecovery = 0L
     private lateinit var root: FrameLayout
     private lateinit var bridge: Bridge
 
@@ -60,22 +68,16 @@ class MainActivity : ComponentActivity() {
 
     val scansDir: File by lazy { File(cacheDir, "scans").apply { mkdirs() } }
 
-    @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        // no grey scrim behind the 3-button navigation bar: the app colour runs to the screen edge
+        if (Build.VERSION.SDK_INT >= 29) window.isNavigationBarContrastEnforced = false
 
         cameraFile = savedInstanceState?.getString("cameraFile")
 
         root = FrameLayout(this)
         root.setBackgroundColor(ContextCompat.getColor(this, R.color.bg))
-        web = WebView(this)
-        web.setBackgroundColor(Color.TRANSPARENT)
-        web.overScrollMode = WebView.OVER_SCROLL_NEVER
-        root.addView(
-            web,
-            FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-        )
         setContentView(root)
 
         ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
@@ -92,34 +94,11 @@ class MainActivity : ComponentActivity() {
         if (BuildConfig.DEBUG) WebView.setWebContentsDebuggingEnabled(true)
 
         bridge = Bridge(this)
-        val loader = WebViewAssetLoader.Builder()
+        loader = WebViewAssetLoader.Builder()
             .addPathHandler("/assets/", WebViewAssetLoader.AssetsPathHandler(this))
             .addPathHandler("/scans/", WebViewAssetLoader.InternalStoragePathHandler(this, scansDir))
             .build()
-
-        web.settings.apply {
-            javaScriptEnabled = true
-            domStorageEnabled = true
-            databaseEnabled = true
-            mediaPlaybackRequiresUserGesture = false
-            allowFileAccess = false
-            allowContentAccess = false
-            textZoom = 100
-            setSupportZoom(false)
-        }
-        web.isVerticalScrollBarEnabled = false
-        web.webViewClient = object : WebViewClient() {
-            override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? =
-                loader.shouldInterceptRequest(request.url)
-
-            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
-                val url = request.url
-                if (url.host == WebViewAssetLoader.DEFAULT_DOMAIN) return false
-                openExternal(url.toString())
-                return true
-            }
-        }
-        web.addJavascriptInterface(bridge, "NativeBridge")
+        web = buildWebView()
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -136,7 +115,67 @@ class MainActivity : ComponentActivity() {
         }
         Reminders.reschedule(this)
 
-        web.loadUrl("https://${WebViewAssetLoader.DEFAULT_DOMAIN}/assets/www/index.html")
+        web.loadUrl(START_URL)
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun buildWebView(): WebView {
+        val w = WebView(this)
+        w.setBackgroundColor(Color.TRANSPARENT)
+        w.overScrollMode = WebView.OVER_SCROLL_NEVER
+        w.isVerticalScrollBarEnabled = false
+        w.settings.apply {
+            javaScriptEnabled = true
+            domStorageEnabled = true
+            databaseEnabled = true
+            mediaPlaybackRequiresUserGesture = false
+            allowFileAccess = false
+            allowContentAccess = false
+            textZoom = 100
+            setSupportZoom(false)
+        }
+        w.webViewClient = object : WebViewClient() {
+            override fun shouldInterceptRequest(view: WebView, request: WebResourceRequest): WebResourceResponse? =
+                loader.shouldInterceptRequest(request.url)
+
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                val url = request.url
+                if (url.host == WebViewAssetLoader.DEFAULT_DOMAIN) return false
+                openExternal(url.toString())
+                return true
+            }
+
+            // Android may kill the page's render process when memory is short (or it can crash).
+            // Without this the whole app would die; instead start the page again. Progress is saved.
+            override fun onRenderProcessGone(view: WebView, detail: RenderProcessGoneDetail): Boolean {
+                recoverPage()
+                return true
+            }
+        }
+        w.addJavascriptInterface(bridge, "NativeBridge")
+        root.addView(
+            w, 0,
+            FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        )
+        return w
+    }
+
+    private fun recoverPage() {
+        pageReady = false
+        try {
+            root.removeView(web)
+            web.destroy()
+        } catch (_: Exception) {
+        }
+        val now = System.currentTimeMillis()
+        recoveries = if (now - lastRecovery < 60_000) recoveries + 1 else 1
+        lastRecovery = now
+        if (recoveries > 3) {            // something is really wrong: leave quietly instead of looping
+            finish()
+            return
+        }
+        web = buildWebView()
+        web.loadUrl(START_URL)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -152,8 +191,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         bridge.shutdown()
-        root.removeView(web)
-        web.destroy()
+        try {
+            root.removeView(web)
+            web.destroy()
+        } catch (_: Exception) {
+        }
         super.onDestroy()
     }
 
